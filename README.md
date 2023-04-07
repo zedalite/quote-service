@@ -1,1 +1,3 @@
-# quote-api
+# Quote API
+
+A simple quote api
