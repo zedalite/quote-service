@@ -51,6 +51,15 @@ public class QuoteController {
     return service.getRandomEntity();
   }
 
+  @Operation(summary = "Get a random quotes")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json",schema = @Schema(implementation = Quote.class))}),
+          @ApiResponse(responseCode = "404", description = "Quotes not found", content = @Content)})
+  @GetMapping("/randoms")
+  public List<Quote> getRandomQuotes(@RequestParam final Integer quantity) {
+    return service.getRandomEntities(quantity);
+  }
+
   @Operation(summary = "Get the number of saved quotes")
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),

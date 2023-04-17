@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -33,6 +34,12 @@ public class QuoteService {
 
   public List<Quote> getEntities() {
     final var quotesRecords = repository.findAll();
+    if (quotesRecords.isEmpty()) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
+    return QUOTE_MAPPER.quoteRecsToQuotes(quotesRecords);
+  }
+
+  public List<Quote> getEntities(final List<Integer> ids) {
+    final var quotesRecords = repository.findAllByIds(ids);
     if (quotesRecords.isEmpty()) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotesRecords);
   }
@@ -62,6 +69,14 @@ public class QuoteService {
     final var availableIds = repository.findAllIds();
     final var randIdx = new SecureRandom().nextInt(availableIds.size());
     return getEntity(availableIds.get(randIdx));
+  }
+
+  public List<Quote> getRandomEntities(final Integer quantity) {
+    final var availableIds = repository.findAllIds();
+    final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
+    final var quotes = getEntities(randIdxs.stream().map(availableIds::get).toList());
+    Collections.shuffle(quotes);
+    return quotes;
   }
 
   public Integer countEntities() {

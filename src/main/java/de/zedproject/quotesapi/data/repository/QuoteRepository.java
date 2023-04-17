@@ -39,6 +39,14 @@ public class QuoteRepository {
     return quotes;
   }
 
+  public List<QuotesRecord> findAllByIds(final List<Integer> ids) {
+    final var quotes = dsl.selectFrom(QUOTES)
+            .where(QUOTES.ID.in(ids))
+            .fetchInto(QuotesRecord.class);
+    LOG.debug("Quotes found, count={}", quotes.size());
+    return quotes;
+  }
+
   public List<Integer> findAllIds() {
     final var quotesIds = dsl.select(QUOTES.ID)
             .from(QUOTES)
