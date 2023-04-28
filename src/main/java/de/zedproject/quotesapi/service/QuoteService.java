@@ -1,10 +1,9 @@
 package de.zedproject.quotesapi.service;
 
 import de.zedproject.quotesapi.data.mapper.QuoteMapper;
-import de.zedproject.quotesapi.data.models.Quote;
-import de.zedproject.quotesapi.data.payloads.QuoteRequest;
+import de.zedproject.quotesapi.data.model.Quote;
+import de.zedproject.quotesapi.data.model.QuoteRequest;
 import de.zedproject.quotesapi.data.repository.QuoteRepository;
-import de.zedproject.quotesapi.exceptions.BadRequestException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -28,7 +27,7 @@ public class QuoteService {
 
   public Quote createEntity(final QuoteRequest request) {
     final var quotesRecord = repository.save(request);
-    if (quotesRecord == null) throw new BadRequestException();
+    if (quotesRecord == null) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecToQuote(quotesRecord);
   }
 
@@ -44,7 +43,7 @@ public class QuoteService {
     return QUOTE_MAPPER.quoteRecsToQuotes(quotesRecords);
   }
 
-  @Cacheable("quotes")
+  @Cacheable(value = "quotes", key = "#id", unless = "#result == null")
   public Quote getEntity(final Integer id) {
     final var quotesRecord = repository.findById(id);
     if (quotesRecord == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
@@ -67,12 +66,14 @@ public class QuoteService {
 
   public Quote getRandomEntity() {
     final var availableIds = repository.findAllIds();
+    if (availableIds.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
     final var randIdx = new SecureRandom().nextInt(availableIds.size());
     return getEntity(availableIds.get(randIdx));
   }
 
   public List<Quote> getRandomEntities(final Integer quantity) {
     final var availableIds = repository.findAllIds();
+    if (availableIds.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
     final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
     final var quotes = getEntities(randIdxs.stream().map(availableIds::get).toList());
     Collections.shuffle(quotes);

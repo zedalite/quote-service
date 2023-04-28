@@ -2,7 +2,7 @@ package de.zedproject.quotesapi.data.repository;
 
 import de.zedproject.jooq.quote.tables.Quotes;
 import de.zedproject.jooq.quote.tables.records.QuotesRecord;
-import de.zedproject.quotesapi.data.payloads.QuoteRequest;
+import de.zedproject.quotesapi.data.model.QuoteRequest;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class QuoteRepository {
             .set(QUOTES.AUTHOR, quote.author())
             .set(QUOTES.DATETIME, quote.datetime())
             .set(QUOTES.TEXT, quote.text())
-            .set(QUOTES.SUBTEXT, quote.subtext().orElse(null))
+            .set(QUOTES.SUBTEXT, quote.subtext())
             .returning()
             .fetchOneInto(QuotesRecord.class);
     LOG.debug("Quote saved, quote={}", savedQuote);
@@ -68,7 +68,7 @@ public class QuoteRepository {
             .set(QUOTES.AUTHOR, quote.author())
             .set(QUOTES.DATETIME, quote.datetime())
             .set(QUOTES.TEXT, quote.text())
-            .set(QUOTES.SUBTEXT, quote.subtext().orElse(null))
+            .set(QUOTES.SUBTEXT, quote.subtext())
             .where(QUOTES.ID.eq(id))
             .execute();
     final var updatedQuote = findById(id);
