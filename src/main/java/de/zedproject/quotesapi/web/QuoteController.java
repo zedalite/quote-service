@@ -3,6 +3,7 @@ package de.zedproject.quotesapi.web;
 import de.zedproject.quotesapi.data.model.ErrorDetails;
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
+import de.zedproject.quotesapi.data.model.ValidationErrorDetails;
 import de.zedproject.quotesapi.service.QuoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -74,7 +75,7 @@ public class QuoteController {
   @Operation(summary = "Create a new quote")
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "Quote created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-          @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
+          @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
   public Quote postQuote(@RequestBody @Valid final QuoteRequest request) {
     return service.createEntity(request);
@@ -83,7 +84,7 @@ public class QuoteController {
   @Operation(summary = "Edit a existing quote")
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "Quote edited", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-          @ApiResponse(responseCode = "400", description = "Quote not edited", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))}),
+          @ApiResponse(responseCode = "400", description = "Quote not edited", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))}),
           @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PutMapping("/{id}")
   public Quote putQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request) {
