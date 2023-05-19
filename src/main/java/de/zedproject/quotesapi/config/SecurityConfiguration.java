@@ -28,7 +28,7 @@ public class SecurityConfiguration {
         .csrf().disable() // TODO what does this
         .cors().and()
         .authorizeHttpRequests()
-        .requestMatchers("/auth/*").permitAll()
+        .requestMatchers("/auth/*", "/actuator/*").permitAll()
         .anyRequest().authenticated().and()
         .sessionManagement().sessionCreationPolicy(STATELESS).and()
         .authenticationProvider(authenticationProvider)
