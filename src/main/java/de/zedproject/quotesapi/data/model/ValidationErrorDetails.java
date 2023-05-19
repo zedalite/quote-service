@@ -13,8 +13,15 @@ import java.util.List;
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record ValidationErrorDetails(
-        @NotNull @PastOrPresent LocalDateTime timestamp,
-        @NotNull String message,
-        List<Violation> violations
+
+    @NotNull
+    @PastOrPresent
+    LocalDateTime timestamp,
+
+    @NotNull
+    String message,
+
+    List<Violation> violations
+
 ) {
 }

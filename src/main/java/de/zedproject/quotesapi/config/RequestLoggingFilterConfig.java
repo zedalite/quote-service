@@ -1,4 +1,4 @@
-package de.zedproject.quotesapi.conf;
+package de.zedproject.quotesapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +16,8 @@ public class RequestLoggingFilterConfig {
     filter.setIncludeClientInfo(true);
     filter.setIncludeHeaders(false);
     filter.setMaxPayloadLength(512);
+
+    // TODO improved logger ; single message ; hide password
 
     return filter;
   }

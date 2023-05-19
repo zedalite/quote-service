@@ -1,10 +1,8 @@
 package de.zedproject.quotesapi.service;
 
-import de.zedproject.quotesapi.data.mapper.QuoteMapper;
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
-import de.zedproject.quotesapi.data.repository.QuoteRepository;
-import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.repository.QuoteRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,9 +14,6 @@ import java.util.List;
 
 @Service
 public class QuoteService {
-  public static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
-  public static final String QUOTE_NOT_FOUND = "Quote not found";
-  public static final String QUOTES_NOT_FOUND = "Quotes not found";
   private final QuoteRepository repository;
 
   public QuoteService(final QuoteRepository repository) {
@@ -26,54 +21,40 @@ public class QuoteService {
   }
 
   public Quote createEntity(final QuoteRequest request) {
-    final var quotesRecord = repository.save(request);
-    if (quotesRecord == null) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(quotesRecord);
+    return repository.save(request);
   }
 
   public List<Quote> getEntities() {
-    final var quotesRecords = repository.findAll();
-    if (quotesRecords.isEmpty()) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecsToQuotes(quotesRecords);
+    return repository.findAll();
   }
 
   public List<Quote> getEntities(final List<Integer> ids) {
-    final var quotesRecords = repository.findAllByIds(ids);
-    if (quotesRecords.isEmpty()) throw new ResourceNotFoundException(QUOTES_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecsToQuotes(quotesRecords);
+    return repository.findAllByIds(ids);
   }
 
   @Cacheable(value = "quotes", key = "#id", unless = "#result == null")
   public Quote getEntity(final Integer id) {
-    final var quotesRecord = repository.findById(id);
-    if (quotesRecord == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(quotesRecord);
+    return repository.findById(id);
   }
 
   @CachePut(value = "quotes", key = "#id")
   public Quote updateEntity(final Integer id, final QuoteRequest request) {
-    final var quotesRecord = repository.update(id, request);
-    if (quotesRecord == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(quotesRecord);
+    return repository.update(id, request);
   }
 
   @CacheEvict(value = "quotes", key = "#id")
   public Quote deleteEntity(final Integer id) {
-    final var quotesRecord = repository.delete(id);
-    if (quotesRecord == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(quotesRecord);
+    return repository.delete(id);
   }
 
   public Quote getRandomEntity() {
     final var availableIds = repository.findAllIds();
-    if (availableIds.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
     final var randIdx = new SecureRandom().nextInt(availableIds.size());
     return getEntity(availableIds.get(randIdx));
   }
 
   public List<Quote> getRandomEntities(final Integer quantity) {
     final var availableIds = repository.findAllIds();
-    if (availableIds.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
     final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
     final var quotes = getEntities(randIdxs.stream().map(availableIds::get).toList());
     Collections.shuffle(quotes);

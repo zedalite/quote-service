@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.data.mapper;
 
-import de.zedproject.jooq.quote.tables.records.QuotesRecord;
+import de.zedproject.jooq.tables.records.QuotesRecord;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

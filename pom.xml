@@ -20,11 +20,10 @@
     <java.version>17</java.version>
     <!-- CVE-2022-1471 -->
     <snakeyaml.version>2.0</snakeyaml.version>
+    <java-jwt.version>4.4.0</java-jwt.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
-    <springdoc-openapi-maven-plugin.version>1.4</springdoc-openapi-maven-plugin.version>
-    <value.version>2.9.3</value.version>
-    <jooq.version>3.18.3</jooq.version>
+    <jooq.version>3.18.4</jooq.version>
     <jooq-codegen.user>quote</jooq-codegen.user>
     <jooq-codegen.password>secret_password</jooq-codegen.password>
   </properties>
@@ -33,6 +32,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -51,10 +54,6 @@
       <artifactId>spring-boot-starter-jooq</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>jooq</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
@@ -71,6 +70,11 @@
       <artifactId>mysql-connector-j</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>${java-jwt.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
@@ -84,6 +88,11 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -128,7 +137,7 @@
           <generator>
             <database>
               <name>org.jooq.meta.mysql.MySQLDatabase</name>
-              <includes>quotes</includes>
+              <inputSchema>quote</inputSchema>
             </database>
             <target>
               <packageName>de.zedproject.jooq</packageName>

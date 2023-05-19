@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.data.mapper;
 
-import de.zedproject.jooq.quote.tables.records.QuotesRecord;
+import de.zedproject.jooq.tables.records.QuotesRecord;
 import de.zedproject.quotesapi.data.model.Quote;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

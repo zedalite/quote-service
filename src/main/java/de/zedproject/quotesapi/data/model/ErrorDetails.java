@@ -12,9 +12,16 @@ import java.time.LocalDateTime;
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record ErrorDetails(
-        @NotNull @PastOrPresent LocalDateTime timestamp,
-        @NotNull String message,
-        String details
+
+    @NotNull
+    @PastOrPresent
+    LocalDateTime timestamp,
+
+    @NotNull
+    String message,
+
+    String details
+
 ) {
   public ErrorDetails(final LocalDateTime time, final String message) {
     this(time, message, null);

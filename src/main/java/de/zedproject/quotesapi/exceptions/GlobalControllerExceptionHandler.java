@@ -22,6 +22,12 @@ public class GlobalControllerExceptionHandler {
     return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
   }
 
+  @ExceptionHandler(ResourceAlreadyExitsException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ErrorDetails handleAlreadyExitsException(final ResourceAlreadyExitsException ex) {
+    return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ValidationErrorDetails handleNotValidException(final MethodArgumentNotValidException ex) {
