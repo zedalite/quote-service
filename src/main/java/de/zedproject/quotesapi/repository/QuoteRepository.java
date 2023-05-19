@@ -5,6 +5,8 @@ import de.zedproject.jooq.tables.records.QuotesRecord;
 import de.zedproject.quotesapi.data.mapper.QuoteMapper;
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
+import de.zedproject.quotesapi.data.model.SortField;
+import de.zedproject.quotesapi.data.model.SortOrder;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -36,6 +38,14 @@ public class QuoteRepository {
 
   public List<Quote> findAll() throws ResourceNotFoundException {
     final var quotes = dsl.selectFrom(QUOTES)
+        .fetchInto(QuotesRecord.class);
+    if (quotes.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
+  }
+
+  public List<Quote> findAll(final SortField field, final SortOrder order) {
+    final var quotes = dsl.selectFrom(QUOTES)
+        .orderBy(sortParamToJooqField(field, order))
         .fetchInto(QuotesRecord.class);
     if (quotes.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
@@ -88,5 +98,20 @@ public class QuoteRepository {
 
   public Integer count() {
     return dsl.fetchCount(QUOTES);
+  }
+
+  private org.jooq.SortField<? extends Comparable<? extends Comparable<?>>> sortParamToJooqField(final SortField field, final SortOrder order) {
+    final var jooqField = switch (field) {
+      case AUTHOR -> QUOTES.AUTHOR;
+      case TEXT -> QUOTES.TEXT;
+      default -> QUOTES.DATETIME;
+    };
+
+    final var jooqSortField = switch (order) {
+      case ASC -> jooqField.asc();
+      default -> jooqField.desc();
+    };
+
+    return jooqSortField;
   }
 }

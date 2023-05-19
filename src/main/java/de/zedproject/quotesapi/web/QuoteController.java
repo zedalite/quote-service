@@ -1,9 +1,6 @@
 package de.zedproject.quotesapi.web;
 
-import de.zedproject.quotesapi.data.model.ErrorDetails;
-import de.zedproject.quotesapi.data.model.Quote;
-import de.zedproject.quotesapi.data.model.QuoteRequest;
-import de.zedproject.quotesapi.data.model.ValidationErrorDetails;
+import de.zedproject.quotesapi.data.model.*;
 import de.zedproject.quotesapi.service.QuoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,8 +27,8 @@ public class QuoteController {
           @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
           @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping()
-  public List<Quote> getQuotes() {
-    return service.getEntities();
+  public List<Quote> getQuotes(@RequestParam(defaultValue = "DATETIME") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
+    return service.getEntities(field, order);
   }
 
   @Operation(summary = "Get a quote by its id",

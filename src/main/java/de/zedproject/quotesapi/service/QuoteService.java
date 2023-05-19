@@ -2,6 +2,8 @@ package de.zedproject.quotesapi.service;
 
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
+import de.zedproject.quotesapi.data.model.SortField;
+import de.zedproject.quotesapi.data.model.SortOrder;
 import de.zedproject.quotesapi.repository.QuoteRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -26,6 +28,10 @@ public class QuoteService {
 
   public List<Quote> getEntities() {
     return repository.findAll();
+  }
+
+  public List<Quote> getEntities(final SortField field, final SortOrder order) {
+    return repository.findAll(field, order);
   }
 
   public List<Quote> getEntities(final List<Integer> ids) {
