@@ -15,10 +15,15 @@ import java.util.List;
 
 @Repository
 public class QuoteRepository {
+
   private static final Quotes QUOTES = Quotes.QUOTES.as("Quotes");
+
   public static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
+
   public static final String QUOTE_NOT_FOUND = "Quote not found";
+
   private final DSLContext dsl;
+
 
   public QuoteRepository(final DSLContext dsl) {
     this.dsl = dsl;
