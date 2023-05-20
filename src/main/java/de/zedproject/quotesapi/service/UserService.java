@@ -4,7 +4,7 @@ import de.zedproject.quotesapi.data.model.User;
 import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.data.model.UserResponse;
 import de.zedproject.quotesapi.exceptions.ResourceAlreadyExitsException;
-import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.exceptions.UserNotFoundException;
 import de.zedproject.quotesapi.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,8 +41,7 @@ public class UserService {
     try {
       findByName(request.name());
       throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
-      // TODO catch dont work?
-    } catch (ResourceNotFoundException ex) {
+    } catch (UserNotFoundException ex) {
       final var encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
       return repository.save(encodedRequest);
     }

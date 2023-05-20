@@ -7,8 +7,11 @@ import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
 import de.zedproject.quotesapi.data.model.SortField;
 import de.zedproject.quotesapi.data.model.SortOrder;
-import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import org.jooq.DSLContext;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,7 +32,8 @@ public class QuoteRepository {
     this.dsl = dsl;
   }
 
-  public Quote save(final QuoteRequest quote) throws ResourceNotFoundException {
+  @CachePut(value = "quotes", key = "#result.id()", unless = "#result == null")
+  public Quote save(final QuoteRequest quote) throws QuoteNotFoundException {
     final var savedQuote = dsl.insertInto(QUOTES)
         .set(QUOTES.AUTHOR, quote.author())
         .set(QUOTES.DATETIME, quote.datetime())
@@ -37,14 +41,14 @@ public class QuoteRepository {
         .set(QUOTES.SUBTEXT, quote.subtext())
         .returning()
         .fetchOneInto(QuotesRecord.class);
-    if (savedQuote == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (savedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecToQuote(savedQuote);
   }
 
-  public List<Quote> findAll() throws ResourceNotFoundException {
+  public List<Quote> findAll() throws QuoteNotFoundException {
     final var quotes = dsl.selectFrom(QUOTES)
         .fetchInto(QuotesRecord.class);
-    if (quotes.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
   }
 
@@ -52,35 +56,37 @@ public class QuoteRepository {
     final var quotes = dsl.selectFrom(QUOTES)
         .orderBy(sortParamToJooqField(field, order))
         .fetchInto(QuotesRecord.class);
-    if (quotes.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
   }
 
-  public List<Quote> findAllByIds(final List<Integer> ids) throws ResourceNotFoundException {
+  public List<Quote> findAllByIds(final List<Integer> ids) throws QuoteNotFoundException {
     final var quotes = dsl.selectFrom(QUOTES)
         .where(QUOTES.ID.in(ids))
         .fetchInto(QuotesRecord.class);
-    if (quotes.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
   }
 
-  public List<Integer> findAllIds() throws ResourceNotFoundException {
+  public List<Integer> findAllIds() throws QuoteNotFoundException {
     final var quotesIds = dsl.select(QUOTES.ID)
         .from(QUOTES)
         .fetchInto(Integer.class);
-    if (quotesIds.isEmpty()) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (quotesIds.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return quotesIds;
   }
 
-  public Quote findById(final Integer id) throws ResourceNotFoundException {
+  @Cacheable(value = "quotes", key = "#id", unless = "#result == null")
+  public Quote findById(final Integer id) throws QuoteNotFoundException {
     final var quote = dsl.selectFrom(QUOTES)
         .where(QUOTES.ID.eq(id))
         .fetchOneInto(QuotesRecord.class);
-    if (quote == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (quote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecToQuote(quote);
   }
 
-  public Quote update(final Integer id, final QuoteRequest quote) throws ResourceNotFoundException {
+  @CachePut(value = "quotes", key = "#id", unless = "#result == null")
+  public Quote update(final Integer id, final QuoteRequest quote) throws QuoteNotFoundException {
     dsl.update(QUOTES)
         .set(QUOTES.AUTHOR, quote.author())
         .set(QUOTES.DATETIME, quote.datetime())
@@ -91,13 +97,14 @@ public class QuoteRepository {
     return findById(id);
   }
 
-  public Quote delete(final Integer id) throws ResourceNotFoundException {
+  @CacheEvict(value = "quotes", key = "#id")
+  public Quote delete(final Integer id) throws QuoteNotFoundException {
     final var deletedQuote = findById(id);
     dsl.deleteFrom(QUOTES)
         .where(QUOTES.ID.eq(id))
         .returning()
         .fetchOneInto(QuotesRecord.class);
-    if (deletedQuote == null) throw new ResourceNotFoundException(QUOTE_NOT_FOUND);
+    if (deletedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return deletedQuote;
   }
 

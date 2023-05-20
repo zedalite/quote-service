@@ -7,6 +7,8 @@ import de.zedproject.quotesapi.data.model.QuoteOfTheDay;
 import de.zedproject.quotesapi.data.model.QuoteOfTheDayRequest;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import org.jooq.DSLContext;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -25,6 +27,7 @@ public class QuoteOfTheDayRepository {
     this.dsl = dsl;
   }
 
+  @CachePut(value = "qotd", key = "#request.dateTime().toLocalDate().atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay save(final QuoteOfTheDayRequest request) throws QotdNotFoundException {
     final var savedQotd = dsl.insertInto(QOTD)
         .set(QOTD.QUOTE_ID, request.quoteId())
@@ -35,6 +38,7 @@ public class QuoteOfTheDayRepository {
     return QOTD_MAPPER.toQuoteOfTheDay(savedQotd);
   }
 
+  @Cacheable(value = "qotd", key = "#date.atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay findByDate(final LocalDate date) throws QotdNotFoundException {
     final var qotd = dsl.selectFrom(QOTD)
         .where(QOTD.DATETIME.between(date.atStartOfDay(), date.atTime(23, 59, 59)))

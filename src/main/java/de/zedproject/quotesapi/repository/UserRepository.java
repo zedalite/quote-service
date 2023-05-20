@@ -5,8 +5,10 @@ import de.zedproject.jooq.tables.records.UsersRecord;
 import de.zedproject.quotesapi.data.mapper.UserMapper;
 import de.zedproject.quotesapi.data.model.User;
 import de.zedproject.quotesapi.data.model.UserRequest;
-import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.exceptions.UserNotFoundException;
 import org.jooq.DSLContext;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,21 +22,23 @@ public class UserRepository {
     this.dsl = dsl;
   }
 
-  public User save(final UserRequest user) throws ResourceNotFoundException {
+  @CachePut(value = "users", key = "#result.id()", unless = "#result == null")
+  public User save(final UserRequest user) throws UserNotFoundException {
     final var savedUser = dsl.insertInto(USERS)
         .set(USERS.NAME, user.name())
         .set(USERS.PASSWORD, user.password())
         .returning()
         .fetchOneInto(UsersRecord.class);
-    if (savedUser == null) throw new ResourceNotFoundException(USER_NOT_FOUND);
+    if (savedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
     return USER_MAPPER.userRecToUser(savedUser);
   }
 
-  public User findByName(final String name) throws ResourceNotFoundException {
+  @Cacheable(value = "users", key = "#name", unless = "#result == null")
+  public User findByName(final String name) throws UserNotFoundException {
     final var user = dsl.selectFrom(USERS)
         .where(USERS.NAME.eq(name))
         .fetchOneInto(UsersRecord.class);
-    if (user == null) throw new ResourceNotFoundException(USER_NOT_FOUND);
+    if (user == null) throw new UserNotFoundException(USER_NOT_FOUND);
     return USER_MAPPER.userRecToUser(user);
   }
 }

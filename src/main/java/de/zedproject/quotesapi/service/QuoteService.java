@@ -2,11 +2,10 @@ package de.zedproject.quotesapi.service;
 
 import de.zedproject.quotesapi.data.model.*;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
+import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
+import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -28,56 +27,88 @@ public class QuoteService {
   }
 
   public Quote createEntity(final QuoteRequest request) {
-    return repository.save(request);
+    try {
+      return repository.save(request);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   public List<Quote> getEntities() {
-    return repository.findAll();
+    try {
+      return repository.findAll();
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   public List<Quote> getEntities(final SortField field, final SortOrder order) {
-    return repository.findAll(field, order);
+    try {
+      return repository.findAll(field, order);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   public List<Quote> getEntities(final List<Integer> ids) {
-    return repository.findAllByIds(ids);
+    try {
+      return repository.findAllByIds(ids);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
-  @Cacheable(value = "quotes", key = "#id", unless = "#result == null")
   public Quote getEntity(final Integer id) {
-    return repository.findById(id);
+    try {
+      return repository.findById(id);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
-  @CachePut(value = "quotes", key = "#id")
   public Quote updateEntity(final Integer id, final QuoteRequest request) {
-    return repository.update(id, request);
+    try {
+      return repository.update(id, request);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
-  @CacheEvict(value = "quotes", key = "#id")
   public Quote deleteEntity(final Integer id) {
-    return repository.delete(id);
+    try {
+      return repository.delete(id);
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   public Quote getRandomEntity() {
-    final var availableIds = repository.findAllIds();
-    final var randIdx = new SecureRandom().nextInt(availableIds.size());
-    return getEntity(availableIds.get(randIdx));
+    try {
+      final var availableIds = repository.findAllIds();
+      final var randIdx = new SecureRandom().nextInt(availableIds.size());
+      return getEntity(availableIds.get(randIdx));
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   // TODO optimise with single caching or learn how to manipulate the cache to insert multiple values
   public List<Quote> getRandomEntities(final Integer quantity) {
-    final var availableIds = repository.findAllIds();
-    final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
-    final var quotes = getEntities(randIdxs.stream().map(availableIds::get).toList());
-    Collections.shuffle(quotes);
-    return quotes;
+    try {
+      final var availableIds = repository.findAllIds();
+      final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
+      final var quotes = getEntities(randIdxs.stream().map(availableIds::get).toList());
+      Collections.shuffle(quotes);
+      return quotes;
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   public Integer countEntities() {
     return repository.count();
   }
 
-  @Cacheable(value = "qotd")
   public Quote getQuoteOfTheDay() {
     // TODO too few quotes available -> throw exception
     QuoteOfTheDay qotd;
@@ -91,9 +122,13 @@ public class QuoteService {
   }
 
   private Quote getRandomQuoteDayDependent() {
-    final var remainder = LocalDate.now().getDayOfYear() % 10;
-    final var availableIds = repository.findAllIds().stream().filter(n -> n % 10 == remainder).toList();
-    final var randIdx = new SecureRandom().nextInt(availableIds.size());
-    return getEntity(availableIds.get(randIdx));
+    try {
+      final var remainder = LocalDate.now().getDayOfYear() % 10;
+      final var availableIds = repository.findAllIds().stream().filter(n -> n % 10 == remainder).toList();
+      final var randIdx = new SecureRandom().nextInt(availableIds.size());
+      return getEntity(availableIds.get(randIdx));
+    } catch (QuoteNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 }
