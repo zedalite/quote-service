@@ -27,13 +27,13 @@ public class QuoteOfTheDayRepository {
     this.dsl = dsl;
   }
 
-  @CachePut(value = "qotd", key = "#request.dateTime().toLocalDate().atStartOfDay()", unless = "#result == null")
+  @CachePut(value = "qotd", key = "#request.datetime().toLocalDate().atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay save(final QuoteOfTheDayRequest request) throws QotdNotFoundException {
     final var savedQotd = dsl.insertInto(QOTD)
-        .set(QOTD.QUOTE_ID, request.quoteId())
-        .set(QOTD.DATETIME, request.dateTime())
-        .returning()
-        .fetchOneInto(QuotesOfTheDayRecord.class);
+      .set(QOTD.QUOTE_ID, request.quoteId())
+      .set(QOTD.DATETIME, request.datetime())
+      .returning()
+      .fetchOneInto(QuotesOfTheDayRecord.class);
     if (savedQotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
     return QOTD_MAPPER.toQuoteOfTheDay(savedQotd);
   }
@@ -41,8 +41,8 @@ public class QuoteOfTheDayRepository {
   @Cacheable(value = "qotd", key = "#date.atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay findByDate(final LocalDate date) throws QotdNotFoundException {
     final var qotd = dsl.selectFrom(QOTD)
-        .where(QOTD.DATETIME.between(date.atStartOfDay(), date.atTime(23, 59, 59)))
-        .fetchOneInto(QuotesOfTheDayRecord.class);
+      .where(QOTD.DATETIME.between(date.atStartOfDay(), date.atTime(23, 59, 59)))
+      .fetchOneInto(QuotesOfTheDayRecord.class);
     if (qotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
     return QOTD_MAPPER.toQuoteOfTheDay(qotd);
   }

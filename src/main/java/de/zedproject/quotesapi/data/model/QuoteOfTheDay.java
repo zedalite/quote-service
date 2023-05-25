@@ -15,16 +15,17 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record QuoteOfTheDay(
 
-    @NotNull
-    @PositiveOrZero
-    Integer id,
+  @NotNull
+  @PositiveOrZero
+  Integer id,
 
-    @NonNull
-    @PastOrPresent
-    LocalDateTime dateTime,
+  @NonNull
+  @PositiveOrZero
+  Integer quoteId,
 
-    @NonNull
-    @PositiveOrZero
-    Integer quoteId
+  @NonNull
+  @PastOrPresent
+  LocalDateTime datetime
+
 ) {
 }

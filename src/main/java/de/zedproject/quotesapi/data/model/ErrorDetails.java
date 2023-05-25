@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record ErrorDetails(
 
-    @NotNull
-    @PastOrPresent
-    LocalDateTime timestamp,
+  @NotNull
+  @PastOrPresent
+  LocalDateTime timestamp,
 
-    @NotNull
-    String message,
+  @NotNull
+  String message,
 
-    String details
+  String details
 
 ) {
   public ErrorDetails(final LocalDateTime time, final String message) {

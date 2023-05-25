@@ -18,36 +18,36 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenService tokenService;
+  private final JwtTokenService tokenService;
 
-    private final UserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
 
 
-    public JwtAuthenticationFilter(final JwtTokenService tokenService, UserDetailsService userDetailsService) {
-      this.tokenService = tokenService;
-      this.userDetailsService = userDetailsService;
+  public JwtAuthenticationFilter(final JwtTokenService tokenService, UserDetailsService userDetailsService) {
+    this.tokenService = tokenService;
+    this.userDetailsService = userDetailsService;
+  }
+
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    final var header = request.getHeader(AUTHORIZATION);
+    if (header == null || !header.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final var header = request.getHeader(AUTHORIZATION);
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        final var token = header.substring(7);
-        final var username = tokenService.validateToken(token);
-        if (username == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        final var userDetails = userDetailsService.loadUserByUsername(username);
-        final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(request, response);
+    final var token = header.substring(7);
+    final var username = tokenService.validateToken(token);
+    if (username == null) {
+      filterChain.doFilter(request, response);
+      return;
     }
+
+    final var userDetails = userDetailsService.loadUserByUsername(username);
+    final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    filterChain.doFilter(request, response);
+  }
 }

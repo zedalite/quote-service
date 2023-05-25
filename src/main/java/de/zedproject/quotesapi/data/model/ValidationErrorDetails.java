@@ -14,14 +14,14 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record ValidationErrorDetails(
 
-    @NotNull
-    @PastOrPresent
-    LocalDateTime timestamp,
+  @NotNull
+  @PastOrPresent
+  LocalDateTime timestamp,
 
-    @NotNull
-    String message,
+  @NotNull
+  String message,
 
-    List<Violation> violations
+  List<Violation> violations
 
 ) {
 }

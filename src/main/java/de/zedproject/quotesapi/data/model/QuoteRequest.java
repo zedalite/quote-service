@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
 @JsonDeserialize
 public record QuoteRequest(
 
-    @NotBlank
-    @Size(max = 32)
-    String author,
+  @NotBlank
+  @Size(max = 32)
+  String author,
 
-    @NotNull
-    @PastOrPresent
-    LocalDateTime datetime,
+  @NotNull
+  @PastOrPresent
+  LocalDateTime datetime,
 
-    @NotBlank
-    @Size(max = 256)
-    String text,
+  @NotBlank
+  @Size(max = 256)
+  String text,
 
-    @Size(max = 64)
-    String subtext
+  @Size(max = 64)
+  String subtext
 
 ) {
 }

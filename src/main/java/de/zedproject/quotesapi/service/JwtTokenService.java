@@ -20,20 +20,18 @@ public class JwtTokenService {
   public String generateToken(final String username) {
     final Instant now = Instant.now();
     return JWT.create()
-        .withSubject(username)
-        .withIssuer("quote-api")
-        .withIssuedAt(now)
-        .withExpiresAt(now.plusMillis(tokenValidityTime * 1000L))
-        .sign(hmac512);
+      .withSubject(username)
+      .withIssuer("quote-api")
+      .withIssuedAt(now)
+      .withExpiresAt(now.plusMillis(tokenValidityTime * 1000L))
+      .sign(hmac512);
   }
 
   public String validateToken(final String token) {
     return JWT.require(hmac512)
-        .withClaimPresence("sub")
-        .build()
-        .verify(token)
-        .getSubject();
+      .withClaimPresence("sub")
+      .build()
+      .verify(token)
+      .getSubject();
   }
-
-
 }

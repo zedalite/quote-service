@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record QuoteOfTheDayRequest(
 
-    @NonNull
-    @PositiveOrZero
-    Integer quoteId,
+  @NonNull
+  @PositiveOrZero
+  Integer quoteId,
 
-    @NonNull
-    @PastOrPresent
-    LocalDateTime dateTime
+  @NonNull
+  @PastOrPresent
+  LocalDateTime datetime
 
 ) {
 }
