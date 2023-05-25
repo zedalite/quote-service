@@ -1,0 +1,28 @@
+package de.zedproject.quotesapi.data.mapper;
+
+import de.zedproject.quotesapi.data.model.SortField;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class StringToSortFieldConverterTest {
+
+  private final StringToSortFieldConverter instance = new StringToSortFieldConverter();
+
+  @ParameterizedTest(name = "Convert \"{0}\" to {1}")
+  @DisplayName("Should convert string to sortField")
+  @CsvSource({"author,AUTHOR", "datetime,DATETIME", "text,TEXT"})
+  void shouldConvertStringToSortField(final String source, final SortField expected) {
+    assertThat(instance.convert(source)).isEqualTo(expected);
+  }
+
+  @Test
+  @DisplayName("Should throw Exception on invalid input")
+  void shouldThrowExceptionOnInvalidInput() {
+    assertThatThrownBy(() -> instance.convert("invalid")).isInstanceOf(IllegalArgumentException.class);
+  }
+}
