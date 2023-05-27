@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.6</version>
+    <version>3.1.0</version>
     <relativePath/>
   </parent>
 
@@ -22,7 +22,7 @@
     <snakeyaml.version>2.0</snakeyaml.version>
     <java-jwt.version>4.4.0</java-jwt.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
-    <springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
+    <springdoc-openapi-webmvc-ui.version>2.1.0</springdoc-openapi-webmvc-ui.version>
     <jooq.version>3.18.4</jooq.version>
     <jooq-codegen.user>quote</jooq-codegen.user>
     <jooq-codegen.password>secret_password</jooq-codegen.password>
@@ -66,8 +66,8 @@
       <artifactId>caffeine</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
       <groupId>com.auth0</groupId>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+      <version>${springdoc-openapi-webmvc-ui.version}</version>
     </dependency>
     <!-- test -->
     <dependency>
@@ -129,15 +129,15 @@
         </executions>
         <configuration>
           <jdbc>
-            <driver>com.mysql.cj.jdbc.Driver</driver>
-            <url>jdbc:mysql://localhost/quote</url>
+            <driver>org.postgresql.Driver</driver>
+            <url>jdbc:postgresql://localhost/quote</url>
             <user>${jooq-codegen.user}</user>
             <password>${jooq-codegen.password}</password>
           </jdbc>
           <generator>
             <database>
-              <name>org.jooq.meta.mysql.MySQLDatabase</name>
-              <inputSchema>quote</inputSchema>
+              <name>org.jooq.meta.postgres.PostgresDatabase</name>
+              <inputSchema>public</inputSchema>
             </database>
             <target>
               <packageName>de.zedproject.jooq</packageName>

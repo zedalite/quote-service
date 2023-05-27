@@ -84,25 +84,26 @@ public class QuoteRepository {
 
   @CachePut(value = "quotes", key = "#id", unless = "#result == null")
   public Quote update(final Integer id, final QuoteRequest quote) throws QuoteNotFoundException {
-    dsl.update(QUOTES)
+    final var updatedQuote = dsl.update(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
       .set(QUOTES.DATETIME, quote.datetime())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.SUBTEXT, quote.subtext())
       .where(QUOTES.ID.eq(id))
-      .execute();
-    return findById(id);
+      .returning()
+      .fetchOneInto(QuotesRecord.class);
+    if (updatedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
+    return QUOTE_MAPPER.quoteRecToQuote(updatedQuote);
   }
 
   @CacheEvict(value = "quotes", key = "#id")
   public Quote delete(final Integer id) throws QuoteNotFoundException {
-    final var deletedQuote = findById(id);
-    dsl.deleteFrom(QUOTES)
+    final var deletedQuote = dsl.deleteFrom(QUOTES)
       .where(QUOTES.ID.eq(id))
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (deletedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return deletedQuote;
+    return QUOTE_MAPPER.quoteRecToQuote(deletedQuote);
   }
 
   public Integer count() {
