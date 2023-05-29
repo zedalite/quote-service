@@ -51,7 +51,7 @@ public class QuoteRepository {
 
   public List<Quote> findAll(final SortField field, final SortOrder order) {
     final var quotes = dsl.selectFrom(QUOTES)
-      .orderBy(sortParamToJooqField(field, order))
+      .orderBy(mapToJooqSortField(field, order))
       .fetchInto(QuotesRecord.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
@@ -110,7 +110,7 @@ public class QuoteRepository {
     return dsl.fetchCount(QUOTES);
   }
 
-  private org.jooq.SortField<? extends Comparable<? extends Comparable<?>>> sortParamToJooqField(final SortField field, final SortOrder order) {
+  private org.jooq.SortField<? extends Comparable<? extends Comparable<?>>> mapToJooqSortField(final SortField field, final SortOrder order) {
     final var jooqField = switch (field) {
       case AUTHOR -> QUOTES.AUTHOR;
       case TEXT -> QUOTES.TEXT;

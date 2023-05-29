@@ -24,8 +24,9 @@
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <springdoc-openapi-webmvc-ui.version>2.1.0</springdoc-openapi-webmvc-ui.version>
     <jooq.version>3.18.4</jooq.version>
-    <jooq-codegen.user>quote</jooq-codegen.user>
-    <jooq-codegen.password>secret_password</jooq-codegen.password>
+    <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-quote-database.sql</db.url>
+    <db.username>quote</db.username>
+    <db.password>secret_password</db.password>
   </properties>
 
   <dependencies>
@@ -67,6 +68,10 @@
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
@@ -121,6 +126,7 @@
         <artifactId>jooq-codegen-maven</artifactId>
         <executions>
           <execution>
+            <id>java-generator</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
@@ -129,14 +135,13 @@
         </executions>
         <configuration>
           <jdbc>
-            <driver>org.postgresql.Driver</driver>
-            <url>jdbc:postgresql://localhost/quote</url>
-            <user>${jooq-codegen.user}</user>
-            <password>${jooq-codegen.password}</password>
+            <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
+            <url>${db.url}</url>
+            <user>${db.username}</user>
+            <password>${db.password}</password>
           </jdbc>
           <generator>
             <database>
-              <name>org.jooq.meta.postgres.PostgresDatabase</name>
               <inputSchema>public</inputSchema>
             </database>
             <target>

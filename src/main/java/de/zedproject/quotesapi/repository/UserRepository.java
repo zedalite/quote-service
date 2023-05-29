@@ -18,7 +18,7 @@ public class UserRepository {
   private static final Users USERS = Users.USERS.as("Users");
   private final DSLContext dsl;
 
-  public UserRepository(DSLContext dsl) {
+  public UserRepository(final DSLContext dsl) {
     this.dsl = dsl;
   }
 
