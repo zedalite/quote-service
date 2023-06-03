@@ -1,11 +1,10 @@
 package de.zedproject.quotesapi.service;
 
-import de.zedproject.quotesapi.data.model.Quote;
-import de.zedproject.quotesapi.data.model.QuoteRequest;
-import de.zedproject.quotesapi.data.model.SortField;
-import de.zedproject.quotesapi.data.model.SortOrder;
+import de.zedproject.quotesapi.data.model.*;
+import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.zedproject.quotesapi.data.model.SortField.AUTHOR;
@@ -31,6 +32,9 @@ class QuoteServiceTest {
 
   @Mock
   private QuoteRepository quoteRepository;
+
+  @Mock
+  private QuoteOfTheDayRepository qotdRepository;
 
   @Test
   @DisplayName("Should create quote")
@@ -193,6 +197,69 @@ class QuoteServiceTest {
     willThrow(QuoteNotFoundException.class).given(quoteRepository).findAllIds();
 
     assertThatCode(() -> instance.findRandom()).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find random quotes")
+  void shouldFindRandomQuotes() {
+    final var expectedQuotes = new ArrayList<Quote>();
+    expectedQuotes.add(new Quote(1, "tester", LocalDateTime.now(), "text", null));
+    expectedQuotes.add(new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    willReturn(List.of(1,2)).given(quoteRepository).findAllIds();
+    willReturn(expectedQuotes).given(quoteRepository).findAllByIds(anyList());
+
+    final var quotes = instance.findRandoms(2);
+
+    assertThat(quotes).hasSize(2);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when random quotes not found")
+  void shouldThrowExceptionWhenRandomQuotesNotFound() {
+    willThrow(QuoteNotFoundException.class).given(quoteRepository).findAllIds();
+
+    assertThatCode(() -> instance.findRandoms(2)).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find quote of the day")
+  void shouldFindQuoteOfTheDay() {
+    final var expectedQotd = new QuoteOfTheDay(1, 1, LocalDateTime.now());
+    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    willReturn(10).given(quoteRepository).count();
+    willReturn(expectedQotd).given(qotdRepository).findByDate(any(LocalDate.class));
+    willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
+
+    final var quote = instance.findQuoteOfTheDay();
+
+    assertThat(quote).isNotNull();
+    assertThat(quote.id()).isEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when minimum quotes not reached")
+  void shouldThrowExceptionWhenMinimumQuotesNotReached() {
+    willReturn(9).given(quoteRepository).count();
+
+    assertThatCode(() -> instance.findQuoteOfTheDay()).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find quote of the day with determination")
+  void shouldFindQuoteOfTheDayWithDetermination() {
+    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "new text", null);
+    final var expectedQotd = new QuoteOfTheDay(1, 1, LocalDateTime.now());
+
+    willReturn(10).given(quoteRepository).count();
+    willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));
+    willReturn(List.of(0,1,2,3,4,5,6,7,8,9)).given(quoteRepository).findAllIds();
+    willReturn(expectedQotd).given(qotdRepository).save(any(QuoteOfTheDayRequest.class));
+    willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
+
+    final var quote = instance.findQuoteOfTheDay();
+
+    assertThat(quote).isNotNull();
+    assertThat(quote.id()).isEqualTo(1);
   }
 
   @Test
