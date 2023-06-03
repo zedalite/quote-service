@@ -4,7 +4,9 @@ import de.zedproject.quotesapi.auth.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,14 +27,15 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http
-        .csrf().disable() // TODO what does this
-        .cors().and()
-        .authorizeHttpRequests()
+      .csrf(AbstractHttpConfigurer::disable)
+      .cors(Customizer.withDefaults())
+      .authorizeHttpRequests(authz -> authz
         .requestMatchers("/auth/*", "/actuator/*").permitAll()
-        .anyRequest().authenticated().and()
-        .sessionManagement().sessionCreationPolicy(STATELESS).and()
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .anyRequest().authenticated())
+      .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+      .authenticationProvider(authenticationProvider)
+      .httpBasic(Customizer.withDefaults())
+      .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 }
