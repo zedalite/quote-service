@@ -15,11 +15,10 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-import static de.zedproject.quotesapi.data.model.SortField.DATETIME;
+import static de.zedproject.quotesapi.data.model.SortField.*;
 import static de.zedproject.quotesapi.data.model.SortOrder.ASC;
 import static de.zedproject.quotesapi.data.model.SortOrder.DESC;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -79,9 +78,17 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   @Test
   @DisplayName("Should find quote by id")
   void shouldFindQuoteById() {
-    final var quote = instance.findById(1);
+    final var quote = instance.findById(2);
 
-    assertThat(quote.id()).isEqualTo(1);
+    assertThat(quote).isNotNull();
+    assertThat(quote.id()).isEqualTo(2);
+  }
+
+  @Test
+  @DisplayName("Should throw exception quote by non-existing id")
+  void shouldThrowExceptionQuoteByNonExistingId() {
+    assertThatCode(() -> instance.findById(999)).isInstanceOf(QuoteNotFoundException.class);
+
   }
 
   @Test
@@ -125,12 +132,32 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   }
 
   @Test
-  @DisplayName("Should find quotes in sorted order")
-  void shouldFindQuotesInSortedOrder() {
+  @DisplayName("Should find quotes sorted by author")
+  void shouldFindQuotesSortedByAuthor() {
+    final var sortedQuotesAsc = instance.findAll(AUTHOR, ASC);
+    final var sortedQuotesDesc = instance.findAll(AUTHOR, DESC);
+
+    assertThat(sortedQuotesAsc).map(Quote::author).isSortedAccordingTo(Comparator.naturalOrder());
+    assertThat(sortedQuotesDesc).map(Quote::author).isSortedAccordingTo(Comparator.reverseOrder());
+  }
+
+  @Test
+  @DisplayName("Should find quotes sorted by date")
+  void shouldFindQuotesSortedByDate() {
     final var sortedQuotesAsc = instance.findAll(DATETIME, ASC);
     final var sortedQuotesDesc = instance.findAll(DATETIME, DESC);
 
     assertThat(sortedQuotesAsc).map(Quote::datetime).isSortedAccordingTo(Comparator.naturalOrder());
     assertThat(sortedQuotesDesc).map(Quote::datetime).isSortedAccordingTo(Comparator.reverseOrder());
+  }
+
+  @Test
+  @DisplayName("Should find quotes sorted by text")
+  void shouldFindQuotesSortedByText() {
+    final var sortedQuotesAsc = instance.findAll(TEXT, ASC);
+    final var sortedQuotesDesc = instance.findAll(TEXT, DESC);
+
+    assertThat(sortedQuotesAsc).map(Quote::text).isSortedAccordingTo(Comparator.naturalOrder());
+    assertThat(sortedQuotesDesc).map(Quote::text).isSortedAccordingTo(Comparator.reverseOrder());
   }
 }
