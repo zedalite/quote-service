@@ -23,12 +23,9 @@
     <sonar.organization>jthewes</sonar.organization>
     <sonar.projectKey>jthewes_quote-api</sonar.projectKey>
     <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
-
-
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml
-    </sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <!-- Dependencies -->
     <java-jwt.version>4.4.0</java-jwt.version>
     <jooq.version>3.18.4</jooq.version>
