@@ -17,6 +17,8 @@ import java.util.List;
 @Service
 public class QuoteService {
 
+  private static final String MIN_QUOTES_COUNT = "Minimum number of quotes not reached (10)";
+  
   private final QuoteRepository repository;
 
   private final QuoteOfTheDayRepository qotdRepository;
@@ -110,7 +112,8 @@ public class QuoteService {
   }
 
   public Quote findQuoteOfTheDay() {
-    // TODO too few quotes available -> throw exception
+    if (count() < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
+
     QuoteOfTheDay qotd;
     try {
       qotd = qotdRepository.findByDate(LocalDate.now());
@@ -122,13 +125,9 @@ public class QuoteService {
   }
 
   private Quote findRandomDayDependent() {
-    try {
       final var remainder = LocalDate.now().getDayOfYear() % 10;
       final var availableIds = repository.findAllIds().stream().filter(n -> n % 10 == remainder).toList();
       final var randIdx = new SecureRandom().nextInt(availableIds.size());
       return find(availableIds.get(randIdx));
-    } catch (QuoteNotFoundException ex) {
-      throw new ResourceNotFoundException(ex.getMessage());
-    }
   }
 }
