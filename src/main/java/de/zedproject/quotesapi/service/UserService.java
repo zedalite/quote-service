@@ -4,10 +4,12 @@ import de.zedproject.quotesapi.data.model.User;
 import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.data.model.UserResponse;
 import de.zedproject.quotesapi.exceptions.ResourceAlreadyExitsException;
+import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.exceptions.UserNotFoundException;
 import de.zedproject.quotesapi.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +33,15 @@ public class UserService {
     this.tokenService = tokenService;
   }
 
-  public UserResponse authenticate(final UserRequest request) {
+  public UserResponse authenticate(final UserRequest request) throws AuthenticationException {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.name(), request.password()));
     final var token = tokenService.generateToken(request.name());
     return new UserResponse(token);
   }
 
-  public User createUser(final UserRequest request) throws ResourceAlreadyExitsException {
+  public User create(final UserRequest request) throws ResourceAlreadyExitsException {
     try {
-      findByName(request.name());
+      repository.findByName(request.name());
       throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
     } catch (UserNotFoundException ex) {
       final var encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
@@ -47,7 +49,11 @@ public class UserService {
     }
   }
 
-  public User findByName(final String name) {
-    return repository.findByName(name);
+  public User find(final String name) throws ResourceNotFoundException {
+    try {
+      return repository.findByName(name);
+    } catch (UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 }

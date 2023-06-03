@@ -28,7 +28,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping()
   public List<Quote> getQuotes(@RequestParam(defaultValue = "DATETIME") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
-    return service.getEntities(field, order);
+    return service.findAll(field, order);
   }
 
   @Operation(summary = "Get a quote by its id",
@@ -37,7 +37,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("{id}")
   public Quote getQuote(@PathVariable("id") final Integer id) {
-    return service.getEntity(id);
+    return service.find(id);
   }
 
   @Operation(summary = "Get a random quotes",
@@ -46,7 +46,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("randoms")
   public List<Quote> getRandomQuotes(@RequestParam(defaultValue = "8") final Integer quantity) {
-    return service.getRandomEntities(quantity);
+    return service.findRandoms(quantity);
   }
 
   @Operation(summary = "Get a random quote",
@@ -55,7 +55,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("random")
   public Quote getRandomQuote() {
-    return service.getRandomEntity();
+    return service.findRandom();
   }
 
   @Operation(summary = "Get quote of the day",
@@ -64,7 +64,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("qotd")
   public Quote getQuoteOfTheDay() {
-    return service.getQuoteOfTheDay();
+    return service.findQuoteOfTheDay();
   }
 
   @Operation(summary = "Get the number of saved quotes",
@@ -73,7 +73,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("count")
   public Integer getQuotesCount() {
-    return service.countEntities();
+    return service.count();
   }
 
   @Operation(summary = "Create a new quote",
@@ -82,7 +82,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
   public Quote postQuote(@RequestBody @Valid final QuoteRequest request) {
-    return service.createEntity(request);
+    return service.create(request);
   }
 
   @Operation(summary = "Edit a existing quote",
@@ -92,7 +92,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PutMapping("{id}")
   public Quote putQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request) {
-    return service.updateEntity(id, request);
+    return service.update(id, request);
   }
 
   @Operation(summary = "Delete a existing quote",
@@ -101,6 +101,6 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @DeleteMapping("{id}")
   public Quote deleteQuote(@PathVariable("id") final Integer id) {
-    return service.deleteEntity(id);
+    return service.delete(id);
   }
 }

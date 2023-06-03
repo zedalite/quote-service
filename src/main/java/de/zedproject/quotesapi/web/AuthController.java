@@ -31,7 +31,7 @@ public class AuthController {
     })
   @PostMapping("signup")
   public void signup(@RequestBody @Valid final UserRequest request) {
-    service.createUser(request);
+    service.create(request);
   }
 
   @Operation(summary = "Login an account",
