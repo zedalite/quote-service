@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @JsonSerialize
@@ -16,7 +17,7 @@ public record UserRequest(
   String name,
 
   @NotBlank
-  @Size(max = 128)
+  @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,128}$", message = "must contain letters, numbers and special chars with length between 8-128")
   String password
 
 ) {

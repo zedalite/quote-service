@@ -3,10 +3,7 @@ package de.zedproject.quotesapi.data.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 @JsonSerialize
 @JsonDeserialize
@@ -21,7 +18,7 @@ public record User(
   String name,
 
   @NotBlank
-  @Size(max = 128)
+  @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,128}$", message = "must contain letters, numbers and special chars with length between 8-128")
   String password
 
 ) {
