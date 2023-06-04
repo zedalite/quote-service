@@ -30,7 +30,7 @@ public class SecurityConfiguration {
       .csrf(AbstractHttpConfigurer::disable)
       .cors(Customizer.withDefaults())
       .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/auth/*", "/actuator/*").permitAll()
+        .requestMatchers("/auth/signup", "/auth/login", "/actuator/*").permitAll()
         .anyRequest().authenticated())
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authenticationProvider)

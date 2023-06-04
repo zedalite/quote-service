@@ -56,4 +56,9 @@ public class UserService {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
+
+  public UserResponse refresh(final String username) {
+    final var token = tokenService.generateToken(username);
+    return new UserResponse(token);
+  }
 }
