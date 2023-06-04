@@ -1,9 +1,12 @@
 package de.zedproject.quotesapi.web;
 
+import de.zedproject.quotesapi.data.model.ErrorDetails;
 import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.data.model.UserResponse;
 import de.zedproject.quotesapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -41,7 +44,6 @@ public class AuthController {
     })
   @PostMapping("login")
   public UserResponse login(@RequestBody @Valid final UserRequest request) {
-    //TODO handle invalid and expired token
     return service.authenticate(request);
   }
 }

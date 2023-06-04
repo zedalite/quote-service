@@ -1,5 +1,6 @@
 package de.zedproject.quotesapi.auth;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import de.zedproject.quotesapi.service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,8 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     final var token = header.substring(7);
-    final var username = tokenService.validateToken(token);
-    if (username == null) {
+    String username;
+    try {
+      username = tokenService.validateToken(token);
+      // TODO logging for security opations?, e.g. unauthorized
+    } catch (JWTVerificationException ex) {
       filterChain.doFilter(request, response);
       return;
     }

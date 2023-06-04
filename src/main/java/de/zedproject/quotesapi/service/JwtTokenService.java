@@ -9,7 +9,9 @@ import java.time.Instant;
 
 @Service
 public class JwtTokenService {
+
   private final Algorithm hmac512;
+
   private final Long tokenValidityTime;
 
   public JwtTokenService(@Value("${auth.jwt.secret}") final String secret, @Value("${auth.jwt.validity}") final Long tokenValidityTime) {
