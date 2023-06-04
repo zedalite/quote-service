@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static de.zedproject.quotesapi.data.model.SortOrder.*;
+
 @Repository
 public class QuoteRepository {
 
@@ -117,11 +119,6 @@ public class QuoteRepository {
       default -> QUOTES.DATETIME;
     };
 
-    final var jooqSortField = switch (order) {
-      case ASC -> jooqField.asc();
-      default -> jooqField.desc();
-    };
-
-    return jooqSortField;
+    return order == ASC ? jooqField.asc() : jooqField.desc();
   }
 }
