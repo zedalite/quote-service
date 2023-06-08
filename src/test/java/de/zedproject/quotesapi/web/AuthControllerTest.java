@@ -1,5 +1,6 @@
 package de.zedproject.quotesapi.web;
 
+import de.zedproject.quotesapi.auth.UserPrincipal;
 import de.zedproject.quotesapi.data.model.User;
 import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.data.model.UserResponse;
@@ -10,8 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -23,6 +28,9 @@ class AuthControllerTest {
 
   @Mock
   private UserService service;
+
+  @Mock
+  private UserDetailsService userDetailsService;
 
   @Test
   @DisplayName("Should signup user")
@@ -48,4 +56,19 @@ class AuthControllerTest {
     then(service).should().authenticate(userRequest);
   }
 
+  @Test
+  @DisplayName("Should refresh user token")
+  void shouldRefreshUserToken() {
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var expectedUserResponse = new UserResponse("uezhag");
+
+    willReturn(expectedUserResponse).given(service).refreshToken(anyString());
+
+    final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    instance.refresh();
+
+    then(service).should().refreshToken("tester");
+  }
 }

@@ -15,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
 
@@ -91,5 +90,16 @@ class UserServiceTest {
     final var userResponse = instance.authenticate(userRequest);
 
     assertThat(userResponse.token()).isEqualTo("e54f6rmh7g");
+  }
+
+  @Test
+  @DisplayName("Should refresh token")
+  void shouldRefreshToken() {
+    final var userName = "test";
+    willReturn("e3432jh3").given(tokenService).generateToken(userName);
+
+    final var userResponse = instance.refreshToken(userName);
+
+    assertThat(userResponse.token()).isEqualTo("e3432jh3");
   }
 }

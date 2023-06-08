@@ -57,7 +57,7 @@ public class UserService {
     }
   }
 
-  public UserResponse refresh(final String username) {
+  public UserResponse refreshToken(final String username) {
     final var token = tokenService.generateToken(username);
     return new UserResponse(token);
   }

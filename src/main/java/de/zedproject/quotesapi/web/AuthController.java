@@ -51,6 +51,6 @@ public class AuthController {
   @GetMapping("refresh")
   public UserResponse refresh() {
     final var username = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.refresh(username);
+    return service.refreshToken(username);
   }
 }
