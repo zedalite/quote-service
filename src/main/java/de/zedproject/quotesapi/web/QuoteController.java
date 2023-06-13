@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,7 +83,8 @@ public class QuoteController {
       @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
   public Quote postQuote(@RequestBody @Valid final QuoteRequest request) {
-    return service.create(request);
+    final var userName = SecurityContextHolder.getContext().getAuthentication().getName();
+    return service.create(request, userName);
   }
 
   @Operation(summary = "Edit a existing quote",
@@ -92,7 +94,8 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PutMapping("{id}")
   public Quote putQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request) {
-    return service.update(id, request);
+    final var userName = SecurityContextHolder.getContext().getAuthentication().getName();
+    return service.update(id, request, userName);
   }
 
   @Operation(summary = "Delete a existing quote",

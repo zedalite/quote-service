@@ -28,7 +28,10 @@ public record Quote(
   String text,
 
   @Size(max = 64)
-  String subtext
+  String subtext,
+
+  @PositiveOrZero
+  Integer creatorId
 
 ) {
 }

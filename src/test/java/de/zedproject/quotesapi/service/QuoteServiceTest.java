@@ -1,6 +1,9 @@
 package de.zedproject.quotesapi.service;
 
-import de.zedproject.quotesapi.data.model.*;
+import de.zedproject.quotesapi.data.model.QuoteOfTheDayRequest;
+import de.zedproject.quotesapi.data.model.QuoteRequest;
+import de.zedproject.quotesapi.data.model.SortField;
+import de.zedproject.quotesapi.data.model.SortOrder;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;

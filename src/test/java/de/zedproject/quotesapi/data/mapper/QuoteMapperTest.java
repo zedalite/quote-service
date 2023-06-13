@@ -19,7 +19,7 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecord to quote")
   void shouldMapQuoteRecordToQuote() {
-    final var quoteRec = new QuotesRecord(0, "test", LocalDateTime.MIN, "Successful test.", "sub");
+    final var quoteRec = new QuotesRecord(0, "test", LocalDateTime.MIN, "Successful test.", "sub", 2);
 
     final var quote = instance.quoteRecToQuote(quoteRec);
 
@@ -29,6 +29,7 @@ class QuoteMapperTest {
     assertThat(quote.datetime()).isEqualTo(LocalDateTime.MIN);
     assertThat(quote.text()).isEqualTo("Successful test.");
     assertThat(quote.subtext()).isEqualTo("sub");
+    assertThat(quote.creatorId()).isEqualTo(2);
   }
 
   @ParameterizedTest
@@ -43,8 +44,8 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecords to quotes")
   void shouldMapQuoteRecordsToQuotes() {
-    final var quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub");
-    final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null);
+    final var quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub",3);
+    final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null,2);
     final var quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
 
     final var quotes = instance.quoteRecsToQuotes(quotesRecords);
@@ -60,6 +61,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteSonar.datetime()).isEqualTo(LocalDateTime.MIN);
     softly.assertThat(quoteSonar.text()).isEqualTo("I like code coverage.");
     softly.assertThat(quoteSonar.subtext()).isEqualTo("sub");
+    softly.assertThat(quoteSonar.creatorId()).isEqualTo(3);
 
     softly.assertThat(quoteMapper).isNotNull();
     softly.assertThat(quoteMapper.id()).isEqualTo(1);
@@ -67,6 +69,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteMapper.datetime()).isEqualTo(LocalDateTime.MAX);
     softly.assertThat(quoteMapper.text()).isEqualTo("Mappers facilitate the work.");
     softly.assertThat(quoteMapper.subtext()).isNull();
+    softly.assertThat(quoteMapper.creatorId()).isEqualTo(2);
 
     softly.assertAll();
   }

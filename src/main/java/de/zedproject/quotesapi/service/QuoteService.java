@@ -6,6 +6,7 @@ import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
+import de.zedproject.quotesapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -21,10 +22,13 @@ public class QuoteService {
   
   private final QuoteRepository repository;
 
+  private final UserRepository userRepository;
+
   private final QuoteOfTheDayRepository qotdRepository;
 
-  public QuoteService(final QuoteRepository repository, QuoteOfTheDayRepository qotdRepository) {
+  public QuoteService(final QuoteRepository repository, final UserRepository userRepository, QuoteOfTheDayRepository qotdRepository) {
     this.repository = repository;
+    this.userRepository = userRepository;
     this.qotdRepository = qotdRepository;
   }
 
@@ -34,6 +38,13 @@ public class QuoteService {
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
+  }
+
+  public Quote create(final QuoteRequest request, final String creator) {
+    // TODO when user not found return null
+    final var creatorId = request.creatorId() == null ? userRepository.findByName(creator).id() : request.creatorId();
+
+    return create(request.withCreatorId(creatorId));
   }
 
   public List<Quote> findAll() {
@@ -74,6 +85,13 @@ public class QuoteService {
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
+  }
+
+  public Quote update(final Integer id, final QuoteRequest request, final String creator) {
+    // TODO when user not found return null
+    final var creatorId = request.creatorId() == null ? userRepository.findByName(creator).id() : request.creatorId();
+
+    return update(id, request.withCreatorId(creatorId));
   }
 
   public Quote delete(final Integer id) {

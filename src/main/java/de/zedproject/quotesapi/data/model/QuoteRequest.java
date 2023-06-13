@@ -2,10 +2,7 @@ package de.zedproject.quotesapi.data.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +23,15 @@ public record QuoteRequest(
   String text,
 
   @Size(max = 64)
-  String subtext
+  String subtext,
+
+  @PositiveOrZero
+  Integer creatorId
 
 ) {
+
+  public QuoteRequest withCreatorId(final Integer creatorId) {
+    return new QuoteRequest(author, datetime, text, subtext, creatorId);
+
+  }
 }

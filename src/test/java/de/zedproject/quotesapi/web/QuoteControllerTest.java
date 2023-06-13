@@ -1,9 +1,11 @@
 package de.zedproject.quotesapi.web;
 
-import de.zedproject.quotesapi.data.model.Quote;
+import de.zedproject.quotesapi.auth.UserPrincipal;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
 import de.zedproject.quotesapi.data.model.SortField;
 import de.zedproject.quotesapi.data.model.SortOrder;
+import de.zedproject.quotesapi.data.model.User;
+import de.zedproject.quotesapi.fixtures.QuoteGenerator;
 import de.zedproject.quotesapi.service.QuoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,14 +13,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import static de.zedproject.quotesapi.data.model.SortField.DATETIME;
 import static de.zedproject.quotesapi.data.model.SortOrder.ASC;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -31,12 +31,13 @@ class QuoteControllerTest {
   @Mock
   private QuoteService service;
 
+  @Mock
+  private SecurityContextHolder securityContextHolder;
+
   @Test
   @DisplayName("Should get quotes")
   void shouldGetQuotes() {
-    final var expectedQuotes = List.of(
-      new Quote(1, "tester", LocalDateTime.now(), "text", null),
-      new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(service).findAll(any(SortField.class), any(SortOrder.class));
 
     instance.getQuotes(DATETIME, ASC);
@@ -47,7 +48,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get quote")
   void shouldGetQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(service).find(anyInt());
 
     instance.getQuote(1);
@@ -58,9 +59,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get random quotes")
   void shouldGetRandomQuotes() {
-    final var expectedQuotes = List.of(
-      new Quote(1, "tester", LocalDateTime.now(), "text", null),
-      new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(service).findRandoms(anyInt());
 
     instance.getRandomQuotes(2);
@@ -71,7 +70,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get random quote")
   void shouldGetRandomQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote =  QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(service).findRandom();
 
     instance.getRandomQuote();
@@ -82,7 +81,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get quote of the day")
   void shouldGetQuoteOfTheDay() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(service).findQuoteOfTheDay();
 
     instance.getQuoteOfTheDay();
@@ -103,31 +102,38 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should post quote")
   void shouldPostQuote() {
-    final var quoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "text", null);
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
-    willReturn(expectedQuote).given(service).create(any(QuoteRequest.class));
+    final var quoteRequest =  QuoteGenerator.getQuoteRequest();
+    final var expectedQuote =  QuoteGenerator.getQuote();final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
+
+    willReturn(expectedQuote).given(service).create(any(QuoteRequest.class), anyString());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
     instance.postQuote(quoteRequest);
 
-    then(service).should().create(quoteRequest);
+    then(service).should().create(quoteRequest, "tester");
   }
 
   @Test
   @DisplayName("Should put quote")
   void shouldPutQuote() {
-    final var quoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "new text", "cool");
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "new text", "cool");
-    willReturn(expectedQuote).given(service).update(anyInt(), any(QuoteRequest.class));
+    final var quoteRequest =  QuoteGenerator.getQuoteRequest();
+    final var expectedQuote =  QuoteGenerator.getQuote();
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
+
+    willReturn(expectedQuote).given(service).update(anyInt(), any(QuoteRequest.class), anyString());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
     instance.putQuote(1, quoteRequest);
 
-    then(service).should().update(1, quoteRequest);
+    then(service).should().update(1, quoteRequest, "tester");
   }
 
   @Test
   @DisplayName("Should delete quote")
   void shouldDeleteQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(service).delete(anyInt());
 
     instance.deleteQuote(1);

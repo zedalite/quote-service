@@ -61,7 +61,8 @@ CREATE TABLE public.quotes (
                                author character varying(64) NOT NULL,
                                datetime timestamp without time zone NOT NULL,
                                text text NOT NULL,
-                               subtext text
+                               subtext text,
+                               creator_id integer
 );
 
 
@@ -204,6 +205,14 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: quotes quotes_creator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: quote
+--
+
+ALTER TABLE ONLY public.quotes
+    ADD CONSTRAINT quotes_creator_id_fkey FOREIGN KEY (creator_id) REFERENCES public.users(id) NOT VALID;
 
 
 --

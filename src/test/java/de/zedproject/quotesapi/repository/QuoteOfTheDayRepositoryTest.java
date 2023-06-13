@@ -31,7 +31,7 @@ class QuoteOfTheDayRepositoryTest extends DatabaseContainerBaseTest {
 
   @BeforeAll
   void setup() {
-    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null)).id();
+    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null,null)).id();
     instance.save(new QuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now()));
   }
 

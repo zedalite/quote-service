@@ -3,6 +3,7 @@ package de.zedproject.quotesapi.repository;
 import de.zedproject.quotesapi.DatabaseContainerBaseTest;
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
+import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -27,18 +28,25 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   @Autowired
   private QuoteRepository instance;
 
+  @Autowired
+  private UserRepository userRepository;
+
   @BeforeAll
   void setup() {
-    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "quotes are cool", "in quotversum"));
-    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "One more quotes", "#2"));
-    instance.save(new QuoteRequest("quotexpert", LocalDateTime.now(), "I'm an expert", null));
+    final var userId = userRepository.save(new UserRequest("quotetester", "test")).id();
+    final var userId2 = userRepository.save(new UserRequest("quotetester2", "test2")).id();
+
+
+    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "quotes are cool", "in quotversum", null));
+    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "One more quotes", "#2",userId));
+    instance.save(new QuoteRequest("quotexpert", LocalDateTime.now(), "I'm an expert", null,userId2));
   }
 
   @Test
   @DisplayName("Should save quote")
   void shouldSaveQuote() {
     final var dateTime = LocalDateTime.of(2023, 5, 29, 21, 0,0);
-    final var quote = new QuoteRequest("test", dateTime, "tests are important", "42");
+    final var quote = new QuoteRequest("test", dateTime, "tests are important", "42",2);
 
     final var savedQuote = instance.save(quote);
 
@@ -94,7 +102,7 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   @Test
   @DisplayName("Should update quote")
   void shouldUpdateQuote() {
-    final var newQuote = new QuoteRequest("quoter", LocalDateTime.now(), "quotes are awesome", "in quotversum");
+    final var newQuote = new QuoteRequest("quoter", LocalDateTime.now(), "quotes are awesome", "in quotversum",2);
     final var updatedQuote = instance.update(1, newQuote);
 
     assertThat(updatedQuote.id()).isEqualTo(1);
@@ -104,7 +112,7 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   @Test
   @DisplayName("Should delete quote")
   void shouldDeleteQuote() {
-    final var quote = instance.save(new QuoteRequest("unstable", LocalDateTime.now(), "I'll be deleted", null));
+    final var quote = instance.save(new QuoteRequest("unstable", LocalDateTime.now(), "I'll be deleted", null,1));
     final var quoteId = quote.id();
 
     final var deletedQuote = instance.delete(quoteId);
@@ -124,7 +132,7 @@ class QuoteRepositoryTest extends DatabaseContainerBaseTest {
   @Test
   @DisplayName("Should throw Exception when quote not found")
   void shouldThrowExceptionWhenQuoteNotFound() {
-    final var quote = new QuoteRequest("pseudo", LocalDateTime.now(), "to be filled", null);
+    final var quote = new QuoteRequest("pseudo", LocalDateTime.now(), "to be filled", null,2);
 
     assertThatCode(() -> instance.findById(99999)).isInstanceOf(QuoteNotFoundException.class);
     assertThatCode(() -> instance.update(77777, quote)).isInstanceOf(QuoteNotFoundException.class);

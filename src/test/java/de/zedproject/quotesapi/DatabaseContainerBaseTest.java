@@ -14,6 +14,8 @@ public abstract class DatabaseContainerBaseTest {
     DB_CONTAINER.start();
   }
 
+  // TODO initially fill some table to make fixture user/quote generation easier
+
   @DynamicPropertySource
   static void registerMySQLProperties(final DynamicPropertyRegistry registry) {
     registry.add("spring.datasource.url", DB_CONTAINER::getJdbcUrl);

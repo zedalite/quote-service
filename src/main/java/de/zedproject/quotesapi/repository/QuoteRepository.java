@@ -3,10 +3,7 @@ package de.zedproject.quotesapi.repository;
 import de.zedproject.jooq.tables.Quotes;
 import de.zedproject.jooq.tables.records.QuotesRecord;
 import de.zedproject.quotesapi.data.mapper.QuoteMapper;
-import de.zedproject.quotesapi.data.model.Quote;
-import de.zedproject.quotesapi.data.model.QuoteRequest;
-import de.zedproject.quotesapi.data.model.SortField;
-import de.zedproject.quotesapi.data.model.SortOrder;
+import de.zedproject.quotesapi.data.model.*;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,6 +35,7 @@ public class QuoteRepository {
       .set(QUOTES.DATETIME, quote.datetime())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.SUBTEXT, quote.subtext())
+      .set(QUOTES.CREATOR_ID, quote.creatorId())
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (savedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
@@ -91,6 +89,7 @@ public class QuoteRepository {
       .set(QUOTES.DATETIME, quote.datetime())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.SUBTEXT, quote.subtext())
+      .set(QUOTES.CREATOR_ID, quote.creatorId())
       .where(QUOTES.ID.eq(id))
       .returning()
       .fetchOneInto(QuotesRecord.class);
