@@ -4,6 +4,7 @@ import de.zedproject.quotesapi.data.model.*;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
+import de.zedproject.quotesapi.fixtures.QuoteGenerator;
 import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,13 +15,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.zedproject.quotesapi.data.model.SortField.AUTHOR;
 import static de.zedproject.quotesapi.data.model.SortOrder.ASC;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
@@ -39,7 +40,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should create quote")
   void shouldCreateQuote() {
-    final var quoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "text", null);
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
     instance.create(quoteRequest);
 
     then(quoteRepository).should().save(quoteRequest);
@@ -48,7 +49,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should throw exception when quote not created")
   void shouldThrowExceptionWhenQuoteNotCreated() {
-    final var quoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "text", null);
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
     willThrow(QuoteNotFoundException.class).given(quoteRepository).save(any(QuoteRequest.class));
 
     assertThatCode(() -> instance.create(quoteRequest)).isInstanceOf(ResourceNotFoundException.class);
@@ -66,9 +67,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find all quotes")
   void shouldFindAllQuotes() {
-    final var expectedQuotes = List.of(
-      new Quote(1, "tester", LocalDateTime.now(), "text", null),
-      new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(quoteRepository).findAll();
 
     final var quotes = instance.findAll();
@@ -87,9 +86,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find all quotes ordered")
   void shouldFindAllQuotesOrdered() {
-    final var expectedQuotes = List.of(
-      new Quote(1, "tester", LocalDateTime.now(), "text", null),
-      new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(quoteRepository).findAll(any(SortField.class), any(SortOrder.class));
 
     final var quotes = instance.findAll(AUTHOR, ASC);
@@ -108,9 +105,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find all quotes by ids")
   void shouldFindAllQuotesByIds() {
-    final var expectedQuotes = List.of(
-      new Quote(1, "tester", LocalDateTime.now(), "text", null),
-      new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(List.of(expectedQuotes.get(1))).given(quoteRepository).findAllByIds(List.of(1));
 
     final var quotes = instance.findAll(List.of(1));
@@ -130,7 +125,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find quote by id")
   void shouldFindQuoteById() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
 
     final var quote = instance.find(1);
@@ -141,14 +136,13 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should update quote")
   void shouldUpdateQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "new text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(quoteRepository).update(anyInt(), any(QuoteRequest.class));
 
-    final var updateQuoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "new text", null);
+    final var updateQuoteRequest = QuoteGenerator.getQuoteRequest();
     final var updatedQuote = instance.update(1, updateQuoteRequest);
 
-    assertThat(updatedQuote.id()).isEqualTo(expectedQuote.id());
-    assertThat(updatedQuote.text()).isEqualTo("new text");
+    assertThat(updatedQuote).isEqualTo(expectedQuote);
   }
 
   @Test
@@ -156,14 +150,14 @@ class QuoteServiceTest {
   void shouldThrowExceptionWhenQuoteToBeUpdateDoesNotExists() {
     willThrow(QuoteNotFoundException.class).given(quoteRepository).update(anyInt(), any(QuoteRequest.class));
 
-    final var updateQuoteRequest = new QuoteRequest("tester", LocalDateTime.now(), "new text", null);
+    final var updateQuoteRequest = QuoteGenerator.getQuoteRequest();
     assertThatCode(() -> instance.update(1, updateQuoteRequest)).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test
   @DisplayName("Should delete quote")
   void shouldDeleteQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(quoteRepository).delete(anyInt());
 
     final var deletedQuote = instance.delete(1);
@@ -182,7 +176,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find random quote")
   void shouldFindRandomQuote() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "new text", null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(List.of(1,3)).given(quoteRepository).findAllIds();
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
 
@@ -202,15 +196,13 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find random quotes")
   void shouldFindRandomQuotes() {
-    final var expectedQuotes = new ArrayList<Quote>();
-    expectedQuotes.add(new Quote(1, "tester", LocalDateTime.now(), "text", null));
-    expectedQuotes.add(new Quote(2, "tester", LocalDateTime.now(), "second text", null));
+    final var expectedQuotes = new ArrayList<>(QuoteGenerator.getQuotes());
     willReturn(List.of(1,2)).given(quoteRepository).findAllIds();
     willReturn(expectedQuotes).given(quoteRepository).findAllByIds(anyList());
 
-    final var quotes = instance.findRandoms(2);
+    final var quotes = instance.findRandoms(QuoteGenerator.getQuotes().size());
 
-    assertThat(quotes).hasSize(2);
+    assertThat(quotes).hasSize(QuoteGenerator.getQuotes().size());
   }
 
   @Test
@@ -224,8 +216,8 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find quote of the day")
   void shouldFindQuoteOfTheDay() {
-    final var expectedQotd = new QuoteOfTheDay(1, 1, LocalDateTime.now());
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "text", null);
+    final var expectedQotd = QuoteGenerator.getQuoteOfTheDay();
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(10).given(quoteRepository).count();
     willReturn(expectedQotd).given(qotdRepository).findByDate(any(LocalDate.class));
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
@@ -247,8 +239,8 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find quote of the day with determination")
   void shouldFindQuoteOfTheDayWithDetermination() {
-    final var expectedQuote = new Quote(1, "tester", LocalDateTime.now(), "new text", null);
-    final var expectedQotd = new QuoteOfTheDay(1, 1, LocalDateTime.now());
+    final var expectedQuote = QuoteGenerator.getQuote();
+    final var expectedQotd = QuoteGenerator.getQuoteOfTheDay();
 
     willReturn(10).given(quoteRepository).count();
     willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));

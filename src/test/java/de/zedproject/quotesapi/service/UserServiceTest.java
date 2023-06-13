@@ -1,10 +1,9 @@
 package de.zedproject.quotesapi.service;
 
-import de.zedproject.quotesapi.data.model.User;
-import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.exceptions.ResourceAlreadyExitsException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.exceptions.UserNotFoundException;
+import de.zedproject.quotesapi.fixtures.UserGenerator;
 import de.zedproject.quotesapi.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.*;
 
@@ -40,8 +40,8 @@ class UserServiceTest {
   @Test
   @DisplayName("Should find user")
   void shouldFindUser() {
-    final var userRequest = new UserRequest("tester", "test");
-    final var expectedUser = new User(1, "tester", "test");
+    final var userRequest = UserGenerator.getUserRequest();
+    final var expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(userRepository).findByName(anyString());
 
     final var user = instance.find(userRequest.name());
@@ -60,8 +60,8 @@ class UserServiceTest {
   @Test
   @DisplayName("Should create user when it not exist")
   void shouldCreateUserWhenItNotExist() {
-    final var userRequest = new UserRequest("tester", "test");
-    willReturn("test").given(passwordEncoder).encode(anyString());
+    final var userRequest = UserGenerator.getUserRequest();
+    willReturn(UserGenerator.getUserRequest().password()).given(passwordEncoder).encode(anyString());
     willThrow(UserNotFoundException.class).given(userRepository).findByName(anyString());
 
     instance.create(userRequest);
@@ -72,8 +72,8 @@ class UserServiceTest {
   @Test
   @DisplayName("Should not create user when it already exists")
   void shouldNotCreateUserWhenItAlreadyExists() {
-    final var userRequest = new UserRequest("tester", "test");
-    final var expectedUser = new User(1, "tester", "test");
+    final var userRequest = UserGenerator.getUserRequest();
+    final var expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(userRepository).findByName(anyString());
 
     assertThatCode(() -> instance.create(userRequest)).isInstanceOf(ResourceAlreadyExitsException.class);
@@ -84,7 +84,7 @@ class UserServiceTest {
   @Test
   @DisplayName("Should authenticate valid user")
   void shouldAuthenticateValidUser() {
-    final var userRequest = new UserRequest("tester", "test");
+    final var userRequest = UserGenerator.getUserRequest();
     willReturn("e54f6rmh7g").given(tokenService).generateToken(userRequest.name());
 
     final var userResponse = instance.authenticate(userRequest);
