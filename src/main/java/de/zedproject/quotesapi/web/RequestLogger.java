@@ -33,7 +33,7 @@ public class RequestLogger extends OncePerRequestFilter {
       final var uri = request.getRequestURI();
       final var query = Objects.requireNonNullElse(request.getQueryString(), "");
       final var status = response.getStatus();
-      final var client = Objects.requireNonNullElse(request.getHeader("X-Forward-For"), request.getRemoteAddr());
+      final var client = Objects.requireNonNullElse(request.getHeader("X-Forwarded-For"), request.getRemoteAddr());
       final var user = SecurityContextHolder.getContext().getAuthentication().getName();
 
       LOGGER.info("request [{} {}{}, status={}, client={}, user={}, duration={}ms]", type, uri, query, status, client, user, time);
