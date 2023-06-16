@@ -23,8 +23,7 @@ import java.util.List;
 
 import static de.zedproject.quotesapi.data.model.SortField.AUTHOR;
 import static de.zedproject.quotesapi.data.model.SortOrder.ASC;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
@@ -45,6 +44,15 @@ class QuoteServiceTest {
   void shouldCreateQuote() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
     instance.create(quoteRequest);
+
+    then(quoteRepository).should().save(quoteRequest);
+  }
+
+  @Test
+  @DisplayName("Should create quote with creator")
+  void shouldCreateQuoteWithCreator() {
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    instance.create(quoteRequest, "super");
 
     then(quoteRepository).should().save(quoteRequest);
   }
@@ -146,6 +154,19 @@ class QuoteServiceTest {
     final var updatedQuote = instance.update(1, updateQuoteRequest);
 
     assertThat(updatedQuote).isEqualTo(expectedQuote);
+  }
+
+  @Test
+  @DisplayName("Should update quote with creator")
+  void shouldUpdateQuoteWithCreator() {
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(expectedQuote).given(quoteRepository).update(anyInt(), any(QuoteRequest.class));
+
+    final var updateQuoteRequest = QuoteGenerator.getQuoteRequest();
+    final var updatedQuote = instance.update(1, updateQuoteRequest, "super");
+
+    assertThat(updatedQuote).isEqualTo(expectedQuote);
+
   }
 
   @Test
