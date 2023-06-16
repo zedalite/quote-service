@@ -31,7 +31,8 @@ public class RequestLogger extends OncePerRequestFilter {
 
       final var type = request.getMethod();
       final var uri = request.getRequestURI();
-      final var query = Objects.requireNonNullElse("?"+request.getQueryString(), "");
+      var query = request.getQueryString();
+      query = query != null && !query.isBlank() ? "?" + query : "";
       final var status = response.getStatus();
       final var client = Objects.requireNonNullElse(request.getHeader("X-Forwarded-For"), request.getRemoteAddr());
       final var user = SecurityContextHolder.getContext().getAuthentication().getName();
