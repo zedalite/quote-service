@@ -8,8 +8,10 @@ import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.fixtures.QuoteGenerator;
+import de.zedproject.quotesapi.fixtures.UserGenerator;
 import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
+import de.zedproject.quotesapi.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,9 @@ class QuoteServiceTest {
   private QuoteRepository quoteRepository;
 
   @Mock
+  private UserRepository userRepository;
+
+  @Mock
   private QuoteOfTheDayRepository qotdRepository;
 
   @Test
@@ -55,6 +60,17 @@ class QuoteServiceTest {
     instance.create(quoteRequest, "super");
 
     then(quoteRepository).should().save(quoteRequest);
+  }
+
+  @Test
+  @DisplayName("Should create quote with creatorId")
+  void shouldCreateQuoteWithCreatorId() {
+    final var user = UserGenerator.getUser();
+    final var quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
+    willReturn(user).given(userRepository).findByName(anyString());
+    instance.create(quoteRequest, "super");
+
+    then(quoteRepository).should().save(quoteRequest.withCreatorId(user.id()));
   }
 
   @Test
@@ -166,7 +182,31 @@ class QuoteServiceTest {
     final var updatedQuote = instance.update(1, updateQuoteRequest, "super");
 
     assertThat(updatedQuote).isEqualTo(expectedQuote);
+  }
 
+/*  @Test
+  @DisplayName("Should create quote with creatorId")
+  void shouldCreateQuoteWithCreatorId() {
+    final var user = UserGenerator.getUser();
+    final var quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
+    willReturn(user).given(userRepository).findByName(anyString());
+    instance.create(quoteRequest, "super");
+
+    then(quoteRepository).should().save(quoteRequest.withCreatorId(user.id()));
+  }*/
+
+  @Test
+  @DisplayName("Should update quote with creatorId")
+  void shouldUpdateQuoteWithCreatorId() {
+    final var user = UserGenerator.getUser();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(user).given(userRepository).findByName(anyString());
+    willReturn(expectedQuote).given(quoteRepository).update(anyInt(), any(QuoteRequest.class));
+
+    final var updateQuoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
+    final var updatedQuote = instance.update(1, updateQuoteRequest, "super");
+
+    assertThat(updatedQuote).isEqualTo(expectedQuote);
   }
 
   @Test
