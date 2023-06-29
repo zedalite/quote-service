@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Tag(name = "AuthController", description = "Operations related to authentication")
 @RequestMapping("auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
   private final UserService service;

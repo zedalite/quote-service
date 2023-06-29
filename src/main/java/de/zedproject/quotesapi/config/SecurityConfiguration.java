@@ -4,12 +4,12 @@ import de.zedproject.quotesapi.auth.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -27,14 +27,14 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http
+      .cors(withDefaults())
       .csrf(AbstractHttpConfigurer::disable)
-      .cors(Customizer.withDefaults())
       .authorizeHttpRequests(authz -> authz
         .requestMatchers("/auth/signup", "/auth/login", "/actuator/*").permitAll()
         .anyRequest().authenticated())
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authenticationProvider)
-      .httpBasic(Customizer.withDefaults())
+      .httpBasic(withDefaults())
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }

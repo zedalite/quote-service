@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @Tag(name = "QuoteController", description = "Operations related to quotes")
 @RequestMapping("quotes")
+@CrossOrigin(origins = "*")
 public class QuoteController {
   private final QuoteService service;
 
