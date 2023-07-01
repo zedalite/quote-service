@@ -33,6 +33,7 @@
     <snakeyaml.version>2.0</snakeyaml.version> <!-- CVE-2022-1471 -->
     <springdoc-openapi-webmvc-ui.version>2.1.0</springdoc-openapi-webmvc-ui.version>
     <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
+    <firebase.version>9.2.0</firebase.version>
     <!-- Database -->
     <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-quote-database.sql</db.url>
     <db.username>quote</db.username>
@@ -98,6 +99,11 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc-openapi-webmvc-ui.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>${firebase.version}</version>
     </dependency>
     <!-- test -->
     <dependency>
