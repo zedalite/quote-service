@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.repository;
 
-import de.zedproject.quotesapi.DatabaseContainerBaseTest;
+import de.zedproject.quotesapi.TestEnvironmentProvider;
 import de.zedproject.quotesapi.data.model.UserRequest;
 import de.zedproject.quotesapi.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
-class UserRepositoryTest extends DatabaseContainerBaseTest {
+class UserRepositoryTest extends TestEnvironmentProvider {
 
   @Autowired
   private UserRepository instance;

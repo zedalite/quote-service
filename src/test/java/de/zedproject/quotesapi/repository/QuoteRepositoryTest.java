@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.repository;
 
-import de.zedproject.quotesapi.DatabaseContainerBaseTest;
+import de.zedproject.quotesapi.TestEnvironmentProvider;
 import de.zedproject.quotesapi.data.model.Quote;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
 import de.zedproject.quotesapi.data.model.UserRequest;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuoteRepositoryTest extends DatabaseContainerBaseTest {
+class QuoteRepositoryTest extends TestEnvironmentProvider {
 
   @Autowired
   private QuoteRepository instance;

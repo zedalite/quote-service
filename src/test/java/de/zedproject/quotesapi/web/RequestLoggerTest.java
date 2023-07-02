@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.web;
 
-import de.zedproject.quotesapi.DatabaseContainerBaseTest;
+import de.zedproject.quotesapi.TestEnvironmentProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 @ExtendWith(OutputCaptureExtension.class)
-class RequestLoggerTest extends DatabaseContainerBaseTest {
+class RequestLoggerTest extends TestEnvironmentProvider {
   @Autowired
   private MockMvc mockMvc;
 
