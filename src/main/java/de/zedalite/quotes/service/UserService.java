@@ -1,11 +1,11 @@
 package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserRequest;
+import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
-import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

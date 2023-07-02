@@ -10,7 +10,7 @@ public class UserGenerator {
   }
 
   public static User getUser() {
-    return new User(1,"tester", "apple");
+    return new User(1, "tester", "apple");
   }
 
 }

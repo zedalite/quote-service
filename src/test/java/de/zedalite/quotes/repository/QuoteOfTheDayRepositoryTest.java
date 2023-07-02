@@ -26,12 +26,12 @@ class QuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
 
   @Autowired
   private QuoteRepository quoteRepository;
-  
+
   private Integer exampleQuoteId;
 
   @BeforeAll
   void setup() {
-    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null,null)).id();
+    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null, null)).id();
     instance.save(new QuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now()));
   }
 
@@ -39,9 +39,9 @@ class QuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should save quote of the day")
   void shouldSaveQuoteOfTheDay() {
     final var qotd = new QuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now());
-    
+
     final var savedQotd = instance.save(qotd);
-    
+
     assertThat(savedQotd).isNotNull();
     assertThat(savedQotd.quoteId()).isEqualTo(exampleQuoteId);
   }

@@ -30,6 +30,6 @@ class RequestLoggerTest extends TestEnvironmentProvider {
     mockMvc.perform(get("/quotes/count"))
       .andExpect(status().isOk());
 
-    assertThat(output).contains("request","GET /quotes/count", "status=200", "client", "user", "duration");
+    assertThat(output).contains("request", "GET /quotes/count", "status=200", "client", "user", "duration");
   }
 }

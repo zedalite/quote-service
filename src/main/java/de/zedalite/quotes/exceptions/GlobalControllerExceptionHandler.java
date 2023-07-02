@@ -1,8 +1,8 @@
 package de.zedalite.quotes.exceptions;
 
-import de.zedalite.quotes.data.model.Violation;
 import de.zedalite.quotes.data.model.ErrorDetails;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
+import de.zedalite.quotes.data.model.Violation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

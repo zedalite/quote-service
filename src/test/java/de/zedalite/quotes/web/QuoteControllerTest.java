@@ -69,7 +69,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get random quote")
   void shouldGetRandomQuote() {
-    final var expectedQuote =  QuoteGenerator.getQuote();
+    final var expectedQuote = QuoteGenerator.getQuote();
     BDDMockito.willReturn(expectedQuote).given(service).findRandom();
 
     instance.getRandomQuote();
@@ -101,8 +101,9 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should post quote")
   void shouldPostQuote() {
-    final var quoteRequest =  QuoteGenerator.getQuoteRequest();
-    final var expectedQuote =  QuoteGenerator.getQuote();final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 
     BDDMockito.willReturn(expectedQuote).given(service).create(any(QuoteRequest.class), anyString());
@@ -116,8 +117,8 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should put quote")
   void shouldPutQuote() {
-    final var quoteRequest =  QuoteGenerator.getQuoteRequest();
-    final var expectedQuote =  QuoteGenerator.getQuote();
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
     final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 

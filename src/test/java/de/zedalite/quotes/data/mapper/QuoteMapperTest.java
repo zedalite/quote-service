@@ -44,8 +44,8 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecords to quotes")
   void shouldMapQuoteRecordsToQuotes() {
-    final var quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub",3);
-    final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null,2);
+    final var quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub", 3);
+    final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null, 2);
     final var quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
 
     final var quotes = instance.quoteRecsToQuotes(quotesRecords);

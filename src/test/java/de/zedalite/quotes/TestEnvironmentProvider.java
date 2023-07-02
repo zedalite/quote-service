@@ -9,12 +9,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public abstract class TestEnvironmentProvider {
 
-  @MockBean
-  FirebaseApp firebaseApp;
-
-  @MockBean
-  FirebaseMessaging firebaseMessaging;
-
   static final PostgreSQLContainer<?> DB_CONTAINER;
 
   static {
@@ -22,6 +16,11 @@ public abstract class TestEnvironmentProvider {
       .withInitScript("postgres-quote-database.sql");
     DB_CONTAINER.start();
   }
+
+  @MockBean
+  FirebaseApp firebaseApp;
+  @MockBean
+  FirebaseMessaging firebaseMessaging;
 
   // TODO initially fill some table to make fixture user/quote generation easier
 

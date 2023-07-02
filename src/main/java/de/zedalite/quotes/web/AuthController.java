@@ -1,8 +1,8 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.service.UserService;
 import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

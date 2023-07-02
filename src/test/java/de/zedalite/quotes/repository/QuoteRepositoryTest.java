@@ -3,9 +3,6 @@ package de.zedalite.quotes.repository;
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.exceptions.QuoteNotFoundException;
-import de.zedalite.quotes.data.model.Quote;
-import de.zedalite.quotes.data.model.QuoteRequest;
-import de.zedalite.quotes.data.model.UserRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +14,8 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -36,22 +34,22 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
 
 
     instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "quotes are cool", "in quotversum", null));
-    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "One more quotes", "#2",userId));
-    instance.save(new QuoteRequest("quotexpert", LocalDateTime.now(), "I'm an expert", null,userId2));
+    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "One more quotes", "#2", userId));
+    instance.save(new QuoteRequest("quotexpert", LocalDateTime.now(), "I'm an expert", null, userId2));
   }
 
   @Test
   @DisplayName("Should save quote")
   void shouldSaveQuote() {
-    final var dateTime = LocalDateTime.of(2023, 5, 29, 21, 0,0);
-    final var quote = new QuoteRequest("test", dateTime, "tests are important", "42",2);
+    final var dateTime = LocalDateTime.of(2023, 5, 29, 21, 0, 0);
+    final var quote = new QuoteRequest("test", dateTime, "tests are important", "42", 2);
 
     final var savedQuote = instance.save(quote);
 
     assertThat(savedQuote).isNotNull();
     assertThat(savedQuote.id()).isNotNull();
     assertThat(savedQuote.author()).isEqualTo("test");
-    assertThat(savedQuote.datetime()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0,0));
+    assertThat(savedQuote.datetime()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0, 0));
     assertThat(savedQuote.text()).isEqualTo("tests are important");
     assertThat(savedQuote.subtext()).isEqualTo("42");
   }
@@ -68,9 +66,9 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all quotes by ids")
   void shouldFindAllQuotesByIds() {
-    final var quotes = instance.findAllByIds(List.of(1,3));
+    final var quotes = instance.findAllByIds(List.of(1, 3));
 
-    assertThat(quotes).map(Quote::id).containsAll(List.of(1,3)).doesNotContain(2);
+    assertThat(quotes).map(Quote::id).containsAll(List.of(1, 3)).doesNotContain(2);
   }
 
   @Test
@@ -78,7 +76,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   void shouldFindAllQuoteIds() {
     final var quotes = instance.findAllIds();
 
-    assertThat(quotes).containsAll(List.of(1,2,3));
+    assertThat(quotes).containsAll(List.of(1, 2, 3));
   }
 
   @Test
@@ -100,7 +98,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should update quote")
   void shouldUpdateQuote() {
-    final var newQuote = new QuoteRequest("quoter", LocalDateTime.now(), "quotes are awesome", "in quotversum",2);
+    final var newQuote = new QuoteRequest("quoter", LocalDateTime.now(), "quotes are awesome", "in quotversum", 2);
     final var updatedQuote = instance.update(1, newQuote);
 
     assertThat(updatedQuote.id()).isEqualTo(1);
@@ -110,7 +108,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should delete quote")
   void shouldDeleteQuote() {
-    final var quote = instance.save(new QuoteRequest("unstable", LocalDateTime.now(), "I'll be deleted", null,1));
+    final var quote = instance.save(new QuoteRequest("unstable", LocalDateTime.now(), "I'll be deleted", null, 1));
     final var quoteId = quote.id();
 
     final var deletedQuote = instance.delete(quoteId);
@@ -130,7 +128,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should throw Exception when quote not found")
   void shouldThrowExceptionWhenQuoteNotFound() {
-    final var quote = new QuoteRequest("pseudo", LocalDateTime.now(), "to be filled", null,2);
+    final var quote = new QuoteRequest("pseudo", LocalDateTime.now(), "to be filled", null, 2);
 
     assertThatCode(() -> instance.findById(99999)).isInstanceOf(QuoteNotFoundException.class);
     assertThatCode(() -> instance.update(77777, quote)).isInstanceOf(QuoteNotFoundException.class);
