@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.integration;
 
-import de.zedproject.quotesapi.DatabaseContainerBaseTest;
+import de.zedproject.quotesapi.TestEnvironmentProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser
-class QuoteControllerIT extends DatabaseContainerBaseTest {
+class QuoteControllerIT extends TestEnvironmentProvider {
   @Autowired
   private MockMvc mockMvc;
 

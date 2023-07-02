@@ -1,10 +1,19 @@
 package de.zedproject.quotesapi;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public abstract class DatabaseContainerBaseTest {
+public abstract class TestEnvironmentProvider {
+
+  @MockBean
+  FirebaseApp firebaseApp;
+
+  @MockBean
+  FirebaseMessaging firebaseMessaging;
 
   static final PostgreSQLContainer<?> DB_CONTAINER;
 

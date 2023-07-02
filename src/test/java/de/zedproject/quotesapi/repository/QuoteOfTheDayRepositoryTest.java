@@ -1,6 +1,6 @@
 package de.zedproject.quotesapi.repository;
 
-import de.zedproject.quotesapi.DatabaseContainerBaseTest;
+import de.zedproject.quotesapi.TestEnvironmentProvider;
 import de.zedproject.quotesapi.data.model.QuoteOfTheDayRequest;
 import de.zedproject.quotesapi.data.model.QuoteRequest;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuoteOfTheDayRepositoryTest extends DatabaseContainerBaseTest {
+class QuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
 
   @Autowired
   private QuoteOfTheDayRepository instance;

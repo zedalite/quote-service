@@ -1,14 +1,13 @@
 package de.zedproject.quotesapi.service;
 
-import de.zedproject.quotesapi.data.model.QuoteOfTheDayRequest;
-import de.zedproject.quotesapi.data.model.QuoteRequest;
-import de.zedproject.quotesapi.data.model.SortField;
-import de.zedproject.quotesapi.data.model.SortOrder;
+import de.zedproject.quotesapi.data.model.*;
+import de.zedproject.quotesapi.exceptions.NotifierException;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
 import de.zedproject.quotesapi.fixtures.QuoteGenerator;
 import de.zedproject.quotesapi.fixtures.UserGenerator;
+import de.zedproject.quotesapi.repository.PushNotificationRepository;
 import de.zedproject.quotesapi.repository.QuoteOfTheDayRepository;
 import de.zedproject.quotesapi.repository.QuoteRepository;
 import de.zedproject.quotesapi.repository.UserRepository;
@@ -44,22 +43,33 @@ class QuoteServiceTest {
   @Mock
   private QuoteOfTheDayRepository qotdRepository;
 
+  @Mock
+  private PushNotificationRepository notifierRepository;
+
   @Test
   @DisplayName("Should create quote")
   void shouldCreateQuote() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(expectedQuote).given(quoteRepository).save(quoteRequest);
+
     instance.create(quoteRequest);
 
     then(quoteRepository).should().save(quoteRequest);
+    then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
   }
 
   @Test
   @DisplayName("Should create quote with creator")
   void shouldCreateQuoteWithCreator() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(expectedQuote).given(quoteRepository).save(quoteRequest);
+
     instance.create(quoteRequest, "super");
 
     then(quoteRepository).should().save(quoteRequest);
+    then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
   }
 
   @Test
@@ -67,10 +77,27 @@ class QuoteServiceTest {
   void shouldCreateQuoteWithCreatorId() {
     final var user = UserGenerator.getUser();
     final var quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
+    final var expectedQuote = QuoteGenerator.getQuote();
     willReturn(user).given(userRepository).findByName(anyString());
+    willReturn(expectedQuote).given(quoteRepository).save(quoteRequest.withCreatorId(user.id()));
+
     instance.create(quoteRequest, "super");
 
     then(quoteRepository).should().save(quoteRequest.withCreatorId(user.id()));
+    then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
+  }
+
+  @Test
+  @DisplayName("Should create quote with failed notification")
+  void shouldCreateQuoteWithFailedNotification() {
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(expectedQuote).given(quoteRepository).save(quoteRequest);
+    willThrow(NotifierException.class).given(notifierRepository).sendToTopic(any(), any(PushNotification.class));
+
+    final var actualQuote = instance.create(quoteRequest);
+
+    assertThat(actualQuote).isEqualTo(expectedQuote);
   }
 
   @Test
@@ -145,7 +172,7 @@ class QuoteServiceTest {
   void shouldThrowExceptionWhenQuotesByIdsNotFound() {
     willThrow(QuoteNotFoundException.class).given(quoteRepository).findAllByIds(anyList());
 
-    final var list = List.of(1,3,5);
+    final var list = List.of(1, 3, 5);
     assertThatCode(() -> instance.findAll(list)).isInstanceOf(ResourceNotFoundException.class);
   }
 
@@ -241,7 +268,7 @@ class QuoteServiceTest {
   @DisplayName("Should find random quote")
   void shouldFindRandomQuote() {
     final var expectedQuote = QuoteGenerator.getQuote();
-    willReturn(List.of(1,3)).given(quoteRepository).findAllIds();
+    willReturn(List.of(1, 3)).given(quoteRepository).findAllIds();
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
 
     final var quote = instance.findRandom();
@@ -261,7 +288,7 @@ class QuoteServiceTest {
   @DisplayName("Should find random quotes")
   void shouldFindRandomQuotes() {
     final var expectedQuotes = new ArrayList<>(QuoteGenerator.getQuotes());
-    willReturn(List.of(1,2)).given(quoteRepository).findAllIds();
+    willReturn(List.of(1, 2)).given(quoteRepository).findAllIds();
     willReturn(expectedQuotes).given(quoteRepository).findAllByIds(anyList());
 
     final var quotes = instance.findRandoms(QuoteGenerator.getQuotes().size());
@@ -308,7 +335,7 @@ class QuoteServiceTest {
 
     willReturn(10).given(quoteRepository).count();
     willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));
-    willReturn(List.of(0,1,2,3,4,5,6,7,8,9)).given(quoteRepository).findAllIds();
+    willReturn(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)).given(quoteRepository).findAllIds();
     willReturn(expectedQotd).given(qotdRepository).save(any(QuoteOfTheDayRequest.class));
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
 
