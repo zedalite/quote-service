@@ -9,7 +9,7 @@
     <relativePath/>
   </parent>
 
-  <groupId>de.zedproject</groupId>
+  <groupId>de.zedalite</groupId>
   <artifactId>quote-api</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>quote-api</name>
@@ -167,7 +167,7 @@
               <inputSchema>public</inputSchema>
             </database>
             <target>
-              <packageName>de.zedproject.jooq</packageName>
+              <packageName>de.zedalite.quotes.data.jooq</packageName>
             </target>
           </generator>
         </configuration>
