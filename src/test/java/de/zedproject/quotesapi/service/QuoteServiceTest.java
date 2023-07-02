@@ -1,6 +1,7 @@
 package de.zedproject.quotesapi.service;
 
 import de.zedproject.quotesapi.data.model.*;
+import de.zedproject.quotesapi.exceptions.NotifierException;
 import de.zedproject.quotesapi.exceptions.QotdNotFoundException;
 import de.zedproject.quotesapi.exceptions.QuoteNotFoundException;
 import de.zedproject.quotesapi.exceptions.ResourceNotFoundException;
@@ -23,8 +24,7 @@ import java.util.List;
 
 import static de.zedproject.quotesapi.data.model.SortField.AUTHOR;
 import static de.zedproject.quotesapi.data.model.SortOrder.ASC;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
@@ -85,6 +85,19 @@ class QuoteServiceTest {
 
     then(quoteRepository).should().save(quoteRequest.withCreatorId(user.id()));
     then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
+  }
+
+  @Test
+  @DisplayName("Should create quote with failed notification")
+  void shouldCreateQuoteWithFailedNotification() {
+    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final var expectedQuote = QuoteGenerator.getQuote();
+    willReturn(expectedQuote).given(quoteRepository).save(quoteRequest);
+    willThrow(NotifierException.class).given(notifierRepository).sendToTopic(any(), any(PushNotification.class));
+
+    final var actualQuote = instance.create(quoteRequest);
+
+    assertThat(actualQuote).isEqualTo(expectedQuote);
   }
 
   @Test
