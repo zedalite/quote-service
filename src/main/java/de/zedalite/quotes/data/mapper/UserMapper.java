@@ -5,6 +5,9 @@ import de.zedalite.quotes.data.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * This interface represents the UserMapper which is responsible for mapping the UsersRecord object to User object.
+ */
 @Mapper
 public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);

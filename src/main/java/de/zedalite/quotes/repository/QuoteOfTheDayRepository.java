@@ -13,6 +13,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 
+/**
+ * The QuoteOfTheDayRepository class is responsible for interacting with the database and
+ * caching the Quote of the Day objects.
+ * <p>
+ * It provides methods for saving a Quote of the Day in the cache and retrieving a Quote
+ * of the Day by date from the cache.
+ */
 @Repository
 public class QuoteOfTheDayRepository {
 
@@ -27,6 +34,13 @@ public class QuoteOfTheDayRepository {
     this.dsl = dsl;
   }
 
+  /**
+   * Saves a Quote of the Day in the cache and returns the saved QOTD object.
+   *
+   * @param request The QuoteOfTheDayRequest object containing the quote ID and date-time.
+   * @return The saved QuoteOfTheDay object.
+   * @throws QotdNotFoundException If the saved QOTD is null.
+   */
   @CachePut(value = "qotd", key = "#request.datetime().toLocalDate().atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay save(final QuoteOfTheDayRequest request) throws QotdNotFoundException {
     final var savedQotd = dsl.insertInto(QOTD)
@@ -38,6 +52,13 @@ public class QuoteOfTheDayRepository {
     return QOTD_MAPPER.toQuoteOfTheDay(savedQotd);
   }
 
+  /**
+   * Finds a Quote of the Day by date in the cache and returns the QOTD object.
+   *
+   * @param date The date for which to find the Quote of the Day.
+   * @return The QuoteOfTheDay object for the given date.
+   * @throws QotdNotFoundException If the Quote of the Day for the given date is not found.
+   */
   @Cacheable(value = "qotd", key = "#date.atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay findByDate(final LocalDate date) throws QotdNotFoundException {
     final var qotd = dsl.selectFrom(QOTD)

@@ -20,6 +20,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a service for managing quotes.
+ * This service provides functionality for creating, retrieving, updating, and deleting quotes,
+ * as well as generating random quotes and finding the quote of the day.
+ */
 @Service
 public class QuoteService {
 
@@ -48,6 +53,15 @@ public class QuoteService {
     this.notifierRepository = notifierRepository;
   }
 
+  /**
+   * Creates a new quote based on the provided quote request.
+   * This method saves the quote in the repository, sends a push notification to the quoteCreationTopic,
+   * and returns the created quote.
+   *
+   * @param request the quote request object containing the necessary information to create the quote
+   * @return the created quote
+   * @throws ResourceNotFoundException if the quote is not found in the repository
+   */
   public Quote create(final QuoteRequest request) {
     Quote quote = null;
     try {
@@ -67,6 +81,16 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Creates a new quote based on the provided quote request and creator.
+   * This method saves the quote in the repository, sends a push notification to the quoteCreationTopic,
+   * and returns the created quote.
+   *
+   * @param request the quote request object containing the necessary information to create the quote
+   * @param creator the name of the creator of the quote
+   * @return the created quote
+   * @throws ResourceNotFoundException if the quote is not found in the repository
+   */
   public Quote create(final QuoteRequest request, final String creator) {
     // TODO when user not found return null
     final var creatorId = request.creatorId() == null ? userRepository.findByName(creator).id() : request.creatorId();
@@ -74,6 +98,12 @@ public class QuoteService {
     return create(request.withCreatorId(creatorId));
   }
 
+  /**
+   * Finds and returns all quotes available in the repository.
+   *
+   * @return a list of all quotes
+   * @throws ResourceNotFoundException if no quotes are found in the repository
+   */
   public List<Quote> findAll() {
     try {
       return repository.findAll();
@@ -82,6 +112,14 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Finds and returns all quotes available in the repository.
+   *
+   * @param field the field to sort the quotes by
+   * @param order the order in which the quotes should be sorted (ascending or descending)
+   * @return a list of all quotes
+   * @throws ResourceNotFoundException if no quotes are found in the repository
+   */
   public List<Quote> findAll(final SortField field, final SortOrder order) {
     try {
       return repository.findAll(field, order);
@@ -90,6 +128,13 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Finds and returns quotes with the given ids from the repository.
+   *
+   * @param ids the list of quote ids to find
+   * @return a list of quotes with the given ids
+   * @throws ResourceNotFoundException if any of the quotes with the given ids are not found in the repository
+   */
   public List<Quote> findAll(final List<Integer> ids) {
     try {
       return repository.findAllByIds(ids);
@@ -98,6 +143,13 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Finds and returns a quote with the given id from the repository.
+   *
+   * @param id the id of the quote to find
+   * @return the quote with the given id
+   * @throws ResourceNotFoundException if the quote with the given id is not found in the repository
+   */
   public Quote find(final Integer id) {
     try {
       return repository.findById(id);
@@ -106,6 +158,14 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Updates the quote with the given id in the repository using the provided request.
+   *
+   * @param id the id of the quote to update
+   * @param request the quote update request
+   * @return the updated quote
+   * @throws ResourceNotFoundException if the quote with the given id is not found in the repository
+   */
   public Quote update(final Integer id, final QuoteRequest request) {
     try {
       return repository.update(id, request);
@@ -114,6 +174,15 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Updates the quote with the given id in the repository using the provided request and creator name.
+   *
+   * @param id the id of the quote to update
+   * @param request the quote update request
+   * @param creator the name of the quote creator
+   * @return the updated quote
+   * @throws ResourceNotFoundException if the quote with the given id is not found in the repository
+   */
   public Quote update(final Integer id, final QuoteRequest request, final String creator) {
     // TODO when user not found return null
     final var creatorId = request.creatorId() == null ? userRepository.findByName(creator).id() : request.creatorId();
@@ -121,6 +190,13 @@ public class QuoteService {
     return update(id, request.withCreatorId(creatorId));
   }
 
+  /**
+   * Deletes the quote with the given id from the repository.
+   *
+   * @param id the id of the quote to delete
+   * @return the deleted quote
+   * @throws ResourceNotFoundException if the quote with the given id is not found in the repository
+   */
   public Quote delete(final Integer id) {
     try {
       return repository.delete(id);
@@ -129,6 +205,12 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Finds and returns a random quote from the repository.
+   *
+   * @return the randomly selected quote
+   * @throws ResourceNotFoundException if no quotes are found in the repository
+   */
   public Quote findRandom() {
     try {
       final var availableIds = repository.findAllIds();
@@ -139,6 +221,13 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Finds and returns a specified number of random quotes from the repository.
+   *
+   * @param quantity the number of random quotes to retrieve
+   * @return a list of randomly selected quotes
+   * @throws ResourceNotFoundException if no quotes are found in the repository
+   */
   // TODO optimise with single caching or learn how to manipulate the cache to insert multiple values
   public List<Quote> findRandoms(final Integer quantity) {
     try {
@@ -152,10 +241,21 @@ public class QuoteService {
     }
   }
 
+  /**
+   * Returns the total number of quotes in the repository.
+   *
+   * @return the count of quotes in the repository
+   */
   public Integer count() {
     return repository.count();
   }
 
+  /**
+   * Finds the quote of the day from the repository based on the current date.
+   *
+   * @throws ResourceNotFoundException if the total number of quotes in the repository is less than 10
+   * @return the quote of the day
+   */
   public Quote findQuoteOfTheDay() {
     if (count() < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
 
@@ -169,6 +269,11 @@ public class QuoteService {
     return repository.findById(qotd.quoteId());
   }
 
+  /**
+   * Finds a random quote from the repository that is dependent on the current day.
+   *
+   * @return a random day-dependent quote
+   */
   private Quote findRandomDayDependent() {
     final var remainder = LocalDate.now().getDayOfYear() % 10;
     final var availableIds = repository.findAllIds().stream().filter(n -> n % 10 == remainder).toList();

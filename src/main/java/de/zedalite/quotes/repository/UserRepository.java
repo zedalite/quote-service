@@ -11,6 +11,10 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+/**
+ * The UserRepository class is responsible for interacting with the user data in the database.
+ * It provides methods for saving and retrieving user information.
+ */
 @Repository
 public class UserRepository {
   private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
@@ -22,6 +26,13 @@ public class UserRepository {
     this.dsl = dsl;
   }
 
+  /**
+   * Saves a user to the database.
+   *
+   * @param user the user details to be saved
+   * @return the saved user
+   * @throws UserNotFoundException if the user is not found in the database
+   */
   @CachePut(value = "users", key = "#result.id()", unless = "#result == null")
   public User save(final UserRequest user) throws UserNotFoundException {
     final var savedUser = dsl.insertInto(USERS)
@@ -33,6 +44,13 @@ public class UserRepository {
     return USER_MAPPER.userRecToUser(savedUser);
   }
 
+  /**
+   * Finds a user in the database by their name.
+   *
+   * @param name the name of the user to be found
+   * @return the found user
+   * @throws UserNotFoundException if the user is not found in the database
+   */
   @Cacheable(value = "users", key = "#name", unless = "#result == null")
   public User findByName(final String name) throws UserNotFoundException {
     final var user = dsl.selectFrom(USERS)

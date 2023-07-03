@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is a global controller exception handler for handling various exceptions thrown by controller methods.
+ * <p>
+ * It provides methods to handle different types of exceptions and return appropriate error details.
+ */
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 
