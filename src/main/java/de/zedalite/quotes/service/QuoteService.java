@@ -40,7 +40,7 @@ public class QuoteService {
 
   private final PushNotificationRepository notifierRepository;
 
-  @Value("{notification.topic.quote-creation}")
+  @Value("${notification.topic.quote-creation}")
   private String quoteCreationTopic;
 
   public QuoteService(final QuoteRepository repository,

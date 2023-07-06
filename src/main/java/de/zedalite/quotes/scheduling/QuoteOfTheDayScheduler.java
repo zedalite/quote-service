@@ -23,7 +23,7 @@ public class QuoteOfTheDayScheduler {
 
   private final PushNotificationRepository notifierRepository;
 
-  @Value("{notification.topic.quote-of-the-day}")
+  @Value("${notification.topic.quote-of-the-day}")
   private String qotdTopic;
 
   /**
