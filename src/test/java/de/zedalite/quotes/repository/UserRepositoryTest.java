@@ -10,8 +10,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @SpringBootTest
@@ -40,8 +39,8 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
-  @DisplayName("Should find user")
-  void shouldFindUser() {
+  @DisplayName("Should find user by name")
+  void shouldFindUserByName() {
     final var user = instance.findByName("tester");
 
     assertThat(user).isNotNull();
@@ -52,5 +51,36 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should throw exception when user not found")
   void shouldThrowExceptionWhenUserNotFound() {
     assertThatCode(() -> instance.findByName("invalidName")).isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should return false when username is already taken")
+  void shouldReturnFalseWhenUsernameIsAlreadyTaken() {
+    instance.save(new UserRequest("takenName", "taken"));
+
+    final var isAvailable = instance.isUsernameAvailable("takenName");
+
+    assertThat(isAvailable).isFalse();
+  }
+
+  @Test
+  @DisplayName("Should return true when username is free")
+  void shouldReturnTrueWhenUsernameIsFree() {
+    final var isAvailable = instance.isUsernameAvailable("abcdefghijklmn");
+
+    assertThat(isAvailable).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should update user")
+  void shouldUpdateUser() {
+    final var userId = instance.save(new UserRequest("super", "sUpEr")).id();
+    final var request = new UserRequest("mega", "mEgA", "MEGA");
+
+    final var updatedUser = instance.update("super", request);
+
+    assertThat(updatedUser.id()).isEqualTo(userId);
+    assertThat(updatedUser.password()).isEqualTo("mEgA");
+    assertThat(updatedUser.displayName()).isEqualTo("MEGA");
   }
 }

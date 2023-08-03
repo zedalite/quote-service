@@ -1,7 +1,8 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.data.model.AuthRequest;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.data.model.AuthResponse;
 import de.zedalite.quotes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,7 +41,7 @@ public class AuthController {
       @ApiResponse(responseCode = "403", description = "Login failed")
     })
   @PostMapping("login")
-  public UserResponse login(@RequestBody @Valid final UserRequest request) {
+  public AuthResponse login(@RequestBody @Valid final AuthRequest request) {
     return service.authenticate(request);
   }
 
@@ -50,7 +51,7 @@ public class AuthController {
       @ApiResponse(responseCode = "401", description = "Refresh failed")
     })
   @GetMapping("refresh")
-  public UserResponse refresh() {
+  public AuthResponse refresh() {
     final var username = SecurityContextHolder.getContext().getAuthentication().getName();
     return service.refreshToken(username);
   }

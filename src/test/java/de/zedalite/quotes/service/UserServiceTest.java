@@ -1,5 +1,6 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.model.AuthRequest;
 import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
@@ -87,9 +88,10 @@ class UserServiceTest {
   @DisplayName("Should authenticate valid user")
   void shouldAuthenticateValidUser() {
     final var userRequest = UserGenerator.getUserRequest();
+    final var authRequest = new AuthRequest(userRequest.name(), userRequest.password());
     willReturn("e54f6rmh7g").given(tokenService).generateToken(userRequest.name());
 
-    final var userResponse = instance.authenticate(userRequest);
+    final var userResponse = instance.authenticate(authRequest);
 
     assertThat(userResponse.token()).isEqualTo("e54f6rmh7g");
   }

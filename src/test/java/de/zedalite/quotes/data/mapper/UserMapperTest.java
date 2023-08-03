@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserMapperTest {
@@ -15,14 +17,16 @@ class UserMapperTest {
   @Test
   @DisplayName("Should map userRecord to user")
   void shouldMapUserRecordToUser() {
-    final var userRec = new UsersRecord(0, "user", "password");
+    final var userRec = new UsersRecord(0, "user", "password", LocalDateTime.MIN, "USER");
 
     final var user = instance.userRecToUser(userRec);
 
     assertThat(user).isNotNull();
-    assertThat(user.id()).isZero();
-    assertThat(user.name()).isEqualTo("user");
-    assertThat(user.password()).isEqualTo("password");
+    assertThat(user.id()).isEqualTo(userRec.getId());
+    assertThat(user.name()).isEqualTo(userRec.getName());
+    assertThat(user.password()).isEqualTo(userRec.getPassword());
+    assertThat(user.creationDate()).isEqualTo(userRec.getCreationDate());
+    assertThat(user.displayName()).isEqualTo(userRec.getDisplayName());
   }
 
   @ParameterizedTest

@@ -1,8 +1,6 @@
 package de.zedalite.quotes.service;
 
-import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
@@ -26,17 +24,25 @@ public class UserService {
 
   private final JwtTokenService tokenService;
 
-  public UserService(final UserRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenService tokenService) {
+  public UserService(final UserRepository repository,
+                     final PasswordEncoder passwordEncoder,
+                     final AuthenticationManager authenticationManager,
+                     final JwtTokenService tokenService) {
     this.repository = repository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.tokenService = tokenService;
   }
 
-  public UserResponse authenticate(final UserRequest request) throws AuthenticationException {
+  public AuthResponse authenticate(final AuthRequest request) throws AuthenticationException {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.name(), request.password()));
     final var token = tokenService.generateToken(request.name());
-    return new UserResponse(token);
+    return new AuthResponse(token);
+  }
+
+  public AuthResponse refreshToken(final String username) {
+    final var token = tokenService.generateToken(username);
+    return new AuthResponse(token);
   }
 
   public User create(final UserRequest request) throws ResourceAlreadyExitsException {
@@ -57,8 +63,23 @@ public class UserService {
     }
   }
 
-  public UserResponse refreshToken(final String username) {
-    final var token = tokenService.generateToken(username);
-    return new UserResponse(token);
+  public void updatePassword(final String username, final PasswordRequest request) {
+    try {
+      final var user = find(username);
+      final var userRequest = new UserRequest(user.name(), passwordEncoder.encode(request.password()), user.displayName());
+      repository.update(username, userRequest);
+    } catch (UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public void updateDisplayName(final String username, final DisplayNameRequest request) {
+    try {
+      final var user = find(username);
+      final var userRequest = new UserRequest(user.name(), user.password(), request.displayName());
+      repository.update(username, userRequest);
+    } catch (UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 }

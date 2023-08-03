@@ -1,9 +1,10 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.AuthRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.data.model.AuthResponse;
 import de.zedalite.quotes.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -36,7 +38,7 @@ class AuthControllerTest {
   @DisplayName("Should signup user")
   void shouldSignupUser() {
     final var userRequest = new UserRequest("tester", "test");
-    final var expectedUser = new User(1, "tester", "test");
+    final var expectedUser = new User(1, "tester", "test", "TESTER", LocalDateTime.now());
     willReturn(expectedUser).given(service).create(any(UserRequest.class));
 
     instance.signup(userRequest);
@@ -47,20 +49,20 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should login user")
   void shouldLoginUser() {
-    final var userRequest = new UserRequest("tester", "test");
-    final var expectedUserResponse = new UserResponse("uezhag");
-    willReturn(expectedUserResponse).given(service).authenticate(any(UserRequest.class));
+    final var authRequest = new AuthRequest("tester", "test");
+    final var expectedUserResponse = new AuthResponse("uezhag");
+    willReturn(expectedUserResponse).given(service).authenticate(any(AuthRequest.class));
 
-    instance.login(userRequest);
+    instance.login(authRequest);
 
-    then(service).should().authenticate(userRequest);
+    then(service).should().authenticate(authRequest);
   }
 
   @Test
   @DisplayName("Should refresh user token")
   void shouldRefreshUserToken() {
-    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
-    final var expectedUserResponse = new UserResponse("uezhag");
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
+    final var expectedUserResponse = new AuthResponse("uezhag");
 
     willReturn(expectedUserResponse).given(service).refreshToken(anyString());
 

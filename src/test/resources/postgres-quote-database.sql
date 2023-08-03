@@ -116,7 +116,9 @@ ALTER TABLE public.quotes_of_the_day ALTER COLUMN id ADD GENERATED ALWAYS AS IDE
 CREATE TABLE public.users (
                               id integer NOT NULL,
                               name character varying(32) NOT NULL,
-                              password character varying(128) NOT NULL
+                              password character varying(128) NOT NULL,
+                              creation_date timestamp without time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
+                              display_name character varying(32) NOT NULL
 );
 
 

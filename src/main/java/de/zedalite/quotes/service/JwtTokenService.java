@@ -53,6 +53,7 @@ public class JwtTokenService {
   public String validateToken(final String token) {
     return JWT.require(hmac512)
       .withClaimPresence("sub")
+      .withIssuer("quote-api")
       .build()
       .verify(token)
       .getSubject();
