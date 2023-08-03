@@ -37,6 +37,7 @@ public class PushNotificationRepository {
     final var message = Message.builder()
       .setTopic(topic)
       .setNotification(notification)
+      .putAllData(pushNotification.data())
       .build();
 
     try {
