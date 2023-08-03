@@ -36,7 +36,7 @@ public record Quote(
 ) {
 
   public String truncateText() {
-    return truncateText(16);
+    return truncateText(128);
   }
 
   public String truncateText(final Integer maxLength) {

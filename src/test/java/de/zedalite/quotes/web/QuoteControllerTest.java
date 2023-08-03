@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
@@ -103,7 +105,7 @@ class QuoteControllerTest {
   void shouldPostQuote() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
     final var expectedQuote = QuoteGenerator.getQuote();
-    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 
     BDDMockito.willReturn(expectedQuote).given(service).create(any(QuoteRequest.class), anyString());
@@ -119,7 +121,7 @@ class QuoteControllerTest {
   void shouldPutQuote() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
     final var expectedQuote = QuoteGenerator.getQuote();
-    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test"));
+    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 
     BDDMockito.willReturn(expectedQuote).given(service).update(anyInt(), any(QuoteRequest.class), anyString());

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a service for managing quotes.
@@ -69,7 +70,8 @@ public class QuoteService {
 
       final var notification = new PushNotification(
         "New Quote",
-        quote.author() + " says " + quote.truncateText() + "...");
+        quote.author() + " says " + quote.truncateText() + "...",
+        Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id())));
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
 
       return quote;

@@ -212,17 +212,6 @@ class QuoteServiceTest {
     assertThat(updatedQuote).isEqualTo(expectedQuote);
   }
 
-/*  @Test
-  @DisplayName("Should create quote with creatorId")
-  void shouldCreateQuoteWithCreatorId() {
-    final var user = UserGenerator.getUser();
-    final var quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
-    willReturn(user).given(userRepository).findByName(anyString());
-    instance.create(quoteRequest, "super");
-
-    then(quoteRepository).should().save(quoteRequest.withCreatorId(user.id()));
-  }*/
-
   @Test
   @DisplayName("Should update quote with creatorId")
   void shouldUpdateQuoteWithCreatorId() {

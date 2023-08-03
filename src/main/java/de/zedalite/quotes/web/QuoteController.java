@@ -84,8 +84,8 @@ public class QuoteController {
       @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
   public Quote postQuote(@RequestBody @Valid final QuoteRequest request) {
-    final var userName = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.create(request, userName);
+    final var creator = SecurityContextHolder.getContext().getAuthentication().getName();
+    return service.create(request, creator);
   }
 
   @Operation(summary = "Edit a existing quote",
@@ -95,8 +95,8 @@ public class QuoteController {
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PutMapping("{id}")
   public Quote putQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request) {
-    final var userName = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.update(id, request, userName);
+    final var creator = SecurityContextHolder.getContext().getAuthentication().getName();
+    return service.update(id, request, creator);
   }
 
   @Operation(summary = "Delete a existing quote",
