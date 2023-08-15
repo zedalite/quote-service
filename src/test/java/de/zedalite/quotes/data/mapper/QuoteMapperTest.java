@@ -28,7 +28,7 @@ class QuoteMapperTest {
     assertThat(quote.author()).isEqualTo("test");
     assertThat(quote.datetime()).isEqualTo(LocalDateTime.MIN);
     assertThat(quote.text()).isEqualTo("Successful test.");
-    assertThat(quote.subtext()).isEqualTo("sub");
+    assertThat(quote.context()).isEqualTo("sub");
     assertThat(quote.creatorId()).isEqualTo(2);
   }
 
@@ -60,7 +60,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteSonar.author()).isEqualTo("sonar");
     softly.assertThat(quoteSonar.datetime()).isEqualTo(LocalDateTime.MIN);
     softly.assertThat(quoteSonar.text()).isEqualTo("I like code coverage.");
-    softly.assertThat(quoteSonar.subtext()).isEqualTo("sub");
+    softly.assertThat(quoteSonar.context()).isEqualTo("sub");
     softly.assertThat(quoteSonar.creatorId()).isEqualTo(3);
 
     softly.assertThat(quoteMapper).isNotNull();
@@ -68,7 +68,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteMapper.author()).isEqualTo("mapper");
     softly.assertThat(quoteMapper.datetime()).isEqualTo(LocalDateTime.MAX);
     softly.assertThat(quoteMapper.text()).isEqualTo("Mappers facilitate the work.");
-    softly.assertThat(quoteMapper.subtext()).isNull();
+    softly.assertThat(quoteMapper.context()).isNull();
     softly.assertThat(quoteMapper.creatorId()).isEqualTo(2);
 
     softly.assertAll();

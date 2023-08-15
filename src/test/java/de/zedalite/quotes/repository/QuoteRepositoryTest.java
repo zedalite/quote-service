@@ -50,7 +50,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
     assertThat(savedQuote.author()).isEqualTo("test");
     assertThat(savedQuote.datetime()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0, 0));
     assertThat(savedQuote.text()).isEqualTo("tests are important");
-    assertThat(savedQuote.subtext()).isEqualTo("42");
+    assertThat(savedQuote.context()).isEqualTo("42");
   }
 
   @Test

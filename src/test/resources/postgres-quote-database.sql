@@ -61,7 +61,7 @@ CREATE TABLE public.quotes (
                                author character varying(64) NOT NULL,
                                datetime timestamp without time zone NOT NULL,
                                text text NOT NULL,
-                               subtext text,
+                               context text,
                                creator_id integer
 );
 

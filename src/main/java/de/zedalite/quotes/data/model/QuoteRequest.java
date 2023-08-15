@@ -23,7 +23,7 @@ public record QuoteRequest(
   String text,
 
   @Size(max = 64)
-  String subtext,
+  String context,
 
   @PositiveOrZero
   Integer creatorId
@@ -31,7 +31,7 @@ public record QuoteRequest(
 ) {
 
   public QuoteRequest withCreatorId(final Integer creatorId) {
-    return new QuoteRequest(author, datetime, text, subtext, creatorId);
+    return new QuoteRequest(author, datetime, text, context, creatorId);
 
   }
 }

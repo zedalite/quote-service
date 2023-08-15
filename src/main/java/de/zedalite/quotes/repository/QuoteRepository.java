@@ -45,7 +45,7 @@ public class QuoteRepository {
       .set(QUOTES.AUTHOR, quote.author())
       .set(QUOTES.DATETIME, quote.datetime())
       .set(QUOTES.TEXT, quote.text())
-      .set(QUOTES.SUBTEXT, quote.subtext())
+      .set(QUOTES.CONTEXT, quote.context())
       .set(QUOTES.CREATOR_ID, quote.creatorId())
       .returning()
       .fetchOneInto(QuotesRecord.class);
@@ -141,7 +141,7 @@ public class QuoteRepository {
       .set(QUOTES.AUTHOR, quote.author())
       .set(QUOTES.DATETIME, quote.datetime())
       .set(QUOTES.TEXT, quote.text())
-      .set(QUOTES.SUBTEXT, quote.subtext())
+      .set(QUOTES.CONTEXT, quote.context())
       .set(QUOTES.CREATOR_ID, quote.creatorId())
       .where(QUOTES.ID.eq(id))
       .returning()
