@@ -25,6 +25,6 @@ import org.springframework.stereotype.Component;
 public class StringToSortFieldConverter implements Converter<String, SortField> {
   @Override
   public SortField convert(final String source) {
-    return SortField.valueOf(source.toUpperCase());
+    return SortField.getByName(source);
   }
 }

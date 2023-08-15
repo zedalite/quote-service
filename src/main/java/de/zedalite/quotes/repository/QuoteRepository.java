@@ -43,7 +43,7 @@ public class QuoteRepository {
   public Quote save(final QuoteRequest quote) throws QuoteNotFoundException {
     final var savedQuote = dsl.insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
-      .set(QUOTES.DATETIME, quote.datetime())
+      .set(QUOTES.CREATION_DATE, quote.creationDate())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.CONTEXT, quote.context())
       .set(QUOTES.CREATOR_ID, quote.creatorId())
@@ -139,7 +139,7 @@ public class QuoteRepository {
   public Quote update(final Integer id, final QuoteRequest quote) throws QuoteNotFoundException {
     final var updatedQuote = dsl.update(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
-      .set(QUOTES.DATETIME, quote.datetime())
+      .set(QUOTES.CREATION_DATE, quote.creationDate())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.CONTEXT, quote.context())
       .set(QUOTES.CREATOR_ID, quote.creatorId())
@@ -187,7 +187,7 @@ public class QuoteRepository {
     final var jooqField = switch (field) {
       case AUTHOR -> QUOTES.AUTHOR;
       case TEXT -> QUOTES.TEXT;
-      default -> QUOTES.DATETIME;
+      default -> QUOTES.CREATION_DATE;
     };
 
     return order == SortOrder.ASC ? jooqField.asc() : jooqField.desc();

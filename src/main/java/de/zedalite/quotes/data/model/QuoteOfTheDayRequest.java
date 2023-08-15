@@ -20,7 +20,7 @@ public record QuoteOfTheDayRequest(
 
   @NonNull
   @PastOrPresent
-  LocalDateTime datetime
+  LocalDateTime creationDate
 
 ) {
 }

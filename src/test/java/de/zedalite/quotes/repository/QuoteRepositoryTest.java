@@ -48,7 +48,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
     assertThat(savedQuote).isNotNull();
     assertThat(savedQuote.id()).isNotNull();
     assertThat(savedQuote.author()).isEqualTo("test");
-    assertThat(savedQuote.datetime()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0, 0));
+    assertThat(savedQuote.creationDate()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0, 0));
     assertThat(savedQuote.text()).isEqualTo("tests are important");
     assertThat(savedQuote.context()).isEqualTo("42");
   }
@@ -147,11 +147,11 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find quotes sorted by date")
   void shouldFindQuotesSortedByDate() {
-    final var sortedQuotesAsc = instance.findAll(SortField.DATETIME, SortOrder.ASC);
-    final var sortedQuotesDesc = instance.findAll(SortField.DATETIME, SortOrder.DESC);
+    final var sortedQuotesAsc = instance.findAll(SortField.CREATION_DATE, SortOrder.ASC);
+    final var sortedQuotesDesc = instance.findAll(SortField.CREATION_DATE, SortOrder.DESC);
 
-    assertThat(sortedQuotesAsc).map(Quote::datetime).isSortedAccordingTo(Comparator.naturalOrder());
-    assertThat(sortedQuotesDesc).map(Quote::datetime).isSortedAccordingTo(Comparator.reverseOrder());
+    assertThat(sortedQuotesAsc).map(Quote::creationDate).isSortedAccordingTo(Comparator.naturalOrder());
+    assertThat(sortedQuotesDesc).map(Quote::creationDate).isSortedAccordingTo(Comparator.reverseOrder());
   }
 
   @Test

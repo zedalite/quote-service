@@ -21,7 +21,7 @@ public record Quote(
 
   @NotNull
   @PastOrPresent
-  LocalDateTime datetime,
+  LocalDateTime creationDate,
 
   @NotBlank
   @Size(max = 256)

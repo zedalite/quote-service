@@ -24,7 +24,7 @@ class QuoteOfTheDayMapperTest {
     assertThat(qotd).isNotNull();
     assertThat(qotd.id()).isZero();
     assertThat(qotd.quoteId()).isZero();
-    assertThat(qotd.datetime()).isEqualTo(LocalDateTime.MIN);
+    assertThat(qotd.creationDate()).isEqualTo(LocalDateTime.MIN);
   }
 
   @ParameterizedTest

@@ -16,7 +16,7 @@ public record QuoteRequest(
 
   @NotNull
   @PastOrPresent
-  LocalDateTime datetime,
+  LocalDateTime creationDate,
 
   @NotBlank
   @Size(max = 256)
@@ -31,7 +31,7 @@ public record QuoteRequest(
 ) {
 
   public QuoteRequest withCreatorId(final Integer creatorId) {
-    return new QuoteRequest(author, datetime, text, context, creatorId);
+    return new QuoteRequest(author, creationDate, text, context, creatorId);
 
   }
 }

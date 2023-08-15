@@ -26,6 +26,6 @@ import org.springframework.stereotype.Component;
 public class StringToSortOrderConverter implements Converter<String, SortOrder> {
   @Override
   public SortOrder convert(final String source) {
-    return SortOrder.valueOf(source.toUpperCase());
+    return SortOrder.getByName(source);
   }
 }

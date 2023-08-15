@@ -15,7 +15,7 @@ class StringToSortFieldConverterTest {
 
   @ParameterizedTest(name = "Convert \"{0}\" to {1}")
   @DisplayName("Should convert string to sortField")
-  @CsvSource({"author,AUTHOR", "datetime,DATETIME", "text,TEXT"})
+  @CsvSource({"author,AUTHOR", "creationDate,CREATION_DATE", "text,TEXT"})
   void shouldConvertStringToSortField(final String source, final SortField expected) {
     assertThat(instance.convert(source)).isEqualTo(expected);
   }

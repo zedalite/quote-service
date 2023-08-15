@@ -25,7 +25,7 @@ public record QuoteOfTheDay(
 
   @NonNull
   @PastOrPresent
-  LocalDateTime datetime
+  LocalDateTime creationDate
 
 ) {
 }

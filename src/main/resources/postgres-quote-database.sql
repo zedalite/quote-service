@@ -59,7 +59,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.quotes (
                                id integer NOT NULL,
                                author character varying(64) NOT NULL,
-                               datetime timestamp without time zone NOT NULL,
+                               creation_date timestamp without time zone NOT NULL,
                                text text NOT NULL,
                                context text,
                                creator_id integer
@@ -89,7 +89,7 @@ ALTER TABLE public.quotes ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 CREATE TABLE public.quotes_of_the_day (
                                           id integer NOT NULL,
                                           quote_id integer NOT NULL,
-                                          datetime timestamp without time zone NOT NULL
+                                          creation_date timestamp without time zone NOT NULL
 );
 
 

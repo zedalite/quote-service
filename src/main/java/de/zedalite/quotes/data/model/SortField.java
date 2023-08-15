@@ -1,8 +1,10 @@
 package de.zedalite.quotes.data.model;
 
+import java.util.Arrays;
+
 public enum SortField {
   AUTHOR("author"),
-  DATETIME("datetime"),
+  CREATION_DATE("creationDate"),
   TEXT("text");
 
   private final String name;
@@ -13,5 +15,12 @@ public enum SortField {
 
   public String getName() {
     return name;
+  }
+
+  public static SortField getByName(final String name) {
+    return Arrays.stream(SortField.values())
+      .filter(sortField -> sortField.name.equals(name))
+      .findFirst()
+      .orElseThrow(IllegalArgumentException::new);
   }
 }

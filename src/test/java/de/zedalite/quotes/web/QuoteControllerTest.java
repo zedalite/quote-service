@@ -41,7 +41,7 @@ class QuoteControllerTest {
     final var expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(service).findAll(any(SortField.class), any(SortOrder.class));
 
-    instance.getQuotes(SortField.DATETIME, SortOrder.ASC);
+    instance.getQuotes(SortField.CREATION_DATE, SortOrder.ASC);
 
     then(service).should().findAll(any(SortField.class), any(SortOrder.class));
   }
