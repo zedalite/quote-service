@@ -31,8 +31,9 @@
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <snakeyaml.version>2.0</snakeyaml.version> <!-- CVE-2022-1471 -->
     <springdoc-openapi-webmvc-ui.version>2.1.0</springdoc-openapi-webmvc-ui.version>
-    <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
     <firebase.version>9.2.0</firebase.version>
+    <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
+    <owasp-plugin.version>8.3.1</owasp-plugin.version>
     <!-- Database -->
     <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-quote-database.sql</db.url>
     <db.username>quote</db.username>
@@ -194,6 +195,28 @@
                 <id>report</id>
                 <goals>
                   <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>owasp-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>${owasp-plugin.version}</version>
+            <configuration>
+              <failBuildOnCVSS>8</failBuildOnCVSS>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
                 </goals>
               </execution>
             </executions>
