@@ -38,7 +38,7 @@ class QuoteOfTheDaySchedulerTest {
   @Test
   @DisplayName("Should send push notification")
   void shouldSendPushNotification() {
-    final var qotd = QuoteGenerator.getQuote();
+    final var qotd = QuoteGenerator.getQuoteMessage();
     willReturn(qotd).given(quoteService).findQuoteOfTheDay();
 
     instance.sendPushNotification();

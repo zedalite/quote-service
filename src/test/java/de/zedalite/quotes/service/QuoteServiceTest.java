@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.zedalite.quotes.data.model.SortField.AUTHOR;
@@ -165,7 +164,8 @@ class QuoteServiceTest {
 
     final var quotes = instance.findAll(List.of(1));
 
-    assertThat(quotes).hasSize(1).containsOnly(expectedQuotes.get(1));
+    assertThat(quotes).hasSize(1);
+    assertThat(quotes.get(0).id()).isEqualTo(expectedQuotes.get(1).id());
   }
 
   @Test
@@ -277,13 +277,13 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should find random quotes")
   void shouldFindRandomQuotes() {
-    final var expectedQuotes = new ArrayList<>(QuoteGenerator.getQuotes());
-    willReturn(List.of(1, 2)).given(quoteRepository).findAllIds();
+    final var expectedQuotes = QuoteGenerator.getQuotes();
+    willReturn(List.of(1, 2, 3)).given(quoteRepository).findAllIds();
     willReturn(expectedQuotes).given(quoteRepository).findAllByIds(anyList());
 
-    final var quotes = instance.findRandoms(QuoteGenerator.getQuotes().size());
+    final var quotes = instance.findRandoms(3);
 
-    assertThat(quotes).hasSize(QuoteGenerator.getQuotes().size());
+    assertThat(quotes).hasSize(expectedQuotes.size());
   }
 
   @Test

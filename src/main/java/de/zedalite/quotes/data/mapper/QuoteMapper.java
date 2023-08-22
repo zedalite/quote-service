@@ -2,6 +2,8 @@ package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.QuoteMessage;
+import de.zedalite.quotes.data.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -16,5 +18,7 @@ public interface QuoteMapper {
 
   Quote quoteRecToQuote(final QuotesRecord quotesRecord);
 
-  List<Quote> quoteRecsToQuotes(final List<QuotesRecord> quotesResRecords);
+  List<Quote> quoteRecsToQuotes(final List<QuotesRecord> quotesRecords);
+
+  QuoteMessage quoteToQuoteMsg(final Quote quote, List<User> mentions);
 }

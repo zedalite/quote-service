@@ -1,5 +1,6 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.exceptions.NotifierException;
 import de.zedalite.quotes.exceptions.QotdNotFoundException;
@@ -17,9 +18,11 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Represents a service for managing quotes.
@@ -30,6 +33,10 @@ import java.util.Map;
 public class QuoteService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(QuoteService.class);
+
+  private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
+
+  private static final Pattern USER_ID_PATTERN = Pattern.compile("<@(\\d+)>");
 
   private static final String MIN_QUOTES_COUNT = "Minimum number of quotes not reached (10)";
 
@@ -122,9 +129,10 @@ public class QuoteService {
    * @return a list of all quotes
    * @throws ResourceNotFoundException if no quotes are found in the repository
    */
-  public List<Quote> findAll(final SortField field, final SortOrder order) {
+  public List<QuoteMessage> findAll(final SortField field, final SortOrder order) {
     try {
-      return repository.findAll(field, order);
+      final var quotes = repository.findAll(field, order);
+      return getQuoteMessages(quotes);
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
@@ -137,9 +145,10 @@ public class QuoteService {
    * @return a list of quotes with the given ids
    * @throws ResourceNotFoundException if any of the quotes with the given ids are not found in the repository
    */
-  public List<Quote> findAll(final List<Integer> ids) {
+  public List<QuoteMessage> findAll(final List<Integer> ids) {
     try {
-      return repository.findAllByIds(ids);
+      final var matchedQuotes = repository.findAllByIds(ids);
+      return getQuoteMessages(matchedQuotes);
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
@@ -152,9 +161,10 @@ public class QuoteService {
    * @return the quote with the given id
    * @throws ResourceNotFoundException if the quote with the given id is not found in the repository
    */
-  public Quote find(final Integer id) {
+  public QuoteMessage find(final Integer id) {
     try {
-      return repository.findById(id);
+      final var quote = repository.findById(id);
+      return getQuoteMessage(quote);
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
@@ -213,7 +223,7 @@ public class QuoteService {
    * @return the randomly selected quote
    * @throws ResourceNotFoundException if no quotes are found in the repository
    */
-  public Quote findRandom() {
+  public QuoteMessage findRandom() {
     try {
       final var availableIds = repository.findAllIds();
       final var randIdx = new SecureRandom().nextInt(availableIds.size());
@@ -231,12 +241,12 @@ public class QuoteService {
    * @throws ResourceNotFoundException if no quotes are found in the repository
    */
   // TODO optimise with single caching or learn how to manipulate the cache to insert multiple values
-  public List<Quote> findRandoms(final Integer quantity) {
+  public List<QuoteMessage> findRandoms(final Integer quantity) {
     try {
       final var availableIds = repository.findAllIds();
       final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
       final var quotes = findAll(randIdxs.stream().map(availableIds::get).toList());
-      Collections.shuffle(quotes);
+      Collections.shuffle(new ArrayList<>(quotes));
       return quotes;
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
@@ -258,17 +268,30 @@ public class QuoteService {
    * @throws ResourceNotFoundException if the total number of quotes in the repository is less than 10
    * @return the quote of the day
    */
-  public Quote findQuoteOfTheDay() {
+  public QuoteMessage findQuoteOfTheDay() {
     if (count() < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
 
     QuoteOfTheDay qotd;
     try {
       qotd = qotdRepository.findByDate(LocalDate.now());
     } catch (final QotdNotFoundException ex) {
-      final var quote = findRandomDayDependent();
-      qotd = qotdRepository.save(new QuoteOfTheDayRequest(quote.id(), LocalDateTime.now()));
+      final var quoteId = findRandomDayDependent().id();
+      qotd = qotdRepository.save(new QuoteOfTheDayRequest(quoteId, LocalDateTime.now()));
     }
-    return repository.findById(qotd.quoteId());
+
+    return find(qotd.quoteId());
+  }
+
+  private QuoteMessage getQuoteMessage(final Quote quote) {
+    final var mentions = getMentions(extractUserIds(quote.text()));
+
+    return QUOTE_MAPPER.quoteToQuoteMsg(quote, mentions);
+  }
+
+  private List<QuoteMessage> getQuoteMessages(final List<Quote> quotes) {
+    return quotes.stream()
+      .map(this::getQuoteMessage)
+      .toList();
   }
 
   /**
@@ -276,10 +299,22 @@ public class QuoteService {
    *
    * @return a random day-dependent quote
    */
-  private Quote findRandomDayDependent() {
+  private QuoteMessage findRandomDayDependent() {
     final var remainder = LocalDate.now().getDayOfYear() % 10;
     final var availableIds = repository.findAllIds().stream().filter(n -> n % 10 == remainder).toList();
     final var randIdx = new SecureRandom().nextInt(availableIds.size());
     return find(availableIds.get(randIdx));
+  }
+
+  private List<User> getMentions(List<Integer> userIds) {
+    return userIds.isEmpty() ? Collections.emptyList() : userRepository.findAllByIds(userIds);
+  }
+
+  private static List<Integer> extractUserIds(final String text) {
+    return USER_ID_PATTERN
+      .matcher(text)
+      .results()
+      .map(result -> Integer.parseInt(result.group(1)))
+      .toList();
   }
 }

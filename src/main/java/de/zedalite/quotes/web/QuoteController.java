@@ -29,7 +29,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping()
-  public List<Quote> getQuotes(@RequestParam(defaultValue = "DATETIME") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
+  public List<QuoteMessage> getQuotes(@RequestParam(defaultValue = "DATETIME") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
     return service.findAll(field, order);
   }
 
@@ -38,7 +38,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("{id}")
-  public Quote getQuote(@PathVariable("id") final Integer id) {
+  public QuoteMessage getQuote(@PathVariable("id") final Integer id) {
     return service.find(id);
   }
 
@@ -47,7 +47,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("randoms")
-  public List<Quote> getRandomQuotes(@RequestParam(defaultValue = "8") final Integer quantity) {
+  public List<QuoteMessage> getRandomQuotes(@RequestParam(defaultValue = "8") final Integer quantity) {
     return service.findRandoms(quantity);
   }
 
@@ -56,7 +56,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("random")
-  public Quote getRandomQuote() {
+  public QuoteMessage getRandomQuote() {
     return service.findRandom();
   }
 
@@ -65,7 +65,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping("qotd")
-  public Quote getQuoteOfTheDay() {
+  public QuoteMessage getQuoteOfTheDay() {
     return service.findQuoteOfTheDay();
   }
 

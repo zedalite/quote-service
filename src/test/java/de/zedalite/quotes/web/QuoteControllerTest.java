@@ -49,7 +49,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get quote")
   void shouldGetQuote() {
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final var expectedQuote = QuoteGenerator.getQuoteMessage();
     BDDMockito.willReturn(expectedQuote).given(service).find(anyInt());
 
     instance.getQuote(1);
@@ -71,7 +71,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get random quote")
   void shouldGetRandomQuote() {
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final var expectedQuote = QuoteGenerator.getQuoteMessage();
     BDDMockito.willReturn(expectedQuote).given(service).findRandom();
 
     instance.getRandomQuote();
@@ -82,7 +82,7 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get quote of the day")
   void shouldGetQuoteOfTheDay() {
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final var expectedQuote = QuoteGenerator.getQuoteMessage();
     BDDMockito.willReturn(expectedQuote).given(service).findQuoteOfTheDay();
 
     instance.getQuoteOfTheDay();

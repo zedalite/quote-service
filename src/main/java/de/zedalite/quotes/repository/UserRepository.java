@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * The UserRepository class is responsible for interacting with the user data in the database.
@@ -50,6 +51,15 @@ public class UserRepository {
       .fetchOneInto(UsersRecord.class);
     if (savedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
     return USER_MAPPER.userRecToUser(savedUser);
+  }
+
+  // TODO Cache result or better integrate in user cache
+  public List<User> findAllByIds(final List<Integer> ids) throws UserNotFoundException {
+    final var users = dsl.selectFrom(USERS)
+      .where(USERS.ID.in(ids))
+      .fetchInto(UsersRecord.class);
+    if (users.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.userRecsToUsers(users);
   }
 
   @Cacheable(value = "users", key = "#name", unless = "#result == null")
