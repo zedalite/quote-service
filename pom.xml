@@ -30,10 +30,10 @@
     <java-jwt.version>4.4.0</java-jwt.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <snakeyaml.version>2.0</snakeyaml.version> <!-- CVE-2022-1471 -->
-    <springdoc-openapi-webmvc-ui.version>2.1.0</springdoc-openapi-webmvc-ui.version>
+    <springdoc-openapi-webmvc-ui.version>2.2.0</springdoc-openapi-webmvc-ui.version>
     <firebase.version>9.2.0</firebase.version>
     <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
-    <owasp-plugin.version>8.3.1</owasp-plugin.version>
+    <owasp-plugin.version>8.4.0</owasp-plugin.version>
     <!-- Database -->
     <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-quote-database.sql</db.url>
     <db.username>quote</db.username>
