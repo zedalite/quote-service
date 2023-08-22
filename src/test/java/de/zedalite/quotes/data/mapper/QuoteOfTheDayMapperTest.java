@@ -19,7 +19,7 @@ class QuoteOfTheDayMapperTest {
   void shouldMapQuoteOfTheDayRecordToQuoteOfTheDay() {
     final var qotdRec = new QuotesOfTheDayRecord(0, 0, LocalDateTime.MIN);
 
-    final var qotd = instance.toQuoteOfTheDay(qotdRec);
+    final var qotd = instance.mapToQuoteOfTheDay(qotdRec);
 
     assertThat(qotd).isNotNull();
     assertThat(qotd.id()).isZero();
@@ -31,7 +31,7 @@ class QuoteOfTheDayMapperTest {
   @DisplayName("Should map empty quoteOfTheDayRecord to null")
   @NullSource
   void shouldMapEmptyQuoteOfTheDayRecordToNull(final QuotesOfTheDayRecord qotdRecord) {
-    final var qotd = instance.toQuoteOfTheDay(qotdRecord);
+    final var qotd = instance.mapToQuoteOfTheDay(qotdRecord);
 
     assertThat(qotd).isNull();
   }

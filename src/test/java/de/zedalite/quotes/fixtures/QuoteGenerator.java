@@ -4,7 +4,6 @@ import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.*;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 public class QuoteGenerator {
@@ -21,7 +20,7 @@ public class QuoteGenerator {
 
   public static QuoteMessage getQuoteMessage() {
     final var mentions = List.of(new User(12, "mentionedUser", "secret555", "mentionedUser", LocalDateTime.MIN));
-    return QUOTE_MAPPER.quoteToQuoteMsg(getQuote(), mentions);
+    return QUOTE_MAPPER.mapToQuoteMessage(getQuote(), mentions);
   }
 
   public static List<Quote> getQuotes() {
@@ -29,16 +28,6 @@ public class QuoteGenerator {
       new Quote(1, "tester", LocalDateTime.now(), "quotes are awesome", "@Home", 4),
       new Quote(2, "qa", LocalDateTime.MIN, "tests are important", null, 5),
       new Quote(3, "pipeline", LocalDateTime.MAX, "Going brrrrr", "@Work", null)
-    );
-  }
-
-  public static List<QuoteMessage> getQuoteMessages() {
-    final var mentions = List.of(new User(12, "mentionedUser", "secret555", "mentionedUser", LocalDateTime.MIN));
-
-    return List.of(
-      QUOTE_MAPPER.quoteToQuoteMsg(new Quote(1, "tester", LocalDateTime.now(), "quotes are awesome", "@Home", 4), mentions),
-      QUOTE_MAPPER.quoteToQuoteMsg(new Quote(2, "qa", LocalDateTime.MIN, "tests are important", null, 5), Collections.emptyList()),
-      QUOTE_MAPPER.quoteToQuoteMsg(new Quote(3, "pipeline", LocalDateTime.MAX, "Going brrrrr", "@Work", null), Collections.emptyList())
     );
   }
 

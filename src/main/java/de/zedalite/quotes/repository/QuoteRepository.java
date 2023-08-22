@@ -50,7 +50,7 @@ public class QuoteRepository {
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (savedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(savedQuote);
+    return QUOTE_MAPPER.mapToQuote(savedQuote);
   }
 
   /**
@@ -63,7 +63,7 @@ public class QuoteRepository {
     final var quotes = dsl.selectFrom(QUOTES)
       .fetchInto(QuotesRecord.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
+    return QUOTE_MAPPER.mapToQuoteList(quotes);
   }
 
   /**
@@ -79,7 +79,7 @@ public class QuoteRepository {
       .orderBy(mapToJooqSortField(field, order))
       .fetchInto(QuotesRecord.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
+    return QUOTE_MAPPER.mapToQuoteList(quotes);
   }
 
   /**
@@ -94,7 +94,7 @@ public class QuoteRepository {
       .where(QUOTES.ID.in(ids))
       .fetchInto(QuotesRecord.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecsToQuotes(quotes);
+    return QUOTE_MAPPER.mapToQuoteList(quotes);
   }
 
   /**
@@ -124,7 +124,7 @@ public class QuoteRepository {
       .where(QUOTES.ID.eq(id))
       .fetchOneInto(QuotesRecord.class);
     if (quote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(quote);
+    return QUOTE_MAPPER.mapToQuote(quote);
   }
 
   /**
@@ -147,7 +147,7 @@ public class QuoteRepository {
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (updatedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(updatedQuote);
+    return QUOTE_MAPPER.mapToQuote(updatedQuote);
   }
 
   /**
@@ -164,7 +164,7 @@ public class QuoteRepository {
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (deletedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
-    return QUOTE_MAPPER.quoteRecToQuote(deletedQuote);
+    return QUOTE_MAPPER.mapToQuote(deletedQuote);
   }
 
   /**

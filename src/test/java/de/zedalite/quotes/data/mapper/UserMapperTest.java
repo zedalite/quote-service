@@ -19,7 +19,7 @@ class UserMapperTest {
   void shouldMapUserRecordToUser() {
     final var userRec = new UsersRecord(0, "user", "password", LocalDateTime.MIN, "USER");
 
-    final var user = instance.userRecToUser(userRec);
+    final var user = instance.mapToUser(userRec);
 
     assertThat(user).isNotNull();
     assertThat(user.id()).isEqualTo(userRec.getId());
@@ -33,7 +33,7 @@ class UserMapperTest {
   @DisplayName("Should map empty userRecord to null")
   @NullSource
   void shouldMapEmptyUserRecordToNull(final UsersRecord usersRecord) {
-    final var user = instance.userRecToUser(usersRecord);
+    final var user = instance.mapToUser(usersRecord);
 
     assertThat(user).isNull();
   }

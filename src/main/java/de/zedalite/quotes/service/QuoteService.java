@@ -285,7 +285,7 @@ public class QuoteService {
   private QuoteMessage getQuoteMessage(final Quote quote) {
     final var mentions = getMentions(extractUserIds(quote.text()));
 
-    return QUOTE_MAPPER.quoteToQuoteMsg(quote, mentions);
+    return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
   }
 
   private List<QuoteMessage> getQuoteMessages(final List<Quote> quotes) {

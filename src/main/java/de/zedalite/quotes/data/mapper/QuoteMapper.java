@@ -16,9 +16,9 @@ import java.util.List;
 public interface QuoteMapper {
   QuoteMapper INSTANCE = Mappers.getMapper(QuoteMapper.class);
 
-  Quote quoteRecToQuote(final QuotesRecord quotesRecord);
+  Quote mapToQuote(final QuotesRecord quotesRecord);
 
-  List<Quote> quoteRecsToQuotes(final List<QuotesRecord> quotesRecords);
+  List<Quote> mapToQuoteList(final List<QuotesRecord> quotesRecords);
 
-  QuoteMessage quoteToQuoteMsg(final Quote quote, List<User> mentions);
+  QuoteMessage mapToQuoteMessage(final Quote quote, List<User> mentions);
 }

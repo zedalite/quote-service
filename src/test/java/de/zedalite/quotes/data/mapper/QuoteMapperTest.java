@@ -21,7 +21,7 @@ class QuoteMapperTest {
   void shouldMapQuoteRecordToQuote() {
     final var quoteRec = new QuotesRecord(0, "test", LocalDateTime.MIN, "Successful test.", "sub", 2);
 
-    final var quote = instance.quoteRecToQuote(quoteRec);
+    final var quote = instance.mapToQuote(quoteRec);
 
     assertThat(quote).isNotNull();
     assertThat(quote.id()).isZero();
@@ -36,7 +36,7 @@ class QuoteMapperTest {
   @DisplayName("Should map empty quoteRecord to null")
   @NullSource
   void shouldMapEmptyQuoteRecordToNull(final QuotesRecord quotesRecord) {
-    final var quote = instance.quoteRecToQuote(quotesRecord);
+    final var quote = instance.mapToQuote(quotesRecord);
 
     assertThat(quote).isNull();
   }
@@ -48,7 +48,7 @@ class QuoteMapperTest {
     final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null, 2);
     final var quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
 
-    final var quotes = instance.quoteRecsToQuotes(quotesRecords);
+    final var quotes = instance.mapToQuoteList(quotesRecords);
 
     final var quoteSonar = quotes.get(0);
     final var quoteMapper = quotes.get(1);
@@ -78,7 +78,7 @@ class QuoteMapperTest {
   @DisplayName("Should map empty quoteRecords to null")
   @NullSource
   void shouldMapEmptyQuoteRecordsToNull(final List<QuotesRecord> quotesRecords) {
-    final var quotes = instance.quoteRecsToQuotes(quotesRecords);
+    final var quotes = instance.mapToQuoteList(quotesRecords);
 
     assertThat(quotes).isNull();
   }

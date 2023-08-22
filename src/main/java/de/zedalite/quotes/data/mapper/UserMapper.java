@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserMapper {
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-  User userRecToUser(final UsersRecord usersRecord);
+  User mapToUser(final UsersRecord usersRecord);
 
-  List<User> userRecsToUsers(final List<UsersRecord> users);
+  List<User> mapToUserList(final List<UsersRecord> users);
 }

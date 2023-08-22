@@ -49,7 +49,7 @@ public class QuoteOfTheDayRepository {
       .returning()
       .fetchOneInto(QuotesOfTheDayRecord.class);
     if (savedQotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
-    return QOTD_MAPPER.toQuoteOfTheDay(savedQotd);
+    return QOTD_MAPPER.mapToQuoteOfTheDay(savedQotd);
   }
 
   /**
@@ -65,6 +65,6 @@ public class QuoteOfTheDayRepository {
       .where(QOTD.CREATION_DATE.between(date.atStartOfDay(), date.atTime(23, 59, 59)))
       .fetchOneInto(QuotesOfTheDayRecord.class);
     if (qotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
-    return QOTD_MAPPER.toQuoteOfTheDay(qotd);
+    return QOTD_MAPPER.mapToQuoteOfTheDay(qotd);
   }
 }

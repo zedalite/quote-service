@@ -12,5 +12,5 @@ import org.mapstruct.factory.Mappers;
 public interface QuoteOfTheDayMapper {
   QuoteOfTheDayMapper INSTANCE = Mappers.getMapper(QuoteOfTheDayMapper.class);
 
-  QuoteOfTheDay toQuoteOfTheDay(final QuotesOfTheDayRecord quotesOfTheDayRecord);
+  QuoteOfTheDay mapToQuoteOfTheDay(final QuotesOfTheDayRecord quotesOfTheDayRecord);
 }

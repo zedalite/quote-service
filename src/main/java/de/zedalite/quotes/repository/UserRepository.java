@@ -50,7 +50,7 @@ public class UserRepository {
       .returning()
       .fetchOneInto(UsersRecord.class);
     if (savedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.userRecToUser(savedUser);
+    return USER_MAPPER.mapToUser(savedUser);
   }
 
   // TODO Cache result or better integrate in user cache
@@ -59,7 +59,7 @@ public class UserRepository {
       .where(USERS.ID.in(ids))
       .fetchInto(UsersRecord.class);
     if (users.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.userRecsToUsers(users);
+    return USER_MAPPER.mapToUserList(users);
   }
 
   @Cacheable(value = "users", key = "#name", unless = "#result == null")
@@ -68,7 +68,7 @@ public class UserRepository {
       .where(USERS.NAME.eq(name))
       .fetchOneInto(UsersRecord.class);
     if (user == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.userRecToUser(user);
+    return USER_MAPPER.mapToUser(user);
   }
 
   @Cacheable(value = "usernames", key = "#name")
@@ -87,6 +87,6 @@ public class UserRepository {
       .returning()
       .fetchOneInto(UsersRecord.class);
     if (updatedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.userRecToUser(updatedUser);
+    return USER_MAPPER.mapToUser(updatedUser);
   }
 }
