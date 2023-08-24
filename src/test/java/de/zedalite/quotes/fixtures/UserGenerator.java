@@ -1,5 +1,6 @@
 package de.zedalite.quotes.fixtures;
 
+import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
 
@@ -15,4 +16,7 @@ public class UserGenerator {
     return new User(1, "tester", "apple", "TESTER", LocalDateTime.now());
   }
 
+  public static UserPrincipal getUserPrincipal() {
+    return new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
+  }
 }
