@@ -14,14 +14,18 @@ public record UserPrincipal(User user) implements UserDetails {
     return List.of(() -> "read");
   }
 
-  @Override
-  public String getPassword() {
-    return user.password();
+  public Integer getId() {
+    return user.id();
   }
 
   @Override
   public String getUsername() {
     return user.name();
+  }
+
+  @Override
+  public String getPassword() {
+    return user.password();
   }
 
   @Override
