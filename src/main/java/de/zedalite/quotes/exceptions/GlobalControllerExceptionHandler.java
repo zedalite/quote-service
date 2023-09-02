@@ -27,9 +27,9 @@ public class GlobalControllerExceptionHandler {
     return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
   }
 
-  @ExceptionHandler(ResourceAlreadyExitsException.class)
+  @ExceptionHandler({ResourceAlreadyExitsException.class, ResourceAccessException.class})
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  public ErrorDetails handleAlreadyExitsException(final ResourceAlreadyExitsException ex) {
+  public ErrorDetails handleForbiddenException(final RuntimeException ex) {
     return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
   }
 
