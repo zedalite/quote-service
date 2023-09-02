@@ -1,6 +1,10 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.*;
+import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.ErrorDetails;
+import de.zedalite.quotes.data.model.Group;
+import de.zedalite.quotes.data.model.GroupRequest;
+import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,11 +12,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(name = "GroupController", description = "Operations related to groups")
+@Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
 @CrossOrigin(origins = "*")
 public class GroupController {
@@ -37,8 +41,7 @@ public class GroupController {
       @ApiResponse(responseCode = "200", description = "Group created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Group.class))}),
       @ApiResponse(responseCode = "400", description = "Group not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
-  public Group postGroup(@RequestBody @Valid final GroupRequest request) {
-    final var creator = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.create(request, creator);
+  public Group postGroup(@RequestBody @Valid final GroupRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    return service.create(request, principal.getId());
   }
 }

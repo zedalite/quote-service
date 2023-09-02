@@ -10,10 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -25,9 +24,6 @@ class GroupControllerTest {
 
   @Mock
   private GroupService service;
-
-  @Mock
-  private SecurityContextHolder securityContextHolder;
 
   @Test
   @DisplayName("Should get group")
@@ -45,14 +41,12 @@ class GroupControllerTest {
   void shouldPostGroup() {
     final var groupRequest = GroupGenerator.getGroupRequest();
     final var expectedGroup = GroupGenerator.getGroup();
-    final var userPrincipal = UserGenerator.getUserPrincipal();
-    final var authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    final var principal = UserGenerator.getUserPrincipal();
 
-    willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyString());
+    willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyInt());
 
-    instance.postGroup(groupRequest);
+    instance.postGroup(groupRequest, principal);
 
-    then(service).should().create(groupRequest, "tester");
+    then(service).should().create(groupRequest, 1);
   }
 }

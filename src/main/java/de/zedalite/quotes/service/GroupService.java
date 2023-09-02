@@ -5,7 +5,6 @@ import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.exceptions.GroupNotFoundException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.repository.GroupRepository;
-import de.zedalite.quotes.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,11 +12,8 @@ public class GroupService {
 
   private final GroupRepository repository;
 
-  private final UserRepository userRepository;
-
-  public GroupService(final GroupRepository repository, final UserRepository userRepository) {
+  public GroupService(final GroupRepository repository) {
     this.repository = repository;
-    this.userRepository = userRepository;
   }
 
   public Group create(final GroupRequest request) {
@@ -28,10 +24,10 @@ public class GroupService {
     }
   }
 
-  public Group create(final GroupRequest request, final String creator) {
-    final var creatorId = request.creatorId() == null ? userRepository.findByName(creator).id() : request.creatorId();
+  public Group create(final GroupRequest request, final Integer creatorId) {
+    final var creatorIdOrDefault = request.creatorId() == null ? creatorId : request.creatorId();
 
-    return create(request.withCreatorId(creatorId));
+    return create(request.withCreatorId(creatorIdOrDefault));
   }
 
   public Group find(final Integer id) {

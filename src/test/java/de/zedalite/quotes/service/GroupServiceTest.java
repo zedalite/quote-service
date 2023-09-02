@@ -48,7 +48,7 @@ class GroupServiceTest {
     final var expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
 
-    instance.create(groupRequest, "tester");
+    instance.create(groupRequest, 1);
 
     then(groupRepository).should().save(groupRequest);
   }
@@ -61,7 +61,7 @@ class GroupServiceTest {
     final var expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
 
-    instance.create(groupRequest, "tester");
+    instance.create(groupRequest, 1);
 
     then(groupRepository).should().save(groupRequest.withCreatorId(user.id()));
   }
