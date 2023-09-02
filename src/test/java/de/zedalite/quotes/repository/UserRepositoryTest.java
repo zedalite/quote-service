@@ -77,7 +77,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
     final var userId = instance.save(new UserRequest("super", "sUpEr")).id();
     final var request = new UserRequest("mega", "mEgA", "MEGA");
 
-    final var updatedUser = instance.update("super", request);
+    final var updatedUser = instance.update(userId, request);
 
     assertThat(updatedUser.id()).isEqualTo(userId);
     assertThat(updatedUser.password()).isEqualTo("mEgA");

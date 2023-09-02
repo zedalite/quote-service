@@ -5,6 +5,7 @@ import de.zedalite.quotes.data.jooq.tables.records.UsersRecord;
 import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
+import de.zedalite.quotes.exceptions.QuoteNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
@@ -40,7 +41,7 @@ public class UserRepository {
    * @return the saved user
    * @throws UserNotFoundException if the user is not found in the database
    */
-  @CachePut(value = "users", key = "#user.name()", unless = "#result == null")
+  @CachePut(value = "users", key = "#result.id()", unless = "#result == null")
   public User save(final UserRequest user) throws UserNotFoundException {
     final var savedUser = dsl.insertInto(USERS)
       .set(USERS.NAME, user.name())
@@ -48,12 +49,20 @@ public class UserRepository {
       .set(USERS.CREATION_DATE, LocalDateTime.now())
       .set(USERS.DISPLAY_NAME, user.displayName())
       .returning()
-      .fetchOneInto(UsersRecord.class);
-    if (savedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.mapToUser(savedUser);
+      .fetchOptionalInto(UsersRecord.class);
+    if (savedUser.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.mapToUser(savedUser.get());
+  }
+
+  public List<User> findAll() {
+    final var users = dsl.selectFrom(USERS)
+      .fetchInto(UsersRecord.class);
+    if (users.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.mapToUserList(users);
   }
 
   // TODO Cache result or better integrate in user cache
+
   public List<User> findAllByIds(final List<Integer> ids) throws UserNotFoundException {
     final var users = dsl.selectFrom(USERS)
       .where(USERS.ID.in(ids))
@@ -63,30 +72,46 @@ public class UserRepository {
   }
 
   @Cacheable(value = "users", key = "#name", unless = "#result == null")
+  // TODO Cache result or better integrate in user cache -> otherwise sync problem when cacheput
   public User findByName(final String name) {
     final var user = dsl.selectFrom(USERS)
       .where(USERS.NAME.eq(name))
-      .fetchOneInto(UsersRecord.class);
-    if (user == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.mapToUser(user);
+      .fetchOptionalInto(UsersRecord.class);
+    if (user.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.mapToUser(user.get());
   }
 
-  @Cacheable(value = "usernames", key = "#name")
-  public boolean isUsernameAvailable(final String name) {
-    final var count = dsl.selectCount().from(USERS).where(USERS.NAME.eq(name)).fetchAnyInto(Integer.class);
-    return count != null && count == 0;
+  @Cacheable(value = "users", key = "#id", unless = "#result == null")
+  public User findById(final Integer id) throws QuoteNotFoundException {
+    final var user = dsl.selectFrom(USERS)
+      .where(USERS.ID.eq(id))
+      .fetchOptionalInto(UsersRecord.class);
+    if (user.isEmpty()) throw new QuoteNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.mapToUser(user.get());
   }
 
-  @CachePut(value = "users", key = "#name", unless = "#result == null")
-  public User update(final String name, final UserRequest user) throws UserNotFoundException {
+  @CachePut(value = "users", key = "#id", unless = "#result == null")
+  public User update(final Integer id, final UserRequest user) throws UserNotFoundException {
     final var updatedUser = dsl.update(USERS)
       .set(USERS.NAME, user.name())
       .set(USERS.PASSWORD, user.password())
       .set(USERS.DISPLAY_NAME, user.displayName())
-      .where(USERS.NAME.eq(name))
+      .where(USERS.ID.eq(id))
       .returning()
-      .fetchOneInto(UsersRecord.class);
-    if (updatedUser == null) throw new UserNotFoundException(USER_NOT_FOUND);
-    return USER_MAPPER.mapToUser(updatedUser);
+      .fetchOptionalInto(UsersRecord.class);
+    if (updatedUser.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
+    return USER_MAPPER.mapToUser(updatedUser.get());
+  }
+
+  public boolean isUsernameTaken(final String name) {
+    return dsl.fetchExists(dsl.selectFrom(USERS).where(USERS.NAME.eq(name)));
+  }
+
+  public boolean isUsernameAvailable(final String name) {
+    return !dsl.fetchExists(dsl.selectFrom(USERS).where(USERS.NAME.eq(name)));
+  }
+
+  public boolean doesUserNonExist(final Integer id) {
+    return !dsl.fetchExists(dsl.selectFrom(USERS).where(USERS.ID.eq(id)));
   }
 }

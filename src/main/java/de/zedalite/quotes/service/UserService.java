@@ -11,6 +11,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -47,15 +49,34 @@ public class UserService {
 
   public User create(final UserRequest request) throws ResourceAlreadyExitsException {
     try {
-      repository.findByName(request.name());
-      throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
+      if (repository.isUsernameTaken(request.name())) {
+        throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
+      } else {
+        final var encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
+        return repository.save(encodedRequest);
+      }
     } catch (UserNotFoundException ex) {
-      final var encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
-      return repository.save(encodedRequest);
+      throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public User find(final String name) throws ResourceNotFoundException {
+  public List<User> findAll() {
+    try {
+      return repository.findAll();
+    } catch (UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public User find(final Integer id) throws ResourceNotFoundException {
+    try {
+      return repository.findById(id);
+    } catch (UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public User findByName(final String name) throws ResourceNotFoundException {
     try {
       return repository.findByName(name);
     } catch (UserNotFoundException ex) {
@@ -63,21 +84,21 @@ public class UserService {
     }
   }
 
-  public void updatePassword(final String username, final PasswordRequest request) {
+  public void updatePassword(final Integer id, final PasswordRequest request) {
     try {
-      final var user = find(username);
+      final var user = find(id);
       final var userRequest = new UserRequest(user.name(), passwordEncoder.encode(request.password()), user.displayName());
-      repository.update(username, userRequest);
+      repository.update(id, userRequest);
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public void updateDisplayName(final String username, final DisplayNameRequest request) {
+  public void updateDisplayName(final Integer id, final DisplayNameRequest request) {
     try {
-      final var user = find(username);
+      final var user = find(id);
       final var userRequest = new UserRequest(user.name(), user.password(), request.displayName());
-      repository.update(username, userRequest);
+      repository.update(id, userRequest);
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
