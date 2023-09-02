@@ -14,7 +14,6 @@ import de.zedalite.quotes.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -104,7 +103,7 @@ class QuoteServiceTest {
   @DisplayName("Should throw exception when quote not created")
   void shouldThrowExceptionWhenQuoteNotCreated() {
     final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    BDDMockito.willThrow(QuoteNotFoundException.class).given(quoteRepository).save(any(QuoteRequest.class));
+    willThrow(QuoteNotFoundException.class).given(quoteRepository).save(any(QuoteRequest.class));
 
     assertThatCode(() -> instance.create(quoteRequest)).isInstanceOf(ResourceNotFoundException.class);
   }
@@ -324,7 +323,7 @@ class QuoteServiceTest {
     final var expectedQotd = QuoteGenerator.getQuoteOfTheDay();
 
     willReturn(10).given(quoteRepository).count();
-    BDDMockito.willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));
+    willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));
     willReturn(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)).given(quoteRepository).findAllIds();
     willReturn(expectedQotd).given(qotdRepository).save(any(QuoteOfTheDayRequest.class));
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());

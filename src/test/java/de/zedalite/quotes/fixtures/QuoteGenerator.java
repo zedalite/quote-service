@@ -19,8 +19,7 @@ public class QuoteGenerator {
   }
 
   public static QuoteMessage getQuoteMessage() {
-    final var mentions = List.of(new User(12, "mentionedUser", "secret555", "mentionedUser", LocalDateTime.MIN));
-    return QUOTE_MAPPER.mapToQuoteMessage(getQuote(), mentions);
+    return QUOTE_MAPPER.mapToQuoteMessage(getQuote(), getMentions());
   }
 
   public static List<Quote> getQuotes() {
@@ -31,7 +30,15 @@ public class QuoteGenerator {
     );
   }
 
+  public static List<QuoteMessage> getQuoteMessages() {
+    return getQuotes().stream().map(quote -> QUOTE_MAPPER.mapToQuoteMessage(quote, getMentions())).toList();
+  }
+
   public static QuoteOfTheDay getQuoteOfTheDay() {
     return new QuoteOfTheDay(1, 1, LocalDateTime.now());
+  }
+
+  private static List<User> getMentions() {
+    return List.of(new User(12, "mentionedUser", "secret555", "mentionedUser", LocalDateTime.MIN));
   }
 }

@@ -122,6 +122,7 @@ public class QuoteRepository {
   public Quote findById(final Integer id) throws QuoteNotFoundException {
     final var quote = dsl.selectFrom(QUOTES)
       .where(QUOTES.ID.eq(id))
+      // TODO use fetchOptionalInto
       .fetchOneInto(QuotesRecord.class);
     if (quote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);
     return QUOTE_MAPPER.mapToQuote(quote);
@@ -179,7 +180,7 @@ public class QuoteRepository {
   /**
    * Maps a field and order to a corresponding JOOQ SortField.
    *
-   * @param field The field to map. Valid values are {@code SortField.AUTHOR}, {@code SortField.TEXT}, {@code SortField.DATETIME}.
+   * @param field The field to map. Valid values are {@code SortField.AUTHOR}, {@code SortField.TEXT}, {@code SortField.CREATION_DATE}.
    * @param order The order to map. Valid values are {@code SortOrder.ASC}, {@code SortOrder.DESC}.
    * @return The JOOQ SortField corresponding to the field and order.
    */

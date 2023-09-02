@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "QuoteController", description = "Operations related to quotes")
+@Tag(name = "Quotes", description = "Operations related to quotes")
 @RequestMapping("quotes")
 @CrossOrigin(origins = "*")
 public class QuoteController {
@@ -29,7 +29,7 @@ public class QuoteController {
       @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
       @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @GetMapping()
-  public List<QuoteMessage> getQuotes(@RequestParam(defaultValue = "DATETIME") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
+  public List<QuoteMessage> getQuotes(@RequestParam(defaultValue = "CREATION_DATE") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
     return service.findAll(field, order);
   }
 

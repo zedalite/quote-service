@@ -10,7 +10,6 @@ import de.zedalite.quotes.service.QuoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,7 +49,7 @@ class QuoteControllerTest {
   @DisplayName("Should get quote")
   void shouldGetQuote() {
     final var expectedQuote = QuoteGenerator.getQuoteMessage();
-    BDDMockito.willReturn(expectedQuote).given(service).find(anyInt());
+    willReturn(expectedQuote).given(service).find(anyInt());
 
     instance.getQuote(1);
 
@@ -72,7 +71,7 @@ class QuoteControllerTest {
   @DisplayName("Should get random quote")
   void shouldGetRandomQuote() {
     final var expectedQuote = QuoteGenerator.getQuoteMessage();
-    BDDMockito.willReturn(expectedQuote).given(service).findRandom();
+    willReturn(expectedQuote).given(service).findRandom();
 
     instance.getRandomQuote();
 
@@ -83,7 +82,7 @@ class QuoteControllerTest {
   @DisplayName("Should get quote of the day")
   void shouldGetQuoteOfTheDay() {
     final var expectedQuote = QuoteGenerator.getQuoteMessage();
-    BDDMockito.willReturn(expectedQuote).given(service).findQuoteOfTheDay();
+    willReturn(expectedQuote).given(service).findQuoteOfTheDay();
 
     instance.getQuoteOfTheDay();
 
@@ -108,7 +107,7 @@ class QuoteControllerTest {
     final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 
-    BDDMockito.willReturn(expectedQuote).given(service).create(any(QuoteRequest.class), anyString());
+    willReturn(expectedQuote).given(service).create(any(QuoteRequest.class), anyString());
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     instance.postQuote(quoteRequest);
@@ -124,7 +123,7 @@ class QuoteControllerTest {
     final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
     final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
 
-    BDDMockito.willReturn(expectedQuote).given(service).update(anyInt(), any(QuoteRequest.class), anyString());
+    willReturn(expectedQuote).given(service).update(anyInt(), any(QuoteRequest.class), anyString());
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     instance.putQuote(1, quoteRequest);
@@ -136,7 +135,7 @@ class QuoteControllerTest {
   @DisplayName("Should delete quote")
   void shouldDeleteQuote() {
     final var expectedQuote = QuoteGenerator.getQuote();
-    BDDMockito.willReturn(expectedQuote).given(service).delete(anyInt());
+    willReturn(expectedQuote).given(service).delete(anyInt());
 
     instance.deleteQuote(1);
 
