@@ -1,10 +1,10 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.AuthRequest;
+import de.zedalite.quotes.data.model.AuthResponse;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.data.model.AuthResponse;
+import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -30,9 +28,6 @@ class AuthControllerTest {
 
   @Mock
   private UserService service;
-
-  @Mock
-  private UserDetailsService userDetailsService;
 
   @Test
   @DisplayName("Should signup user")
@@ -61,15 +56,12 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should refresh user token")
   void shouldRefreshUserToken() {
-    final var expectedUserDetails = new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
     final var expectedUserResponse = new AuthResponse("uezhag");
+    final var principal = UserGenerator.getUserPrincipal();
 
     willReturn(expectedUserResponse).given(service).refreshToken(anyString());
 
-    final var authentication = new UsernamePasswordAuthenticationToken(expectedUserDetails, null, expectedUserDetails.getAuthorities());
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    instance.refresh();
+    instance.refresh(principal);
 
     then(service).should().refreshToken("tester");
   }

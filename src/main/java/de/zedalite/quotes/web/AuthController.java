@@ -1,18 +1,19 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.AuthRequest;
-import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.data.model.AuthResponse;
+import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(name = "AuthController", description = "Operations related to authentication")
+@Tag(name = "Authentication", description = "Operations related to authentication")
 @RequestMapping("auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
@@ -51,8 +52,7 @@ public class AuthController {
       @ApiResponse(responseCode = "401", description = "Refresh failed")
     })
   @GetMapping("refresh")
-  public AuthResponse refresh() {
-    final var username = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.refreshToken(username);
+  public AuthResponse refresh(@AuthenticationPrincipal UserPrincipal principal) {
+    return service.refreshToken(principal.getUsername());
   }
 }
