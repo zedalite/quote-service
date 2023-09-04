@@ -9,12 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
+@TestPropertySource(value = "classpath:test-no-cache.properties")
 class UserRepositoryTest extends TestEnvironmentProvider {
 
   @Autowired
@@ -39,6 +43,24 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
+  @DisplayName("Should find all users")
+  void shouldFindAllUsers() {
+    final var users = instance.findAll();
+
+    assertThat(users).hasSizeGreaterThanOrEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("Should find all by ids")
+  void shouldFindAllByIds() {
+    final var id = instance.findByName("tester").id();
+    final var users = instance.findAllByIds(List.of(id));
+
+    assertThat(users).hasSize(1);
+    assertThat(users.get(0).name()).isEqualTo("tester");
+  }
+
+  @Test
   @DisplayName("Should find user by name")
   void shouldFindUserByName() {
     final var user = instance.findByName("tester");
@@ -51,6 +73,47 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should throw exception when user not found")
   void shouldThrowExceptionWhenUserNotFound() {
     assertThatCode(() -> instance.findByName("invalidName")).isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find user by id")
+  void shouldFindUserById() {
+    final var id = instance.findByName("tester").id();
+    final var user = instance.findById(id);
+
+    assertThat(user).isNotNull();
+    assertThat(user.name()).isEqualTo("tester");
+  }
+
+  @Test
+  @DisplayName("Should update user")
+  void shouldUpdateUser() {
+    final var userId = instance.save(new UserRequest("super", "sUpEr")).id();
+    final var request = new UserRequest("mega", "mEgA", "MEGA");
+
+    final var updatedUser = instance.update(userId, request);
+
+    assertThat(updatedUser.id()).isEqualTo(userId);
+    assertThat(updatedUser.password()).isEqualTo("mEgA");
+    assertThat(updatedUser.displayName()).isEqualTo("MEGA");
+  }
+
+  @Test
+  @DisplayName("Should return true when username is taken")
+  void shouldReturnTrueWhenUsernameIsTaken() {
+    instance.save(new UserRequest("definitelyTaken", "taken"));
+
+    final var isTaken = instance.isUsernameTaken("definitelyTaken");
+
+    assertThat(isTaken).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should return false when username is free")
+  void shouldReturnFalseWhenUsernameIsFree() {
+    final var isTaken = instance.isUsernameTaken("freeUsername");
+
+    assertThat(isTaken).isFalse();
   }
 
   @Test
@@ -72,15 +135,18 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
-  @DisplayName("Should update user")
-  void shouldUpdateUser() {
-    final var userId = instance.save(new UserRequest("super", "sUpEr")).id();
-    final var request = new UserRequest("mega", "mEgA", "MEGA");
+  @DisplayName("Should return true when user non exist")
+  void shouldReturnTrueWhenUserNonExist() {
+    final var isNonExist = instance.doesUserNonExist(9876);
 
-    final var updatedUser = instance.update(userId, request);
+    assertThat(isNonExist).isTrue();
+  }
 
-    assertThat(updatedUser.id()).isEqualTo(userId);
-    assertThat(updatedUser.password()).isEqualTo("mEgA");
-    assertThat(updatedUser.displayName()).isEqualTo("MEGA");
+  @Test
+  @DisplayName("Should return false when user exist")
+  void shouldReturnFalseWhenUserExist() {
+    final var isNonExist = instance.doesUserNonExist(1);
+
+    assertThat(isNonExist).isFalse();
   }
 }

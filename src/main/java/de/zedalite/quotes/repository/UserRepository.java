@@ -5,7 +5,6 @@ import de.zedalite.quotes.data.jooq.tables.records.UsersRecord;
 import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.exceptions.QuoteNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
@@ -82,11 +81,11 @@ public class UserRepository {
   }
 
   @Cacheable(value = "users", key = "#id", unless = "#result == null")
-  public User findById(final Integer id) throws QuoteNotFoundException {
+  public User findById(final Integer id) {
     final var user = dsl.selectFrom(USERS)
       .where(USERS.ID.eq(id))
       .fetchOptionalInto(UsersRecord.class);
-    if (user.isEmpty()) throw new QuoteNotFoundException(USER_NOT_FOUND);
+    if (user.isEmpty()) throw new UserNotFoundException(USER_NOT_FOUND);
     return USER_MAPPER.mapToUser(user.get());
   }
 
