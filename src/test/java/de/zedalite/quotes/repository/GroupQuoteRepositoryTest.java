@@ -44,12 +44,14 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
 
   private Integer groupId;
 
+  private Quote quote;
+
 
   @BeforeAll
   void setup() {
     final var userId = userRepository.save(new UserRequest("qg", "test")).id();
     groupId = groupRepository.save(new GroupRequest("quoter-group", "Quoter Group", LocalDateTime.now(), userId)).id();
-    instance.save(groupId, QuoteGenerator.getQuoteRequest());
+    quote = instance.save(groupId, QuoteGenerator.getQuoteRequest());
   }
 
   @Test
@@ -112,9 +114,9 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find random group quotes")
   void shouldFindRandomGroupQuotes() {
-    final var quotes = instance.findRandoms(1, 3);
+    final var quotes = instance.findRandoms(1, 8);
 
-    assertThat(quotes).hasSizeGreaterThanOrEqualTo(1);
+    assertThat(quotes).contains(quote);
   }
 
   @Test
