@@ -10,6 +10,7 @@ import de.zedalite.quotes.data.model.SortField;
 import de.zedalite.quotes.data.model.SortOrder;
 import de.zedalite.quotes.exceptions.QuoteNotFoundException;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -65,7 +66,7 @@ public class GroupQuoteRepository {
     return quote.get();
   }
 
-  // TODO implement caching
+  // TODO implement caching, optimise with single caching or learn how to manipulate the cache to insert multiple values
   public List<Quote> findAll(final Integer id, final SortField field, final SortOrder order) {
     final var quotes = dsl.select(QUOTES)
       .from(GROUP_QUOTES.join(QUOTES).on(GROUP_QUOTES.QUOTE_ID.eq(QUOTES.ID)))
@@ -76,23 +77,15 @@ public class GroupQuoteRepository {
     return quotes;
   }
 
-  public List<Quote> findAllByIds(final Integer id, final List<Integer> quoteIds) throws QuoteNotFoundException {
+  public List<Quote> findRandoms(final Integer id, final Integer quantity) {
     final var quotes = dsl.select(QUOTES)
       .from(GROUP_QUOTES.join(QUOTES).on(GROUP_QUOTES.QUOTE_ID.eq(QUOTES.ID)))
       .where(GROUP_QUOTES.GROUP_ID.eq(id))
-      .and(QUOTES.ID.in(quoteIds))
+      .orderBy(DSL.rand())
+      .limit(quantity)
       .fetchInto(Quote.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(GROUP_QUOTE_NOT_FOUND);
     return quotes;
-  }
-
-  public List<Integer> findAllIds(final Integer id) {
-    final var quotesIds = dsl.select(GROUP_QUOTES.QUOTE_ID)
-      .from(GROUP_QUOTES)
-      .where(GROUP_QUOTES.GROUP_ID.eq(id))
-      .fetchInto(Integer.class);
-    if (quotesIds.isEmpty()) throw new QuoteNotFoundException(GROUP_QUOTE_NOT_FOUND);
-    return quotesIds;
   }
 
   public Integer count(final Integer id) {

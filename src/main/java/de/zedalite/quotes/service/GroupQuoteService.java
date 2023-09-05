@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,15 +77,6 @@ public class GroupQuoteService {
     }
   }
 
-  public List<QuoteMessage> findAll(final Integer id, final List<Integer> quoteIds) {
-    try {
-      final var matchedQuotes = repository.findAllByIds(id, quoteIds);
-      return getQuoteMessages(matchedQuotes);
-    } catch (QuoteNotFoundException ex) {
-      throw new ResourceNotFoundException(ex.getMessage());
-    }
-  }
-
   public QuoteMessage find(final Integer id, final Integer quoteId) {
     try {
       final var quote = repository.findById(id, quoteId);
@@ -97,24 +86,17 @@ public class GroupQuoteService {
     }
   }
 
-  public Integer count(final Integer id) {
-    return repository.count(id);
-  }
-
-  // TODO optimise with single caching or learn how to manipulate the cache to insert multiple values
   public List<QuoteMessage> findRandoms(final Integer id, final Integer quantity) {
     try {
-      final var availableIds = repository.findAllIds(id);
-      final var randIdxs = new SecureRandom().ints(quantity, 0, availableIds.size()).boxed().toList();
-      final var quotes = findAll(id, randIdxs.stream().map(availableIds::get).toList());
-      Collections.shuffle(new ArrayList<>(quotes));
-      return quotes;
+      return getQuoteMessages(repository.findRandoms(id, quantity));
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  // TODO move methods to helper class?
+  public Integer count(final Integer id) {
+    return repository.count(id);
+  }
 
   private QuoteMessage getQuoteMessage(final Quote quote) {
     final var mentions = getMentions(StringUtils.extractUserIds(quote.text()));

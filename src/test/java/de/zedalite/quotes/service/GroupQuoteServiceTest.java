@@ -15,11 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static de.zedalite.quotes.data.model.SortField.CREATION_DATE;
 import static de.zedalite.quotes.data.model.SortOrder.DESC;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
@@ -119,25 +118,6 @@ class GroupQuoteServiceTest {
   }
 
   @Test
-  @DisplayName("Should find all group quotes with given Ids")
-  void shouldFindAllGroupQuotesWithGivenIds() {
-    final var expectedQuotes = QuoteGenerator.getQuotes();
-    willReturn(expectedQuotes).given(repository).findAllByIds(1, List.of(4, 7));
-
-    final var quotes = instance.findAll(1, List.of(4, 7));
-
-    assertThat(quotes).hasSize(expectedQuotes.size());
-  }
-
-  @Test
-  @DisplayName("Should throw exception when group quotes with given Ids not found")
-  void shouldThrowExceptionWhenGroupQuotesWithGivenIdsNotFound() {
-    willThrow(QuoteNotFoundException.class).given(repository).findAllByIds(1, List.of(4));
-
-    assertThatCode(() -> instance.findAll(1, List.of(4))).isInstanceOf(ResourceNotFoundException.class);
-  }
-
-  @Test
   @DisplayName("Should find group quote")
   void shouldFindGroupQuote() {
     final var expectedQuote = QuoteGenerator.getQuote();
@@ -160,9 +140,7 @@ class GroupQuoteServiceTest {
   @DisplayName("Should find random group quotes")
   void shouldFindRandomGroupQuotes() {
     final var expectedQuotes = QuoteGenerator.getQuotes();
-    final var quoteIds = List.of(1, 2, 3);
-    willReturn(quoteIds).given(repository).findAllIds(1);
-    willReturn(expectedQuotes).given(repository).findAllByIds(anyInt(), anyList());
+    willReturn(expectedQuotes).given(repository).findRandoms(1, 3);
 
     final var quotes = instance.findRandoms(1, 3);
 
@@ -172,7 +150,7 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should throw exception when random group quotes not found")
   void shouldThrowExceptionWhenRandomGroupQuotesNotFound() {
-    willThrow(QuoteNotFoundException.class).given(repository).findAllIds(1);
+    willThrow(QuoteNotFoundException.class).given(repository).findRandoms(1, 3);
 
     assertThatCode(() -> instance.findRandoms(1, 3)).isInstanceOf(ResourceNotFoundException.class);
   }

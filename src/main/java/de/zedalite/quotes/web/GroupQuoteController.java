@@ -3,7 +3,6 @@ package de.zedalite.quotes.web;
 import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.service.GroupQuoteService;
-import de.zedalite.quotes.service.GroupUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class GroupQuoteController {
 
   private final GroupQuoteService service;
 
-  public GroupQuoteController(final GroupQuoteService service, final GroupUserService groupUserService) {
+  public GroupQuoteController(final GroupQuoteService service) {
     this.service = service;
   }
 
@@ -87,7 +87,7 @@ public class GroupQuoteController {
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/randoms")
   public List<QuoteMessage> getRandomQuotes(@PathVariable("id") final Integer id,
-                                            @RequestParam(defaultValue = "8") final Integer quantity) {
+                                            @RequestParam(defaultValue = "8") @PositiveOrZero final Integer quantity) {
     return service.findRandoms(id, quantity);
   }
 }

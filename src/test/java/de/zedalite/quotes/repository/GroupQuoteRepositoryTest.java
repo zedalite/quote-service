@@ -17,7 +17,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.List;
 
 import static de.zedalite.quotes.data.model.SortField.*;
 import static de.zedalite.quotes.data.model.SortOrder.ASC;
@@ -50,6 +49,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   void setup() {
     final var userId = userRepository.save(new UserRequest("qg", "test")).id();
     groupId = groupRepository.save(new GroupRequest("quoter-group", "Quoter Group", LocalDateTime.now(), userId)).id();
+    instance.save(groupId, QuoteGenerator.getQuoteRequest());
   }
 
   @Test
@@ -110,23 +110,11 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
-  @DisplayName("Should find all group quotes by given ids")
-  void shouldFindAllGroupQuotesByGivenIds() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var savedQuote = instance.save(groupId, quoteRequest);
+  @DisplayName("Should find random group quotes")
+  void shouldFindRandomGroupQuotes() {
+    final var quotes = instance.findRandoms(1, 3);
 
-    final var quotes = instance.findAllByIds(groupId, List.of(savedQuote.id()));
-
-    assertThat(quotes).hasSize(1);
-    assertThat(quotes.get(0).id()).isEqualTo(savedQuote.id());
-  }
-
-  @Test
-  @DisplayName("Should find all group quotes ids")
-  void shouldFindAllGroupQuotesIds() {
-    final var allIds = instance.findAllIds(groupId);
-
-    assertThat(allIds).hasSizeGreaterThanOrEqualTo(1);
+    assertThat(quotes).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test
