@@ -77,7 +77,7 @@ public class QuoteService {
 
       final var notification = new PushNotification(
         "New Quote",
-        quote.author() + " says " + quote.truncateText() + "...",
+        quote.author() + " says " + quote.text() + "...",
         Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id())));
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
 

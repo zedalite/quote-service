@@ -41,9 +41,9 @@ public class GroupQuoteService {
   }
 
   public QuoteMessage create(final Integer id, final QuoteRequest request) {
-    Quote quote = null;
+    QuoteMessage quote = null;
     try {
-      quote = repository.save(id, request);
+      quote = getQuoteMessage(repository.save(id, request));
 
       // TODO extract notification build?
       final var notification = new PushNotification(
@@ -53,10 +53,10 @@ public class GroupQuoteService {
       // TODO send to specific group topic or user notification token
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
 
-      return getQuoteMessage(quote);
+      return quote;
     } catch (NotifierException ex) {
       LOGGER.warn("PushNotification for quote creation failed");
-      return getQuoteMessage(quote);
+      return quote;
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
