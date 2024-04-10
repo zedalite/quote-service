@@ -276,7 +276,7 @@ public class QuoteService {
       qotd = qotdRepository.findByDate(LocalDate.now());
     } catch (final QotdNotFoundException ex) {
       final var quoteId = findRandomDayDependent().id();
-      qotd = qotdRepository.save(new QuoteOfTheDayRequest(quoteId, LocalDateTime.now()));
+      qotd = qotdRepository.save(new OldQuoteOfTheDayRequest(quoteId, LocalDateTime.now()));
     }
 
     return find(qotd.quoteId());

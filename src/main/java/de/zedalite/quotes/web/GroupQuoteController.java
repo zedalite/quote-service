@@ -4,7 +4,6 @@ import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.service.GroupQuoteService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,10 +29,6 @@ public class GroupQuoteController {
   }
 
   @Operation(summary = "Get all group quotes",
-    parameters = {
-      @Parameter(name = "field", schema = @Schema(defaultValue = "CREATION_DATE")),
-      @Parameter(name = "order", schema = @Schema(defaultValue = "DESC"))
-    },
     responses = {
       @ApiResponse(responseCode = "200", description = "Group quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = QuoteMessage.class))}),
       @ApiResponse(responseCode = "403", description = "Principal is no group member", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))}),

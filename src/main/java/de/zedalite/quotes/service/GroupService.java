@@ -7,6 +7,8 @@ import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GroupService {
 
@@ -33,6 +35,22 @@ public class GroupService {
   public Group find(final Integer id) {
     try {
       return repository.findById(id);
+    } catch (GroupNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public List<Group> findAll() {
+    try {
+      return repository.findAll();
+    } catch (GroupNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public List<Integer> findAllIds() {
+    try {
+      return repository.findAllIds();
     } catch (GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }

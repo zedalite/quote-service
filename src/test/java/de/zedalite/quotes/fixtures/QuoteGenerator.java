@@ -3,6 +3,7 @@ package de.zedalite.quotes.fixtures;
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class QuoteGenerator {
   }
 
   public static QuoteOfTheDay getQuoteOfTheDay() {
-    return new QuoteOfTheDay(1, 1, LocalDateTime.now());
+    return new QuoteOfTheDay(1, 1, LocalDate.now());
   }
 
   private static List<User> getMentions() {

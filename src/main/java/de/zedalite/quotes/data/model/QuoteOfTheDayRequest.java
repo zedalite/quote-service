@@ -7,7 +7,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.lang.NonNull;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @JsonSerialize
 @JsonDeserialize
@@ -20,7 +20,7 @@ public record QuoteOfTheDayRequest(
 
   @NonNull
   @PastOrPresent
-  LocalDateTime creationDate
+  LocalDate creationDate
 
 ) {
 }

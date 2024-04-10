@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
-import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
+import de.zedalite.quotes.data.model.OldQuoteOfTheDayRequest;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.exceptions.QotdNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,13 +32,13 @@ class QuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
   @BeforeAll
   void setup() {
     exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null, null)).id();
-    instance.save(new QuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now()));
+    instance.save(new OldQuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now()));
   }
 
   @Test
   @DisplayName("Should save quote of the day")
   void shouldSaveQuoteOfTheDay() {
-    final var qotd = new QuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now());
+    final var qotd = new OldQuoteOfTheDayRequest(exampleQuoteId, LocalDateTime.now());
 
     final var savedQotd = instance.save(qotd);
 

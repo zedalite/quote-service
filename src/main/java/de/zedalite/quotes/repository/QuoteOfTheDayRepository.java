@@ -4,7 +4,7 @@ import de.zedalite.quotes.data.jooq.tables.QuotesOfTheDay;
 import de.zedalite.quotes.data.jooq.tables.records.QuotesOfTheDayRecord;
 import de.zedalite.quotes.data.mapper.QuoteOfTheDayMapper;
 import de.zedalite.quotes.data.model.QuoteOfTheDay;
-import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
+import de.zedalite.quotes.data.model.OldQuoteOfTheDayRequest;
 import de.zedalite.quotes.exceptions.QotdNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
@@ -42,10 +42,10 @@ public class QuoteOfTheDayRepository {
    * @throws QotdNotFoundException If the saved QOTD is null.
    */
   @CachePut(value = "qotd", key = "#request.creationDate().toLocalDate().atStartOfDay()", unless = "#result == null")
-  public QuoteOfTheDay save(final QuoteOfTheDayRequest request) throws QotdNotFoundException {
+  public QuoteOfTheDay save(final OldQuoteOfTheDayRequest request) throws QotdNotFoundException {
     final var savedQotd = dsl.insertInto(QOTD)
       .set(QOTD.QUOTE_ID, request.quoteId())
-      .set(QOTD.CREATION_DATE, request.creationDate())
+      .set(QOTD.CREATION_DATE, request.creationDate().toLocalDate())
       .returning()
       .fetchOneInto(QuotesOfTheDayRecord.class);
     if (savedQotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
@@ -62,7 +62,7 @@ public class QuoteOfTheDayRepository {
   @Cacheable(value = "qotd", key = "#date.atStartOfDay()", unless = "#result == null")
   public QuoteOfTheDay findByDate(final LocalDate date) throws QotdNotFoundException {
     final var qotd = dsl.selectFrom(QOTD)
-      .where(QOTD.CREATION_DATE.between(date.atStartOfDay(), date.atTime(23, 59, 59)))
+      .where(QOTD.CREATION_DATE.eq(date))
       .fetchOneInto(QuotesOfTheDayRecord.class);
     if (qotd == null) throw new QotdNotFoundException(QOTD_NOT_FOUND);
     return QOTD_MAPPER.mapToQuoteOfTheDay(qotd);

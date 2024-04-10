@@ -12,6 +12,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Provides methods for interacting with the database to perform CRUD operations on quotes.
  */
@@ -50,5 +52,20 @@ public class GroupRepository {
       .fetchOptionalInto(GroupsRecord.class);
     if (group.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
     return GROUP_MAPPER.mapToGroup(group.get());
+  }
+
+  public List<Group> findAll() {
+    final List<GroupsRecord> groups = dsl.selectFrom(GROUPS)
+      .fetchInto(GroupsRecord.class);
+    if (groups.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
+    return GROUP_MAPPER.mapToGroups(groups);
+  }
+
+  public List<Integer> findAllIds() {
+    final List<Integer> ids = dsl.select(GROUPS.ID)
+      .from(GROUPS)
+      .fetchInto(Integer.class);
+    if (ids.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
+    return ids;
   }
 }

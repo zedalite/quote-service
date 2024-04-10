@@ -325,7 +325,7 @@ class QuoteServiceTest {
     willReturn(10).given(quoteRepository).count();
     willThrow(QotdNotFoundException.class).given(qotdRepository).findByDate(any(LocalDate.class));
     willReturn(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)).given(quoteRepository).findAllIds();
-    willReturn(expectedQotd).given(qotdRepository).save(any(QuoteOfTheDayRequest.class));
+    willReturn(expectedQotd).given(qotdRepository).save(any(OldQuoteOfTheDayRequest.class));
     willReturn(expectedQuote).given(quoteRepository).findById(anyInt());
 
     final var quote = instance.findQuoteOfTheDay();
