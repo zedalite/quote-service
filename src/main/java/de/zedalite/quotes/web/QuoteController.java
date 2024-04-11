@@ -1,17 +1,17 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.*;
+import de.zedalite.quotes.data.model.ErrorDetails;
+import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.service.QuoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Quotes", description = "Operations related to quotes")
@@ -24,51 +24,6 @@ public class QuoteController {
     this.service = service;
   }
 
-  @Operation(summary = "Get all quotes",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping()
-  public List<QuoteMessage> getQuotes(@RequestParam(defaultValue = "CREATION_DATE") @Valid final SortField field, @RequestParam(defaultValue = "DESC") @Valid final SortOrder order) {
-    return service.findAll(field, order);
-  }
-
-  @Operation(summary = "Get a quote by its id",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping("{id}")
-  public QuoteMessage getQuote(@PathVariable("id") final Integer id) {
-    return service.find(id);
-  }
-
-  @Operation(summary = "Get a random quotes",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping("randoms")
-  public List<QuoteMessage> getRandomQuotes(@RequestParam(defaultValue = "8") final Integer quantity) {
-    return service.findRandoms(quantity);
-  }
-
-  @Operation(summary = "Get a random quote",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping("random")
-  public QuoteMessage getRandomQuote() {
-    return service.findRandom();
-  }
-
-  @Operation(summary = "Get quote of the day",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping("qotd")
-  public QuoteMessage getQuoteOfTheDay() {
-    return service.findQuoteOfTheDay();
-  }
-
   @Operation(summary = "Get the number of saved quotes",
     responses = {
       @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
@@ -76,35 +31,5 @@ public class QuoteController {
   @GetMapping("count")
   public Integer getQuotesCount() {
     return service.count();
-  }
-
-  @Operation(summary = "Create a new quote",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "400", description = "Quote not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
-  @PostMapping()
-  public Quote postQuote(@RequestBody @Valid final QuoteRequest request) {
-    final var creator = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.create(request, creator);
-  }
-
-  @Operation(summary = "Edit a existing quote",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote edited", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "400", description = "Quote not edited", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))}),
-      @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @PutMapping("{id}")
-  public Quote putQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request) {
-    final var creator = SecurityContextHolder.getContext().getAuthentication().getName();
-    return service.update(id, request, creator);
-  }
-
-  @Operation(summary = "Delete a existing quote",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Quote deleted", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quote not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @DeleteMapping("{id}")
-  public Quote deleteQuote(@PathVariable("id") final Integer id) {
-    return service.delete(id);
   }
 }

@@ -17,7 +17,7 @@ class UserMapperTest {
   @Test
   @DisplayName("Should map userRecord to user")
   void shouldMapUserRecordToUser() {
-    final var userRec = new UsersRecord(0, "user", "password", LocalDateTime.MIN, "USER");
+    final var userRec = new UsersRecord(0, "user", "password", "USER", LocalDateTime.MIN);
 
     final var user = instance.mapToUser(userRec);
 
