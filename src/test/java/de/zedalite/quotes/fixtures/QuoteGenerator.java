@@ -1,9 +1,11 @@
 package de.zedalite.quotes.fixtures;
 
 import de.zedalite.quotes.data.mapper.QuoteMapper;
-import de.zedalite.quotes.data.model.*;
+import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.QuoteMessage;
+import de.zedalite.quotes.data.model.QuoteRequest;
+import de.zedalite.quotes.data.model.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,10 +35,6 @@ public class QuoteGenerator {
 
   public static List<QuoteMessage> getQuoteMessages() {
     return getQuotes().stream().map(quote -> QUOTE_MAPPER.mapToQuoteMessage(quote, getMentions())).toList();
-  }
-
-  public static QuoteOfTheDay getQuoteOfTheDay() {
-    return new QuoteOfTheDay(1, 1, LocalDate.now());
   }
 
   private static List<User> getMentions() {

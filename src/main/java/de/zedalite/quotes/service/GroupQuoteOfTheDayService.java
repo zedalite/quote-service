@@ -36,14 +36,14 @@ public class GroupQuoteOfTheDayService {
     this.userRepository = userRepository;
   }
 
-  public QuoteMessage findQuoteOfTheDay(final Integer id) {
-    if (groupQuoteRepository.count(1) < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
+  public QuoteMessage findQuoteOfTheDay(final Integer id) throws  ResourceNotFoundException {
+    if (groupQuoteRepository.count(id) < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
 
     Quote qotd;
     try {
       qotd = repository.findByDate(id, LocalDate.now());
     } catch (final QotdNotFoundException ex) {
-      qotd = groupQuoteRepository.findRandoms(id, 1).get(0);
+      qotd = groupQuoteRepository.findRandoms(id, 1).getFirst();
       repository.save(id, new QuoteOfTheDayRequest(qotd.id(), LocalDate.now()));
     }
 

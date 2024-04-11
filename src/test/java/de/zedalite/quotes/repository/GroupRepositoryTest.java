@@ -1,6 +1,7 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.exceptions.GroupNotFoundException;
@@ -12,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,5 +65,21 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should throw exception finding group by non-existing id")
   void shouldThrowExceptionFindingGroupByNonExistingId() {
     assertThatCode(() -> instance.findById(999)).isInstanceOf(GroupNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find all groups")
+  void shouldFindAllGroups() {
+    final List<Group> users = instance.findAll();
+
+    assertThat(users).hasSizeGreaterThanOrEqualTo(2);
+  }
+
+  @Test
+  @DisplayName("Should find all groups ids")
+  void shouldFindAllGroupsIds() {
+    final List<Integer> ids = instance.findAllIds();
+
+    assertThat(ids).hasSizeGreaterThanOrEqualTo(2);
   }
 }

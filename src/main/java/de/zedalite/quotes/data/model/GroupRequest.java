@@ -21,6 +21,7 @@ public record GroupRequest(
   @PastOrPresent
   LocalDateTime creationDate,
 
+  //TODO make optional instead of nullable?
   @PositiveOrZero
   Integer creatorId
 

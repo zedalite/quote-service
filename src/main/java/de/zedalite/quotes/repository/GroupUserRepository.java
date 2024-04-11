@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class GroupUserRepository {
@@ -28,7 +29,7 @@ public class GroupUserRepository {
 
   @CachePut(value = "group_users", key = "{#id,#userId}", unless = "#result == false")
   public Boolean save(final Integer id, final Integer userId) {
-    final var isSaved = dsl.insertInto(GROUP_USERS)
+    final boolean isSaved = dsl.insertInto(GROUP_USERS)
       .set(GROUP_USERS.GROUP_ID, id)
       .set(GROUP_USERS.USER_ID, userId)
       .execute() == 1;
@@ -38,7 +39,7 @@ public class GroupUserRepository {
 
   @Cacheable(value = "group_users", key = "{#id,#userId}", unless = "#result = null")
   public User findById(final Integer id, final Integer userId) {
-    final var user = dsl.select(USERS)
+    final Optional<User> user = dsl.select(USERS)
       .from(GROUP_USERS.join(USERS).on(GROUP_USERS.USER_ID.eq(USERS.ID)))
       .where(GROUP_USERS.GROUP_ID.eq(id)
         .and(GROUP_USERS.USER_ID.eq(userId)))
@@ -48,7 +49,7 @@ public class GroupUserRepository {
   }
 
   public List<User> findAll(final Integer id) {
-    final var users = dsl.select(USERS)
+    final List<User> users = dsl.select(USERS)
       .from(GROUP_USERS.join(USERS).on(GROUP_USERS.USER_ID.eq(USERS.ID)))
       .where(GROUP_USERS.GROUP_ID.eq(id))
       .fetchInto(User.class);

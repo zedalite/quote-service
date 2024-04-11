@@ -114,7 +114,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find random group quotes")
   void shouldFindRandomGroupQuotes() {
-    final var quotes = instance.findRandoms(1, 8);
+    final var quotes = instance.findRandoms(groupId, 8);
 
     assertThat(quotes).contains(quote);
   }

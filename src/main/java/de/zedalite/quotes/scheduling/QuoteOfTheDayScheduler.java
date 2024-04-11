@@ -1,5 +1,6 @@
 package de.zedalite.quotes.scheduling;
 
+import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import de.zedalite.quotes.service.GroupService;
 import org.slf4j.Logger;
@@ -32,8 +33,19 @@ public class QuoteOfTheDayScheduler {
    */
   @Scheduled(cron = "@daily")
   public void resetQuoteOfTheDay() {
+    LOGGER.info("Resetting quotes of the day...");
     emptyQotdCache();
-    groupService.findAllIds().forEach(groupQuoteOfTheDayService::findQuoteOfTheDay);
+    groupService.findAllIds();
+
+    for (final Integer groupId : groupService.findAllIds()) {
+      try {
+        groupQuoteOfTheDayService.findQuoteOfTheDay(groupId);
+      } catch (final ResourceNotFoundException ignored) {
+        LOGGER.warn("Quotes of the day reset not reset, groupId={}", groupId);
+      }
+    }
+    LOGGER.info("Quotes of the day reset.");
+
   }
 
   /**

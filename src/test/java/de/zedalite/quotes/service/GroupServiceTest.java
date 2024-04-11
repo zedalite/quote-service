@@ -1,12 +1,13 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exceptions.GroupNotFoundException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupRepository;
-import de.zedalite.quotes.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.*;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,9 +29,6 @@ class GroupServiceTest {
 
   @Mock
   private GroupRepository groupRepository;
-
-  @Mock
-  private UserRepository userRepository;
 
   @Test
   @DisplayName("Should create group")
@@ -67,6 +68,19 @@ class GroupServiceTest {
   }
 
   @Test
+  @DisplayName("Should create group with creatorId when requestCreatorId not present")
+  void shouldCreateGroupWithCreatorIdWhenRequestCreatorIdNotPresent() {
+    final User user = UserGenerator.getUser();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest().withCreatorId(null);
+    final Group expectedGroup = GroupGenerator.getGroup();
+    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
+
+    instance.create(groupRequest, 1);
+
+    then(groupRepository).should().save(groupRequest.withCreatorId(user.id()));
+  }
+
+  @Test
   @DisplayName("Should throw exception when group not created")
   void shouldThrowExceptionWhenGroupNotCreated() {
     final var groupRequest = GroupGenerator.getGroupRequest();
@@ -78,7 +92,7 @@ class GroupServiceTest {
   @Test
   @DisplayName("Should find group by id")
   void shouldFindGroupById() {
-    final var expectedGroup = GroupGenerator.getGroup();
+    final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).findById(anyInt());
 
     final var group = instance.find(1);
@@ -93,4 +107,45 @@ class GroupServiceTest {
 
     assertThatCode(() -> instance.find(1)).isInstanceOf(ResourceNotFoundException.class);
   }
+
+  @Test
+  @DisplayName("Should find all groups")
+  void shouldFindAllGroups() {
+    final List<Group> expectedGroups = GroupGenerator.getGroups();
+    willReturn(expectedGroups).given(groupRepository).findAll();
+
+    instance.findAll();
+
+    then(groupRepository).should().findAll();
+  }
+
+  @Test
+  @DisplayName("Should throw exception when groups not found")
+  void shouldThrowExceptionWhenGroupsNotFound() {
+    willThrow(GroupNotFoundException.class).given(groupRepository).findAll();
+
+    assertThatCode(() -> instance.findAll()).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find all group ids")
+  void shouldFindAllGroupIds() {
+    final List<Integer> expectedIds = GroupGenerator.getGroups().stream().map(Group::id).toList();
+    willReturn(expectedIds).given(groupRepository).findAllIds();
+
+    instance.findAllIds();
+
+    then(groupRepository).should().findAllIds();
+  }
+
+  @Test
+  @DisplayName("Should throw exception when group ids not found")
+  void shouldThrowExceptionWhenGroupIdsNotFound() {
+    willThrow(GroupNotFoundException.class).given(groupRepository).findAllIds();
+
+    assertThatCode(() -> instance.findAllIds()).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+
+
 }
