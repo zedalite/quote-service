@@ -35,7 +35,6 @@ public class QuoteOfTheDayScheduler {
   public void resetQuoteOfTheDay() {
     LOGGER.info("Resetting quotes of the day...");
     emptyQotdCache();
-    groupService.findAllIds();
 
     for (final Integer groupId : groupService.findAllIds()) {
       try {
