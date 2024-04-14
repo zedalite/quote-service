@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import de.zedalite.quotes.data.model.PushNotification;
-import de.zedalite.quotes.exceptions.NotifierException;
+import de.zedalite.quotes.exception.NotifierException;
 import org.springframework.stereotype.Repository;
 
 /**

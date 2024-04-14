@@ -8,7 +8,7 @@ import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.SortField;
 import de.zedalite.quotes.data.model.SortOrder;
-import de.zedalite.quotes.exceptions.QuoteNotFoundException;
+import de.zedalite.quotes.exception.QuoteNotFoundException;
 import org.jooq.DSLContext;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;

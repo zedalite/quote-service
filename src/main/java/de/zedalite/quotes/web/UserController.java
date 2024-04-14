@@ -1,10 +1,7 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
-import de.zedalite.quotes.data.model.DisplayNameRequest;
-import de.zedalite.quotes.data.model.ErrorDetails;
-import de.zedalite.quotes.data.model.PasswordRequest;
-import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserPrincipal;
+import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,13 +17,31 @@ import java.util.List;
 @RestController
 @Tag(name = "Users", description = "Operations related to users")
 @RequestMapping("users")
-@CrossOrigin(origins = "*")
 public class UserController {
 
   private final UserService service;
 
   public UserController(final UserService service) {
     this.service = service;
+  }
+
+  @Operation(summary = "Create a new user",
+    responses = {
+      @ApiResponse(responseCode = "200", description = "Users created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = User.class))}),
+      @ApiResponse(responseCode = "400", description = "Users not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
+  @PostMapping()
+  public User postUser(@Valid @RequestBody final UserRequest user) {
+    // TODO necessary plausibilities check to avoid fake user creation?
+    return service.create(user);
+  }
+
+  @Operation(summary = "Get a user",
+    responses = {
+      @ApiResponse(responseCode = "200", description = "User found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = User.class))}),
+      @ApiResponse(responseCode = "404", description = "User not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
+  @GetMapping("{id}")
+  public User getUser(@PathVariable("id") final Integer id) {
+    return service.find(id);
   }
 
   @Operation(summary = "Get all users",
@@ -37,24 +52,6 @@ public class UserController {
   public List<User> getUsers() {
     // TODO decide if necessary for non-admins?
     return service.findAll();
-  }
-
-  @Operation(summary = "Get a user by its name",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "User found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = User.class))}),
-      @ApiResponse(responseCode = "404", description = "User not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @GetMapping("{id}")
-  public User getUser(@PathVariable("id") final Integer id) {
-    return service.find(id);
-  }
-
-  @Operation(summary = "Patch user's password",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Password patched"),
-      @ApiResponse(responseCode = "404", description = "User not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
-  @PatchMapping("password")
-  public void patchPassword(@RequestBody @Valid final PasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
-    service.updatePassword(principal.getId(), request);
   }
 
   @Operation(summary = "Patch user's display name",

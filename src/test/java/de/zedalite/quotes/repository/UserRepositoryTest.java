@@ -3,7 +3,7 @@ package de.zedalite.quotes.repository;
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.exceptions.UserNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

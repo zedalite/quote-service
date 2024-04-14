@@ -1,4 +1,4 @@
-package de.zedalite.quotes.web;
+package de.zedalite.quotes.security;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
 import org.junit.jupiter.api.DisplayName;

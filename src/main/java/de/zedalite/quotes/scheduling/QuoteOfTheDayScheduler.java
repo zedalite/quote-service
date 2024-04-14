@@ -1,6 +1,6 @@
 package de.zedalite.quotes.scheduling;
 
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import de.zedalite.quotes.service.GroupService;
 import org.slf4j.Logger;

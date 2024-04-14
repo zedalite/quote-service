@@ -2,7 +2,7 @@ package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.*;
-import de.zedalite.quotes.exceptions.QotdNotFoundException;
+import de.zedalite.quotes.exception.QotdNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,9 +2,9 @@ package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.*;
-import de.zedalite.quotes.exceptions.NotifierException;
-import de.zedalite.quotes.exceptions.QuoteNotFoundException;
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
+import de.zedalite.quotes.exception.NotifierException;
+import de.zedalite.quotes.exception.QuoteNotFoundException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.PushNotificationRepository;
 import de.zedalite.quotes.repository.UserRepository;

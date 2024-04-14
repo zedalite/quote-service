@@ -7,7 +7,7 @@ import de.zedalite.quotes.data.mapper.QuoteOfTheDayMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteOfTheDay;
 import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
-import de.zedalite.quotes.exceptions.QotdNotFoundException;
+import de.zedalite.quotes.exception.QotdNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;

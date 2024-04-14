@@ -1,6 +1,5 @@
-package de.zedalite.quotes.auth;
+package de.zedalite.quotes.data.model;
 
-import de.zedalite.quotes.data.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

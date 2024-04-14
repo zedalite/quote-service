@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
-@CrossOrigin(origins = "*")
 public class GroupUserController {
 
   private final GroupUserService service;

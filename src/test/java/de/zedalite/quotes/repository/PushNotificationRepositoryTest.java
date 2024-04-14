@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import de.zedalite.quotes.data.model.PushNotification;
-import de.zedalite.quotes.exceptions.NotifierException;
+import de.zedalite.quotes.exception.NotifierException;
 import de.zedalite.quotes.fixtures.PushNotificationGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

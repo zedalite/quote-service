@@ -1,5 +1,6 @@
-package de.zedalite.quotes.auth;
+package de.zedalite.quotes.security;
 
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.service.GroupUserService;
 import org.springframework.stereotype.Component;
 

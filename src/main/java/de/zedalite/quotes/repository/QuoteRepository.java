@@ -5,7 +5,7 @@ import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
-import de.zedalite.quotes.exceptions.QuoteNotFoundException;
+import de.zedalite.quotes.exception.QuoteNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 

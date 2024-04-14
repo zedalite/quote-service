@@ -4,7 +4,7 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.exceptions.GroupNotFoundException;
+import de.zedalite.quotes.exception.GroupNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

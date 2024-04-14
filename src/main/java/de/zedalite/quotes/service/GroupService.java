@@ -2,8 +2,8 @@ package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
-import de.zedalite.quotes.exceptions.GroupNotFoundException;
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
+import de.zedalite.quotes.exception.GroupNotFoundException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 

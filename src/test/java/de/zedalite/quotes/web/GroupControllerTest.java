@@ -1,6 +1,6 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.fixtures.GroupGenerator;

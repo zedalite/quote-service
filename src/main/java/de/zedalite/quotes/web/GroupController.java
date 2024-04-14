@@ -1,6 +1,6 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.ErrorDetails;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
-@CrossOrigin(origins = "*")
 public class GroupController {
 
   private final GroupService service;

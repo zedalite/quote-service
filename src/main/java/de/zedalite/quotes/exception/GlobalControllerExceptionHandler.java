@@ -1,4 +1,4 @@
-package de.zedalite.quotes.exceptions;
+package de.zedalite.quotes.exception;
 
 import de.zedalite.quotes.data.model.ErrorDetails;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;

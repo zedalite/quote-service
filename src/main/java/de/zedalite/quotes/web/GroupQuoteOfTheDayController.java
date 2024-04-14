@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
-@CrossOrigin(origins = "*")
 public class GroupQuoteOfTheDayController {
 
   private final GroupQuoteOfTheDayService service;

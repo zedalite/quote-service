@@ -5,7 +5,7 @@ import de.zedalite.quotes.data.jooq.users.tables.records.UsersRecord;
 import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.exceptions.UserNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -71,8 +71,9 @@ public class UserRepository {
     return USER_MAPPER.mapToUserList(users);
   }
 
-  @Cacheable(value = "users", key = "#name", unless = "#result == null")
   // TODO Cache result or better integrate in user cache -> otherwise sync problem when cacheput
+  // -> custom implementiation of cache to search for name in exisiting cache
+  @Cacheable(value = "users", key = "#name", unless = "#result == null")
   public User findByName(final String name) {
     final Optional<UsersRecord> user = dsl.selectFrom(USERS)
       .where(USERS.NAME.eq(name))

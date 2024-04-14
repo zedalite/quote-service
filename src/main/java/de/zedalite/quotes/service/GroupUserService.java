@@ -1,9 +1,9 @@
 package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
-import de.zedalite.quotes.exceptions.UserNotFoundException;
+import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import org.springframework.stereotype.Service;

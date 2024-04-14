@@ -1,6 +1,6 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.service.GroupQuoteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
-@CrossOrigin(origins = "*")
 public class GroupQuoteController {
 
   private final GroupQuoteService service;

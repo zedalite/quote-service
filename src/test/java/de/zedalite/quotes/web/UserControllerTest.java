@@ -1,8 +1,7 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.DisplayNameRequest;
-import de.zedalite.quotes.data.model.PasswordRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
@@ -50,16 +49,6 @@ class UserControllerTest {
     then(service).should().find(1);
   }
 
-  @Test
-  @DisplayName("Should patch password")
-  void shouldPatchPassword() {
-    final PasswordRequest request = UserGenerator.getPasswordRequest();
-    final UserPrincipal principal = UserGenerator.getUserPrincipal();
-
-    instance.patchPassword(request, principal);
-
-    then(service).should().updatePassword(principal.getId(), request);
-  }
 
   @Test
   @DisplayName("Should patch displayName")

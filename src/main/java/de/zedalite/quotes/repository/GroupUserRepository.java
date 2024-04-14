@@ -3,7 +3,7 @@ package de.zedalite.quotes.repository;
 import de.zedalite.quotes.data.jooq.quotes.tables.GroupUsers;
 import de.zedalite.quotes.data.jooq.users.tables.Users;
 import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.exceptions.UserNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
