@@ -52,8 +52,7 @@ public class UserService {
       if (repository.isUsernameTaken(request.name())) {
         throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
       } else {
-        final UserRequest encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
-        return repository.save(encodedRequest);
+        return repository.save(request);
       }
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
@@ -97,7 +96,7 @@ public class UserService {
   public void updateDisplayName(final Integer id, final DisplayNameRequest request) {
     try {
       final User user = find(id);
-      final UserRequest userRequest = new UserRequest(user.name(), user.password(), request.displayName());
+      final UserRequest userRequest = new UserRequest(user.name(), user.email(), request.displayName());
       repository.update(id, userRequest);
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());

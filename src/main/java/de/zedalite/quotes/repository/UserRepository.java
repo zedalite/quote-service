@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.Users;
-import de.zedalite.quotes.data.jooq.tables.records.UsersRecord;
+import de.zedalite.quotes.data.jooq.users.tables.Users;
+import de.zedalite.quotes.data.jooq.users.tables.records.UsersRecord;
 import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
@@ -26,7 +26,7 @@ public class UserRepository {
 
   private static final String USER_NOT_FOUND = "User not found";
 
-  private static final Users USERS = Users.USERS.as("Users");
+  private static final Users USERS = Users.USERS_.as("Users");
 
   private final DSLContext dsl;
 
@@ -45,7 +45,7 @@ public class UserRepository {
   public User save(final UserRequest user) throws UserNotFoundException {
     final Optional<UsersRecord> savedUser = dsl.insertInto(USERS)
       .set(USERS.NAME, user.name())
-      .set(USERS.PASSWORD, user.password())
+      .set(USERS.EMAIL, user.email())
       .set(USERS.CREATION_DATE, LocalDateTime.now())
       .set(USERS.DISPLAY_NAME, user.displayName())
       .returning()
@@ -94,7 +94,7 @@ public class UserRepository {
   public User update(final Integer id, final UserRequest user) throws UserNotFoundException {
     final Optional<UsersRecord> updatedUser = dsl.update(USERS)
       .set(USERS.NAME, user.name())
-      .set(USERS.PASSWORD, user.password())
+      .set(USERS.EMAIL, user.email())
       .set(USERS.DISPLAY_NAME, user.displayName())
       .where(USERS.ID.eq(id))
       .returning()

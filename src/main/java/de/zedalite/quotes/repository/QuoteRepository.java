@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.Quotes;
-import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.Quotes;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class QuoteRepository {
   private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
   private static final String QUOTE_NOT_FOUND = "Quote not found";
-  private static final Quotes QUOTES = Quotes.QUOTES.as("Quotes");
+  private static final Quotes QUOTES = Quotes.QUOTES_.as("quotes");
 
   private final DSLContext dsl;
 

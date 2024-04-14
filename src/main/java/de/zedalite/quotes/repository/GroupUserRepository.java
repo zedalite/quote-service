@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.GroupUsers;
-import de.zedalite.quotes.data.jooq.tables.Users;
+import de.zedalite.quotes.data.jooq.quotes.tables.GroupUsers;
+import de.zedalite.quotes.data.jooq.users.tables.Users;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
 import org.jooq.DSLContext;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public class GroupUserRepository {
 
-  private static final Users USERS = Users.USERS.as("users");
+  private static final Users USERS = Users.USERS_.as("users");
 
   private static final GroupUsers GROUP_USERS = GroupUsers.GROUP_USERS.as("group_users");
 

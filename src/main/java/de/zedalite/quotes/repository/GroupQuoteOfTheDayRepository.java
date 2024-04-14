@@ -1,8 +1,8 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.Quotes;
-import de.zedalite.quotes.data.jooq.tables.QuotesOfTheDay;
-import de.zedalite.quotes.data.jooq.tables.records.QuotesOfTheDayRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.Quotes;
+import de.zedalite.quotes.data.jooq.quotes.tables.QuotesOfTheDay;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesOfTheDayRecord;
 import de.zedalite.quotes.data.mapper.QuoteOfTheDayMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteOfTheDay;
@@ -20,7 +20,7 @@ public class GroupQuoteOfTheDayRepository {
 
   private static final QuoteOfTheDayMapper QOTD_MAPPER = QuoteOfTheDayMapper.INSTANCE;
 
-  private static final Quotes QUOTES = Quotes.QUOTES.as("quotes");
+  private static final Quotes QUOTES = Quotes.QUOTES_.as("quotes");
 
   private static final QuotesOfTheDay QOTD = QuotesOfTheDay.QUOTES_OF_THE_DAY.as("quotes_of_the_day");
 

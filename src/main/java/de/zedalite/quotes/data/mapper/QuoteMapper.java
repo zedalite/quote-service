@@ -1,6 +1,6 @@
 package de.zedalite.quotes.data.mapper;
 
-import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.User;

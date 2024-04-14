@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.Groups;
-import de.zedalite.quotes.data.jooq.tables.records.GroupsRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.Groups;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.mapper.GroupMapper;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;

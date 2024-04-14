@@ -64,7 +64,6 @@ class UserServiceTest {
   @DisplayName("Should create user when it not exist")
   void shouldCreateUserWhenItNotExist() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
-    willReturn(UserGenerator.getUserRequest().password()).given(passwordEncoder).encode(anyString());
     willReturn(false).given(repository).isUsernameTaken(anyString());
 
     instance.create(userRequest);
@@ -87,7 +86,6 @@ class UserServiceTest {
   @DisplayName("Should not create user when saving failed ")
   void shouldNotCreateUserWhenSavingFailed() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
-    willReturn(userRequest.password()).given(passwordEncoder).encode(anyString());
     willThrow(UserNotFoundException.class).given(repository).save(userRequest);
 
     assertThatCode(() -> instance.create(userRequest)).isInstanceOf(ResourceNotFoundException.class);
@@ -161,7 +159,7 @@ class UserServiceTest {
   void shouldUpdateDisplayName() {
     final DisplayNameRequest displayNameRequest = UserGenerator.getDisplayNameRequest();
     final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), user.password(), displayNameRequest.displayName());
+    final UserRequest userRequest = new UserRequest(user.name(), user.email(), displayNameRequest.displayName());
     willReturn(user).given(repository).findById(1);
 
     instance.updateDisplayName(1, displayNameRequest);
@@ -174,7 +172,7 @@ class UserServiceTest {
   void shouldNotUpdateDisplayNameWhenUpdatingFailed() {
     final DisplayNameRequest displayNameRequest = UserGenerator.getDisplayNameRequest();
     final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), user.password(), displayNameRequest.displayName());
+    final UserRequest userRequest = new UserRequest(user.name(), user.email(), displayNameRequest.displayName());
     willReturn(user).given(repository).findById(1);
     willThrow(UserNotFoundException.class).given(repository).update(1, userRequest);
 
@@ -185,7 +183,7 @@ class UserServiceTest {
   @DisplayName("Should authenticate valid user")
   void shouldAuthenticateValidUser() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
-    final AuthRequest authRequest = new AuthRequest(userRequest.name(), userRequest.password());
+    final AuthRequest authRequest = new AuthRequest(userRequest.name(), userRequest.email());
     willReturn("e54f6rmh7g").given(tokenService).generateToken(userRequest.name());
 
     final AuthResponse userResponse = instance.authenticate(authRequest);

@@ -27,20 +27,20 @@ class UserRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    instance.save(new UserRequest("tester", "test"));
+    instance.save(new UserRequest("tester", "email@test.com"));
   }
 
   @Test
   @DisplayName("Should save user")
   void shouldSaveUser() {
-    final UserRequest user = new UserRequest("newuser", "safepw");
+    final UserRequest user = new UserRequest("newuser", "email@test.com");
 
     final User savedUser = instance.save(user);
 
     assertThat(savedUser).isNotNull();
     assertThat(savedUser.id()).isNotNull();
     assertThat(savedUser.name()).isEqualTo("newuser");
-    assertThat(savedUser.password()).isEqualTo("safepw");
+    assertThat(savedUser.email()).isEqualTo("email@test.com");
   }
 
   @Test
@@ -89,13 +89,13 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should update user")
   void shouldUpdateUser() {
-    final Integer userId = instance.save(new UserRequest("super", "sUpEr")).id();
-    final UserRequest request = new UserRequest("mega", "mEgA", "MEGA");
+    final Integer userId = instance.save(new UserRequest("super", "email@test.com")).id();
+    final UserRequest request = new UserRequest("mega", "email@test.com", "MEGA");
 
     final User updatedUser = instance.update(userId, request);
 
     assertThat(updatedUser.id()).isEqualTo(userId);
-    assertThat(updatedUser.password()).isEqualTo("mEgA");
+    assertThat(updatedUser.email()).isEqualTo("email@test.com");
     assertThat(updatedUser.displayName()).isEqualTo("MEGA");
   }
 

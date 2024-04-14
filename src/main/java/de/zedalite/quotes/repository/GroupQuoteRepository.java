@@ -1,8 +1,8 @@
 package de.zedalite.quotes.repository;
 
-import de.zedalite.quotes.data.jooq.tables.GroupQuotes;
-import de.zedalite.quotes.data.jooq.tables.Quotes;
-import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.GroupQuotes;
+import de.zedalite.quotes.data.jooq.quotes.tables.Quotes;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
@@ -24,7 +24,7 @@ public class GroupQuoteRepository {
 
   private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
 
-  private static final Quotes QUOTES = Quotes.QUOTES.as("quotes");
+  private static final Quotes QUOTES = Quotes.QUOTES_.as("quotes");
 
   private static final GroupQuotes GROUP_QUOTES = GroupQuotes.GROUP_QUOTES.as("group_quotes");
 

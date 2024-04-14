@@ -9,11 +9,14 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public abstract class TestEnvironmentProvider {
 
-  static final PostgreSQLContainer<?> DB_CONTAINER;
+  static PostgreSQLContainer<?> DB_CONTAINER;
 
   static {
-    DB_CONTAINER = new PostgreSQLContainer<>("postgres:latest")
-      .withInitScript("postgres-quote-database.sql");
+    // No try-with-resources is intentionally used here
+    // "The singleton container is started only once when the base class is loaded. The container can then be used by all inheriting test classes.
+    // At the end of the test suite the Ryuk container that is started by Testcontainers core will take care of stopping the singleton container."
+    // See: https://java.testcontainers.org/test_framework_integration/manual_lifecycle_control/
+    DB_CONTAINER = new PostgreSQLContainer<>("postgres:latest").withInitScript("database.sql");
     DB_CONTAINER.start();
   }
 
@@ -31,4 +34,3 @@ public abstract class TestEnvironmentProvider {
     registry.add("spring.datasource.password", DB_CONTAINER::getPassword);
   }
 }
-

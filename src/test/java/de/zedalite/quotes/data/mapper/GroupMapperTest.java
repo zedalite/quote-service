@@ -1,6 +1,6 @@
 package de.zedalite.quotes.data.mapper;
 
-import de.zedalite.quotes.data.jooq.tables.records.GroupsRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.model.Group;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

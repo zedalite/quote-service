@@ -25,7 +25,7 @@ public record UserPrincipal(User user) implements UserDetails {
 
   @Override
   public String getPassword() {
-    return user.password();
+    return null;
   }
 
   @Override

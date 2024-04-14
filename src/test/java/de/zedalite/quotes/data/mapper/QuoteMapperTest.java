@@ -1,6 +1,6 @@
 package de.zedalite.quotes.data.mapper;
 
-import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
+import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;

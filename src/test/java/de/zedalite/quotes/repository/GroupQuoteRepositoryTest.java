@@ -1,7 +1,7 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
-import de.zedalite.quotes.data.jooq.tables.GroupQuotes;
+import de.zedalite.quotes.data.jooq.quotes.tables.GroupQuotes;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;

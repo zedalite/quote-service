@@ -11,7 +11,7 @@
 
   <groupId>de.zedalite</groupId>
   <artifactId>quote-api</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <name>quote-api</name>
   <description>Quote API</description>
   <packaging>jar</packaging>
@@ -34,7 +34,7 @@
     <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
     <owasp-plugin.version>9.1.0</owasp-plugin.version>
     <!-- Database -->
-    <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/postgres-quote-database.sql</db.url>
+    <db.url>jdbc:tc:postgresql:latest:///sakila?TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/database.sql</db.url>
     <db.username>quote</db.username>
     <db.password>secret_password</db.password>
   </properties>
@@ -169,7 +169,14 @@
           </jdbc>
           <generator>
             <database>
-              <inputSchema>public</inputSchema>
+              <schemata>
+                <schema>
+                  <inputSchema>users</inputSchema>
+                </schema>
+                <schema>
+                  <inputSchema>quotes</inputSchema>
+                </schema>
+              </schemata>
             </database>
             <target>
               <packageName>de.zedalite.quotes.data.jooq</packageName>

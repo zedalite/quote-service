@@ -1,6 +1,5 @@
 package de.zedalite.quotes.data.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,10 +19,9 @@ public record User(
   @Size(max = 32)
   String name,
 
-  @JsonIgnore
   @NotBlank
-  @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z]).{8,128}$", message = "must contain letters and numbers with length between 8-128")
-  String password,
+  @Size(max = 64)
+  String email,
 
   @NotBlank
   @Size(max = 32)

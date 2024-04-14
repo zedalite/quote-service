@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @JsonSerialize
@@ -17,20 +16,16 @@ public record UserRequest(
   String name,
 
   @NotBlank
-  @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z]).{8,128}$", message = "must contain letters and numbers with length between 8-128")
-  String password,
+  @Size(max = 64)
+  String email,
 
-  @NotBlank //TODO enforce not blank after app update + enforce not null on database
+  @NotBlank
   @Size(max = 32)
   String displayName
 
 ) {
 
-  public UserRequest(final String name, final String password) {
-    this(name, password, name);
-  }
-
-  public UserRequest withPassword(final String password) {
-    return new UserRequest(name, password, displayName);
+  public UserRequest(final String name, final String email) {
+    this(name, email, name);
   }
 }
