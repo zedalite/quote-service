@@ -19,9 +19,9 @@ class StringUtilsTest {
   @Test
   @DisplayName("Should extract user ids")
   void shouldExtractUserIds() {
-    final var text = "<@2>The quick <@2313> brown fox <@jumps> <@-1>over the la<@13>zy dog.<@3>";
+    final String text = "<@2>The quick <@2313> brown fox <@jumps> <@-1>over the la<@13>zy dog.<@3>";
 
-    final var userIds = StringUtils.extractUserIds(text);
+    final List<Integer> userIds = StringUtils.extractUserIds(text);
 
     assertThat(userIds).containsAll(List.of(2,2313,13,3));
   }
@@ -29,9 +29,9 @@ class StringUtilsTest {
   @Test
   @DisplayName("Should return empty list when no user ids found")
   void shouldReturnEmptyListWhenNoUserIdsFound() {
-    final var text = "The quick brown fox jumps over the lazy dog.";
+    final String text = "The quick brown fox jumps over the lazy dog.";
 
-    final var userIds = StringUtils.extractUserIds(text);
+    final List<Integer> userIds = StringUtils.extractUserIds(text);
 
     assertThat(userIds).isEmpty();
   }
@@ -39,9 +39,9 @@ class StringUtilsTest {
   @Test
   @DisplayName("Should handle too large numbers")
   void shouldHandleTooLargeNumbers() {
-    final var text = "<@2147483648>";
+    final String text = "<@2147483648>";
 
-    final var userIds = StringUtils.extractUserIds(text);
+    final List<Integer> userIds = StringUtils.extractUserIds(text);
 
     assertThat(userIds).isEmpty();
   }

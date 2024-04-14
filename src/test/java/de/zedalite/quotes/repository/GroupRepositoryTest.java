@@ -29,8 +29,8 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final var userId = userRepository.save(new UserRequest("grouptester", "test")).id();
-    final var userId2 = userRepository.save(new UserRequest("grouptester2", "test2")).id();
+    final Integer userId = userRepository.save(new UserRequest("grouptester", "test")).id();
+    final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2")).id();
 
     instance.save(new GroupRequest("test-group", "TESTGROUP", LocalDateTime.now(), userId));
     instance.save(new GroupRequest("best-quoter", "The Best Quoter", LocalDateTime.now(), userId2));
@@ -39,10 +39,10 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should save group")
   void shouldSaveGroup() {
-    final var creationDate = LocalDateTime.of(2023, 11, 15, 15, 0, 0);
-    final var groupRequest = new GroupRequest("test-group", "TestGroup", creationDate, 1);
+    final LocalDateTime creationDate = LocalDateTime.of(2023, 11, 15, 15, 0, 0);
+    final GroupRequest groupRequest = new GroupRequest("test-group", "TestGroup", creationDate, 1);
 
-    final var savedGroup = instance.save(groupRequest);
+    final Group savedGroup = instance.save(groupRequest);
 
     assertThat(savedGroup).isNotNull();
     assertThat(savedGroup.id()).isNotNull();
@@ -55,7 +55,7 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find group by id")
   void shouldFindGroupById() {
-    final var group = instance.findById(2);
+    final Group group = instance.findById(2);
 
     assertThat(group).isNotNull();
     assertThat(group.id()).isEqualTo(2);

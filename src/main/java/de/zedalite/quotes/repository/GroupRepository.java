@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides methods for interacting with the database to perform CRUD operations on quotes.
@@ -34,7 +35,7 @@ public class GroupRepository {
 
   @CachePut(value = "groups", key = "#result.id()", unless = "#result == null")
   public Group save(final GroupRequest group) throws QuoteNotFoundException {
-    final var savedGroup = dsl.insertInto(GROUPS)
+    final Optional<GroupsRecord> savedGroup = dsl.insertInto(GROUPS)
       .set(GROUPS.NAME, group.name())
       .set(GROUPS.DISPLAY_NAME, group.displayName())
       .set(GROUPS.CREATION_DATE, group.creationDate())
@@ -47,7 +48,7 @@ public class GroupRepository {
 
   @Cacheable(value = "groups", key = "#id", unless = "#result == null")
   public Group findById(final Integer id) throws GroupNotFoundException {
-    final var group = dsl.selectFrom(GROUPS)
+    final Optional<GroupsRecord> group = dsl.selectFrom(GROUPS)
       .where(GROUPS.ID.eq(id))
       .fetchOptionalInto(GroupsRecord.class);
     if (group.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);

@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupUserService;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
@@ -25,7 +28,7 @@ class GroupUserControllerTest {
   @Test
   @DisplayName("Should get group users")
   void shouldGetGroupUsers() {
-    final var expectedUsers = UserGenerator.getUsers();
+    final List<User> expectedUsers = UserGenerator.getUsers();
     willReturn(expectedUsers).given(service).findAll(anyInt());
     
     instance.getUsers(1);
@@ -36,7 +39,7 @@ class GroupUserControllerTest {
   @Test
   @DisplayName("Should get group user")
   void shouldGetGroupUser() {
-    final var expectedUser = UserGenerator.getUser();
+    final User expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(service).find(anyInt(), anyInt());
     
     instance.getUser(1, 1);

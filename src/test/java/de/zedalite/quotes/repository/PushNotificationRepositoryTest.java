@@ -3,6 +3,7 @@ package de.zedalite.quotes.repository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import de.zedalite.quotes.data.model.PushNotification;
 import de.zedalite.quotes.exceptions.NotifierException;
 import de.zedalite.quotes.fixtures.PushNotificationGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class PushNotificationRepositoryTest {
   @Test
   @DisplayName("Should send to topic")
   void shouldSendToTopic() throws Exception {
-    final var notification = PushNotificationGenerator.getPushNotification();
+    final PushNotification notification = PushNotificationGenerator.getPushNotification();
 
     instance.sendToTopic("test", notification);
 
@@ -39,7 +40,7 @@ class PushNotificationRepositoryTest {
   @Test
   @DisplayName("Should throw exception when sending fails")
   void shouldThrowExceptionWhenSendingFails() throws Exception {
-    final var notification = PushNotificationGenerator.getPushNotification();
+    final PushNotification notification = PushNotificationGenerator.getPushNotification();
     willThrow(FirebaseMessagingException.class).given(firebaseMessaging).send(any(Message.class));
 
     assertThatCode(() -> instance.sendToTopic("test", notification)).isInstanceOf(NotifierException.class);

@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public class GroupQuoteOfTheDayRepository {
@@ -32,7 +33,7 @@ public class GroupQuoteOfTheDayRepository {
   }
 
   public QuoteOfTheDay save(final Integer id, final QuoteOfTheDayRequest request) {
-    final var savedQotd = dsl.insertInto(QOTD)
+    final Optional<QuotesOfTheDayRecord> savedQotd = dsl.insertInto(QOTD)
       .set(QOTD.GROUP_ID, id)
       .set(QOTD.QUOTE_ID, request.quoteId())
       .set(QOTD.CREATION_DATE, request.creationDate())
@@ -44,7 +45,7 @@ public class GroupQuoteOfTheDayRepository {
 
   @Cacheable(value = "qotd", key = "{#id,#date}", unless = "#result == null")
   public Quote findByDate(final Integer id, final LocalDate date) throws QotdNotFoundException {
-    final var qotd = dsl.select(QUOTES)
+    final Optional<Quote> qotd = dsl.select(QUOTES)
       .from(QOTD.join(QUOTES).on(QOTD.QUOTE_ID.eq(QUOTES.ID)))
       .where(QOTD.GROUP_ID.eq(id))
       .and(QOTD.CREATION_DATE.eq(date))

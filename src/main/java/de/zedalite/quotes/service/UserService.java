@@ -38,12 +38,12 @@ public class UserService {
 
   public AuthResponse authenticate(final AuthRequest request) throws AuthenticationException {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.name(), request.password()));
-    final var token = tokenService.generateToken(request.name());
+    final String token = tokenService.generateToken(request.name());
     return new AuthResponse(token);
   }
 
   public AuthResponse refreshToken(final String username) {
-    final var token = tokenService.generateToken(username);
+    final String token = tokenService.generateToken(username);
     return new AuthResponse(token);
   }
 
@@ -52,7 +52,7 @@ public class UserService {
       if (repository.isUsernameTaken(request.name())) {
         throw new ResourceAlreadyExitsException(USER_ALREADY_EXITS);
       } else {
-        final var encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
+        final UserRequest encodedRequest = request.withPassword(passwordEncoder.encode(request.password()));
         return repository.save(encodedRequest);
       }
     } catch (UserNotFoundException ex) {
@@ -86,8 +86,8 @@ public class UserService {
 
   public void updatePassword(final Integer id, final PasswordRequest request) {
     try {
-      final var user = find(id);
-      final var userRequest = new UserRequest(user.name(), passwordEncoder.encode(request.password()), user.displayName());
+      final User user = find(id);
+      final UserRequest userRequest = new UserRequest(user.name(), passwordEncoder.encode(request.password()), user.displayName());
       repository.update(id, userRequest);
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
@@ -96,8 +96,8 @@ public class UserService {
 
   public void updateDisplayName(final Integer id, final DisplayNameRequest request) {
     try {
-      final var user = find(id);
-      final var userRequest = new UserRequest(user.name(), user.password(), request.displayName());
+      final User user = find(id);
+      final UserRequest userRequest = new UserRequest(user.name(), user.password(), request.displayName());
       repository.update(id, userRequest);
     } catch (UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class GroupQuoteService {
@@ -46,7 +47,7 @@ public class GroupQuoteService {
       quote = getQuoteMessage(repository.save(id, request));
 
       // TODO extract notification build?
-      final var notification = new PushNotification(
+      final PushNotification notification = new PushNotification(
         "New Quote",
         quote.author() + " says " + quote.truncateText() + "...",
         Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id())));
@@ -63,14 +64,14 @@ public class GroupQuoteService {
   }
 
   public QuoteMessage create(final Integer id, final QuoteRequest request, final Integer creatorId) {
-    final var creatorIdOrDefault = request.creatorId() == null ? creatorId : request.creatorId();
+    final Integer creatorIdOrDefault = Objects.requireNonNullElse(request.creatorId(), creatorId);
 
     return create(id, request.withCreatorId(creatorIdOrDefault));
   }
 
   public List<QuoteMessage> findAll(final Integer id, final SortField field, final SortOrder order) {
     try {
-      final var quotes = repository.findAll(id, field, order);
+      final List<Quote> quotes = repository.findAll(id, field, order);
       return getQuoteMessages(quotes);
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
@@ -79,7 +80,7 @@ public class GroupQuoteService {
 
   public QuoteMessage find(final Integer id, final Integer quoteId) {
     try {
-      final var quote = repository.findById(id, quoteId);
+      final Quote quote = repository.findById(id, quoteId);
       return getQuoteMessage(quote);
     } catch (QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
@@ -99,7 +100,7 @@ public class GroupQuoteService {
   }
 
   private QuoteMessage getQuoteMessage(final Quote quote) {
-    final var mentions = getMentions(StringUtils.extractUserIds(quote.text()));
+    final List<User> mentions = getMentions(StringUtils.extractUserIds(quote.text()));
 
     return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
   }

@@ -1,5 +1,7 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
@@ -28,7 +30,7 @@ class GroupControllerTest {
   @Test
   @DisplayName("Should get group")
   void shouldGetGroup() {
-    final var expectedGroup = GroupGenerator.getGroup();
+    final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(service).find(anyInt());
 
     instance.getGroup(1);
@@ -39,9 +41,9 @@ class GroupControllerTest {
   @Test
   @DisplayName("Should post group")
   void shouldPostGroup() {
-    final var groupRequest = GroupGenerator.getGroupRequest();
-    final var expectedGroup = GroupGenerator.getGroup();
-    final var principal = UserGenerator.getUserPrincipal();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
+    final Group expectedGroup = GroupGenerator.getGroup();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
     willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyInt());
 

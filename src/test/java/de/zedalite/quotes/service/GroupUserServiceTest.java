@@ -1,5 +1,6 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
@@ -14,6 +15,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -75,7 +78,7 @@ class GroupUserServiceTest {
   @Test
   @DisplayName("Should find group user")
   void shouldFindGroupUser() {
-    final var expectedUser = UserGenerator.getUser();
+    final User expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(repository).findById(1, 2);
 
     instance.find(1, 2);
@@ -94,7 +97,7 @@ class GroupUserServiceTest {
   @Test
   @DisplayName("Should find group users")
   void shouldFindGroupUsers() {
-    final var expectedUsers = UserGenerator.getUsers();
+    final List<User> expectedUsers = UserGenerator.getUsers();
     willReturn(expectedUsers).given(repository).findAll(1);
 
     instance.findAll(1);
@@ -116,7 +119,7 @@ class GroupUserServiceTest {
   void shouldDetermineIfUserIsInGroup(final Boolean isInGroup) {
     willReturn(isInGroup).given(repository).isUserInGroup(1, 2);
 
-    final var result = instance.isUserInGroup(1, 2);
+    final boolean result = instance.isUserInGroup(1, 2);
 
     assertThat(result).isEqualTo(isInGroup);
   }

@@ -13,7 +13,7 @@ class JwtTokenServiceTest {
   @Test
   @DisplayName("Should generate token")
   void shouldGenerateToken() {
-    final var token = instance.generateToken("quoter");
+    final String token = instance.generateToken("quoter");
 
     assertThat(token).isNotNull();
     assertThat(JWT.decode(token).getSubject()).isEqualTo("quoter");
@@ -23,8 +23,8 @@ class JwtTokenServiceTest {
   @Test
   @DisplayName("Should validate token")
   void shouldValidateToken() {
-    final var token = instance.generateToken("quoter");
-    final var user = instance.validateToken(token);
+    final String token = instance.generateToken("quoter");
+    final String user = instance.validateToken(token);
 
     assertThat(user).isEqualTo("quoter");
   }

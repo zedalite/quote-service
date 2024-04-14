@@ -26,7 +26,7 @@ public class QuoteRepository {
   }
 
   public Quote save(final QuoteRequest quote) throws QuoteNotFoundException {
-    final var savedQuote = dsl.insertInto(QUOTES)
+    final QuotesRecord savedQuote = dsl.insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
       .set(QUOTES.CREATION_DATE, quote.creationDate())
       .set(QUOTES.TEXT, quote.text())

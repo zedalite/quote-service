@@ -19,9 +19,9 @@ public class PushNotificationConfig {
 
   @Bean
   FirebaseApp firebaseApp() throws IOException {
-    final var credentials = GoogleCredentials.fromStream(resource.getInputStream());
+    final GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
 
-    final var options = FirebaseOptions.builder()
+    final FirebaseOptions options = FirebaseOptions.builder()
       .setCredentials(credentials)
       .build();
 

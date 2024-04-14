@@ -1,6 +1,7 @@
 package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.tables.records.UsersRecord;
+import de.zedalite.quotes.data.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +18,9 @@ class UserMapperTest {
   @Test
   @DisplayName("Should map userRecord to user")
   void shouldMapUserRecordToUser() {
-    final var userRec = new UsersRecord(0, "user", "password", "USER", LocalDateTime.MIN);
+    final UsersRecord userRec = new UsersRecord(0, "user", "password", "USER", LocalDateTime.MIN);
 
-    final var user = instance.mapToUser(userRec);
+    final User user = instance.mapToUser(userRec);
 
     assertThat(user).isNotNull();
     assertThat(user.id()).isEqualTo(userRec.getId());
@@ -33,7 +34,7 @@ class UserMapperTest {
   @DisplayName("Should map empty userRecord to null")
   @NullSource
   void shouldMapEmptyUserRecordToNull(final UsersRecord usersRecord) {
-    final var user = instance.mapToUser(usersRecord);
+    final User user = instance.mapToUser(usersRecord);
 
     assertThat(user).isNull();
   }

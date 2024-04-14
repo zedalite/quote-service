@@ -1,6 +1,9 @@
 package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.model.PushNotification;
+import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.QuoteMessage;
+import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.exceptions.NotifierException;
 import de.zedalite.quotes.exceptions.QuoteNotFoundException;
 import de.zedalite.quotes.exceptions.ResourceNotFoundException;
@@ -14,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static de.zedalite.quotes.data.model.SortField.CREATION_DATE;
 import static de.zedalite.quotes.data.model.SortOrder.DESC;
@@ -40,8 +45,8 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should create group quote")
   void shouldCreateGroupQuote() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
+    final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).save(1, quoteRequest);
 
     instance.create(1, quoteRequest);
@@ -53,8 +58,8 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should create group quote with creator")
   void shouldCreateGroupQuoteWithCreator() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
+    final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).save(1, quoteRequest);
 
     instance.create(1, quoteRequest, 2);
@@ -66,8 +71,8 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should create group quote with principal as creator")
   void shouldCreateGroupQuoteWithPrincipalAsCreator() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
+    final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).save(1, quoteRequest.withCreatorId(2));
 
     instance.create(1, quoteRequest, 2);
@@ -79,8 +84,8 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should create group quote with failed notification")
   void shouldCreateGroupQuoteWithFailedNotification() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
+    final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).save(1, quoteRequest);
     willThrow(NotifierException.class).given(notifierRepository).sendToTopic(any(), any(PushNotification.class));
 
@@ -92,7 +97,7 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should throw exception when group quote not created")
   void shouldThrowExceptionWhenGroupQuoteNotCreated() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
     willThrow(QuoteNotFoundException.class).given(repository).save(1, quoteRequest);
 
     assertThatCode(() -> instance.create(1, quoteRequest)).isInstanceOf(ResourceNotFoundException.class);
@@ -101,10 +106,10 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should find all group quotes")
   void shouldFindAllGroupQuotes() {
-    final var expectedQuotes = QuoteGenerator.getQuotes();
+    final List<Quote> expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(repository).findAll(1, CREATION_DATE, DESC);
 
-    final var quotes = instance.findAll(1, CREATION_DATE, DESC);
+    final List<QuoteMessage> quotes = instance.findAll(1, CREATION_DATE, DESC);
 
     assertThat(quotes).hasSize(expectedQuotes.size());
   }
@@ -120,7 +125,7 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should find group quote")
   void shouldFindGroupQuote() {
-    final var expectedQuote = QuoteGenerator.getQuote();
+    final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).findById(1, 2);
     
     instance.find(1, 2);
@@ -139,10 +144,10 @@ class GroupQuoteServiceTest {
   @Test
   @DisplayName("Should find random group quotes")
   void shouldFindRandomGroupQuotes() {
-    final var expectedQuotes = QuoteGenerator.getQuotes();
+    final List<Quote> expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(repository).findRandoms(1, 3);
 
-    final var quotes = instance.findRandoms(1, 3);
+    final List<QuoteMessage> quotes = instance.findRandoms(1, 3);
 
     assertThat(quotes).hasSize(expectedQuotes.size());
   }
@@ -160,7 +165,7 @@ class GroupQuoteServiceTest {
   void shouldCountQuotes() {
     willReturn(5).given(repository).count(1);
 
-    final var count = instance.count(1);
+    final Integer count = instance.count(1);
 
     assertThat(count).isEqualTo(5);
     then(repository).should().count(1);

@@ -1,6 +1,7 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
+import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,8 +27,8 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final var userId = userRepository.save(new UserRequest("quotetester", "test")).id();
-    final var userId2 = userRepository.save(new UserRequest("quotetester2", "test2")).id();
+    final Integer userId = userRepository.save(new UserRequest("quotetester", "test")).id();
+    final Integer userId2 = userRepository.save(new UserRequest("quotetester2", "test2")).id();
 
 
     instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "quotes are cool", "in quotversum", null));
@@ -38,10 +39,10 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should save quote")
   void shouldSaveQuote() {
-    final var dateTime = LocalDateTime.of(2023, 5, 29, 21, 0, 0);
-    final var quote = new QuoteRequest("test", dateTime, "tests are important", "42", 2);
+    final LocalDateTime dateTime = LocalDateTime.of(2023, 5, 29, 21, 0, 0);
+    final QuoteRequest quote = new QuoteRequest("test", dateTime, "tests are important", "42", 2);
 
-    final var savedQuote = instance.save(quote);
+    final Quote savedQuote = instance.save(quote);
 
     assertThat(savedQuote).isNotNull();
     assertThat(savedQuote.id()).isNotNull();
@@ -54,7 +55,7 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find quote count")
   void shouldFindQuoteCount() {
-    final var quoteCount = instance.count();
+    final Integer quoteCount = instance.count();
 
     assertThat(quoteCount).isGreaterThanOrEqualTo(3);
   }

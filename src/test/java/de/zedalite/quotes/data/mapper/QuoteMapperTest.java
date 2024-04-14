@@ -1,6 +1,7 @@
 package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.tables.records.QuotesRecord;
+import de.zedalite.quotes.data.model.Quote;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,9 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecord to quote")
   void shouldMapQuoteRecordToQuote() {
-    final var quoteRec = new QuotesRecord(0, "test", LocalDateTime.MIN, "Successful test.", "sub", 2);
+    final QuotesRecord quoteRec = new QuotesRecord(0, "test", LocalDateTime.MIN, "Successful test.", "sub", 2);
 
-    final var quote = instance.mapToQuote(quoteRec);
+    final Quote quote = instance.mapToQuote(quoteRec);
 
     assertThat(quote).isNotNull();
     assertThat(quote.id()).isZero();
@@ -36,7 +37,7 @@ class QuoteMapperTest {
   @DisplayName("Should map empty quoteRecord to null")
   @NullSource
   void shouldMapEmptyQuoteRecordToNull(final QuotesRecord quotesRecord) {
-    final var quote = instance.mapToQuote(quotesRecord);
+    final Quote quote = instance.mapToQuote(quotesRecord);
 
     assertThat(quote).isNull();
   }
@@ -44,16 +45,16 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecords to quotes")
   void shouldMapQuoteRecordsToQuotes() {
-    final var quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub", 3);
-    final var quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null, 2);
-    final var quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
+    final QuotesRecord quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub", 3);
+    final QuotesRecord quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null, 2);
+    final List<QuotesRecord> quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
 
-    final var quotes = instance.mapToQuoteList(quotesRecords);
+    final List<Quote> quotes = instance.mapToQuoteList(quotesRecords);
 
-    final var quoteSonar = quotes.get(0);
-    final var quoteMapper = quotes.get(1);
+    final Quote quoteSonar = quotes.get(0);
+    final Quote quoteMapper = quotes.get(1);
 
-    final var softly = new SoftAssertions();
+    final SoftAssertions softly = new SoftAssertions();
 
     softly.assertThat(quoteSonar).isNotNull();
     softly.assertThat(quoteSonar.id()).isZero();
@@ -78,7 +79,7 @@ class QuoteMapperTest {
   @DisplayName("Should map empty quoteRecords to null")
   @NullSource
   void shouldMapEmptyQuoteRecordsToNull(final List<QuotesRecord> quotesRecords) {
-    final var quotes = instance.mapToQuoteList(quotesRecords);
+    final List<Quote> quotes = instance.mapToQuoteList(quotesRecords);
 
     assertThat(quotes).isNull();
   }

@@ -1,6 +1,7 @@
 package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.tables.records.QuotesOfTheDayRecord;
+import de.zedalite.quotes.data.model.QuoteOfTheDay;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +18,9 @@ class QuoteOfTheDayMapperTest {
   @Test
   @DisplayName("Should map quoteOfTheDayRecord to quoteOfTheDay")
   void shouldMapQuoteOfTheDayRecordToQuoteOfTheDay() {
-    final var qotdRec = new QuotesOfTheDayRecord(0, 0, LocalDate.MIN, null);
+    final QuotesOfTheDayRecord qotdRec = new QuotesOfTheDayRecord(0, 0, LocalDate.MIN, null);
 
-    final var qotd = instance.mapToQuoteOfTheDay(qotdRec);
+    final QuoteOfTheDay qotd = instance.mapToQuoteOfTheDay(qotdRec);
 
     assertThat(qotd).isNotNull();
     assertThat(qotd.id()).isZero();
@@ -31,7 +32,7 @@ class QuoteOfTheDayMapperTest {
   @DisplayName("Should map empty quoteOfTheDayRecord to null")
   @NullSource
   void shouldMapEmptyQuoteOfTheDayRecordToNull(final QuotesOfTheDayRecord qotdRecord) {
-    final var qotd = instance.mapToQuoteOfTheDay(qotdRecord);
+    final QuoteOfTheDay qotd = instance.mapToQuoteOfTheDay(qotdRecord);
 
     assertThat(qotd).isNull();
   }

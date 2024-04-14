@@ -1,5 +1,7 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.SortField;
 import de.zedalite.quotes.data.model.SortOrder;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -30,7 +34,7 @@ class GroupQuoteControllerTest {
   @Test
   @DisplayName("Should get group quotes")
   void shouldGetGroupQuotes() {
-    final var expectedQuotes = QuoteGenerator.getQuoteMessages();
+    final List<QuoteMessage> expectedQuotes = QuoteGenerator.getQuoteMessages();
     willReturn(expectedQuotes).given(service).findAll(anyInt(), any(SortField.class), any(SortOrder.class));
 
     instance.getQuotes(1, SortField.CREATION_DATE, SortOrder.ASC);
@@ -41,7 +45,7 @@ class GroupQuoteControllerTest {
   @Test
   @DisplayName("Should get group quote")
   void shouldGetGroupQuote() {
-    final var expectedQuote = QuoteGenerator.getQuoteMessage();
+    final QuoteMessage expectedQuote = QuoteGenerator.getQuoteMessage();
     willReturn(expectedQuote).given(service).find(anyInt(), anyInt());
 
     instance.getQuote(1, 8);
@@ -62,9 +66,9 @@ class GroupQuoteControllerTest {
   @Test
   @DisplayName("Should post group quote")
   void shouldPostGroupQuote() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var principal = UserGenerator.getUserPrincipal();
-    final var expectedQuote = QuoteGenerator.getQuoteMessage();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+    final QuoteMessage expectedQuote = QuoteGenerator.getQuoteMessage();
     willReturn(expectedQuote).given(service).create(anyInt(), any(QuoteRequest.class), anyInt());
 
     instance.postQuote(1, quoteRequest, principal);
@@ -75,7 +79,7 @@ class GroupQuoteControllerTest {
   @Test
   @DisplayName("Should get random group quotes")
   void shouldGetRandomGroupQuotes() {
-    final var expectedQuote = QuoteGenerator.getQuoteMessages();
+    final List<QuoteMessage> expectedQuote = QuoteGenerator.getQuoteMessages();
     willReturn(expectedQuote).given(service).findRandoms(anyInt(), anyInt());
 
     instance.getRandomQuotes(1, 8);

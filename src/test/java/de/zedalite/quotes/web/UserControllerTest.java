@@ -1,5 +1,9 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.auth.UserPrincipal;
+import de.zedalite.quotes.data.model.DisplayNameRequest;
+import de.zedalite.quotes.data.model.PasswordRequest;
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
@@ -25,7 +31,7 @@ class UserControllerTest {
   @Test
   @DisplayName("Should get users")
   void shouldGetUsers() {
-    final var expectedUsers = UserGenerator.getUsers();
+    final List<User> expectedUsers = UserGenerator.getUsers();
     willReturn(expectedUsers).given(service).findAll();
 
     instance.getUsers();
@@ -36,7 +42,7 @@ class UserControllerTest {
   @Test
   @DisplayName("Should get user")
   void shouldGetUser() {
-    final var expectedUser = UserGenerator.getUser();
+    final User expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(service).find(anyInt());
 
     instance.getUser(1);
@@ -47,8 +53,8 @@ class UserControllerTest {
   @Test
   @DisplayName("Should patch password")
   void shouldPatchPassword() {
-    final var request = UserGenerator.getPasswordRequest();
-    final var principal = UserGenerator.getUserPrincipal();
+    final PasswordRequest request = UserGenerator.getPasswordRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
     instance.patchPassword(request, principal);
 
@@ -58,8 +64,8 @@ class UserControllerTest {
   @Test
   @DisplayName("Should patch displayName")
   void shouldPatchDisplayName() {
-    final var request = UserGenerator.getDisplayNameRequest();
-    final var principal = UserGenerator.getUserPrincipal();
+    final DisplayNameRequest request = UserGenerator.getDisplayNameRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
     instance.patchDisplayName(request, principal);
 

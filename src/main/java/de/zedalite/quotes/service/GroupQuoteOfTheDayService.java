@@ -51,7 +51,7 @@ public class GroupQuoteOfTheDayService {
   }
 
   private QuoteMessage getQuoteMessage(final Quote quote) {
-    final var mentions = getMentions(StringUtils.extractUserIds(quote.text()));
+    final List<User> mentions = getMentions(StringUtils.extractUserIds(quote.text()));
 
     return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
   }

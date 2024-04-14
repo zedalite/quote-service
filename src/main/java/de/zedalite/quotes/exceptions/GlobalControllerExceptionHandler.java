@@ -4,6 +4,7 @@ import de.zedalite.quotes.data.model.ErrorDetails;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.data.model.Violation;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class is a global controller exception handler for handling various exceptions thrown by controller methods.
@@ -37,9 +39,9 @@ public class GlobalControllerExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ValidationErrorDetails handleNotValidException(final MethodArgumentNotValidException ex) {
     final List<Violation> violations = new ArrayList<>();
-    final var details = new ValidationErrorDetails(LocalDateTime.now(), "Validation failed", violations);
-    for (final var fieldError : ex.getBindingResult().getFieldErrors()) {
-      details.violations().add(new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
+    final ValidationErrorDetails details = new ValidationErrorDetails(LocalDateTime.now(), "Validation failed", violations);
+    for (final FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+      details.violations().add(new Violation(fieldError.getField(), Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Validation failed")));
     }
     return details;
   }

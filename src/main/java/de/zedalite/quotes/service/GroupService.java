@@ -27,7 +27,7 @@ public class GroupService {
   }
 
   public Group create(final GroupRequest request, final Integer creatorId) {
-    final var creatorIdOrDefault = request.creatorId() == null ? creatorId : request.creatorId();
+    final Integer creatorIdOrDefault = request.creatorId() == null ? creatorId : request.creatorId();
 
     return create(request.withCreatorId(creatorIdOrDefault));
   }

@@ -21,7 +21,7 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should count quotes")
   void shouldCountQuotes() {
-    final var count = instance.count();
+    final Integer count = instance.count();
 
     assertThat(count).isNotNegative();
   }

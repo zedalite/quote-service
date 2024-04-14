@@ -1,6 +1,7 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,9 +33,9 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should save user")
   void shouldSaveUser() {
-    final var user = new UserRequest("newuser", "safepw");
+    final UserRequest user = new UserRequest("newuser", "safepw");
 
-    final var savedUser = instance.save(user);
+    final User savedUser = instance.save(user);
 
     assertThat(savedUser).isNotNull();
     assertThat(savedUser.id()).isNotNull();
@@ -45,7 +46,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all users")
   void shouldFindAllUsers() {
-    final var users = instance.findAll();
+    final List<User> users = instance.findAll();
 
     assertThat(users).hasSizeGreaterThanOrEqualTo(1);
   }
@@ -53,17 +54,17 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all by ids")
   void shouldFindAllByIds() {
-    final var id = instance.findByName("tester").id();
-    final var users = instance.findAllByIds(List.of(id));
+    final Integer id = instance.findByName("tester").id();
+    final List<User> users = instance.findAllByIds(List.of(id));
 
     assertThat(users).hasSize(1);
-    assertThat(users.get(0).name()).isEqualTo("tester");
+    assertThat(users.getFirst().name()).isEqualTo("tester");
   }
 
   @Test
   @DisplayName("Should find user by name")
   void shouldFindUserByName() {
-    final var user = instance.findByName("tester");
+    final User user = instance.findByName("tester");
 
     assertThat(user).isNotNull();
     assertThat(user.name()).isEqualTo("tester");
@@ -78,8 +79,8 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find user by id")
   void shouldFindUserById() {
-    final var id = instance.findByName("tester").id();
-    final var user = instance.findById(id);
+    final Integer id = instance.findByName("tester").id();
+    final User user = instance.findById(id);
 
     assertThat(user).isNotNull();
     assertThat(user.name()).isEqualTo("tester");
@@ -88,10 +89,10 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should update user")
   void shouldUpdateUser() {
-    final var userId = instance.save(new UserRequest("super", "sUpEr")).id();
-    final var request = new UserRequest("mega", "mEgA", "MEGA");
+    final Integer userId = instance.save(new UserRequest("super", "sUpEr")).id();
+    final UserRequest request = new UserRequest("mega", "mEgA", "MEGA");
 
-    final var updatedUser = instance.update(userId, request);
+    final User updatedUser = instance.update(userId, request);
 
     assertThat(updatedUser.id()).isEqualTo(userId);
     assertThat(updatedUser.password()).isEqualTo("mEgA");
@@ -103,7 +104,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   void shouldReturnTrueWhenUsernameIsTaken() {
     instance.save(new UserRequest("definitelyTaken", "taken"));
 
-    final var isTaken = instance.isUsernameTaken("definitelyTaken");
+    final boolean isTaken = instance.isUsernameTaken("definitelyTaken");
 
     assertThat(isTaken).isTrue();
   }
@@ -111,7 +112,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return false when username is free")
   void shouldReturnFalseWhenUsernameIsFree() {
-    final var isTaken = instance.isUsernameTaken("freeUsername");
+    final boolean isTaken = instance.isUsernameTaken("freeUsername");
 
     assertThat(isTaken).isFalse();
   }
@@ -121,7 +122,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   void shouldReturnFalseWhenUsernameIsAlreadyTaken() {
     instance.save(new UserRequest("takenName", "taken"));
 
-    final var isAvailable = instance.isUsernameAvailable("takenName");
+    final boolean isAvailable = instance.isUsernameAvailable("takenName");
 
     assertThat(isAvailable).isFalse();
   }
@@ -129,7 +130,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return true when username is free")
   void shouldReturnTrueWhenUsernameIsFree() {
-    final var isAvailable = instance.isUsernameAvailable("abcdefghijklmn");
+    final boolean isAvailable = instance.isUsernameAvailable("abcdefghijklmn");
 
     assertThat(isAvailable).isTrue();
   }
@@ -137,7 +138,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return true when user non exist")
   void shouldReturnTrueWhenUserNonExist() {
-    final var isNonExist = instance.doesUserNonExist(9876);
+    final boolean isNonExist = instance.doesUserNonExist(9876);
 
     assertThat(isNonExist).isTrue();
   }
@@ -145,7 +146,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return false when user exist")
   void shouldReturnFalseWhenUserExist() {
-    final var isNonExist = instance.doesUserNonExist(1);
+    final boolean isNonExist = instance.doesUserNonExist(1);
 
     assertThat(isNonExist).isFalse();
   }

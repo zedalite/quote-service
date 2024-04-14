@@ -33,8 +33,8 @@ class GroupServiceTest {
   @Test
   @DisplayName("Should create group")
   void shouldCreateGroup() {
-    final var groupRequest = GroupGenerator.getGroupRequest();
-    final var expectedGroup = GroupGenerator.getGroup();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
+    final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
 
     instance.create(groupRequest);
@@ -45,8 +45,8 @@ class GroupServiceTest {
   @Test
   @DisplayName("Should create group with creator")
   void shouldCreateGroupWithCreator() {
-    final var groupRequest = GroupGenerator.getGroupRequest();
-    final var expectedGroup = GroupGenerator.getGroup();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
+    final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
 
     instance.create(groupRequest, 1);
@@ -57,9 +57,9 @@ class GroupServiceTest {
   @Test
   @DisplayName("Should create group with creatorId")
   void shouldCreateGroupWithCreatorId() {
-    final var user = UserGenerator.getUser();
-    final var groupRequest = GroupGenerator.getGroupRequest();
-    final var expectedGroup = GroupGenerator.getGroup();
+    final User user = UserGenerator.getUser();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
+    final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
 
     instance.create(groupRequest, 1);
@@ -83,7 +83,7 @@ class GroupServiceTest {
   @Test
   @DisplayName("Should throw exception when group not created")
   void shouldThrowExceptionWhenGroupNotCreated() {
-    final var groupRequest = GroupGenerator.getGroupRequest();
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
     willThrow(GroupNotFoundException.class).given(groupRepository).save(any(GroupRequest.class));
 
     assertThatCode(() -> instance.create(groupRequest)).isInstanceOf(ResourceNotFoundException.class);
@@ -95,7 +95,7 @@ class GroupServiceTest {
     final Group expectedGroup = GroupGenerator.getGroup();
     willReturn(expectedGroup).given(groupRepository).findById(anyInt());
 
-    final var group = instance.find(1);
+    final Group group = instance.find(1);
 
     assertThat(group.id()).isEqualTo(expectedGroup.id());
   }

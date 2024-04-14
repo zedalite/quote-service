@@ -1,6 +1,7 @@
 package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.tables.records.GroupsRecord;
+import de.zedalite.quotes.data.model.Group;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +18,9 @@ class GroupMapperTest {
   @Test
   @DisplayName("Should map groupsRecord to group")
   void shouldMapGroupsRecordToGroup() {
-    final var groupRec = new GroupsRecord(0, "group", "GROUP", LocalDateTime.MIN, 1);
+    final GroupsRecord groupRec = new GroupsRecord(0, "group", "GROUP", LocalDateTime.MIN, 1);
 
-    final var group = instance.mapToGroup(groupRec);
+    final Group group = instance.mapToGroup(groupRec);
 
     assertThat(group).isNotNull();
     assertThat(group.id()).isZero();
@@ -33,7 +34,7 @@ class GroupMapperTest {
   @DisplayName("Should map empty groupRecord to null")
   @NullSource
   void shouldMapEmptyGroupRecordToNull(final GroupsRecord groupsRecord) {
-    final var group = instance.mapToGroup(groupsRecord);
+    final Group group = instance.mapToGroup(groupsRecord);
 
     assertThat(group).isNull();
   }

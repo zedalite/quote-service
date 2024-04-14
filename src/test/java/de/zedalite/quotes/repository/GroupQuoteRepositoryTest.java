@@ -4,6 +4,7 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.jooq.tables.GroupQuotes;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
 import org.jooq.DSLContext;
@@ -17,6 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 
 import static de.zedalite.quotes.data.model.SortField.*;
 import static de.zedalite.quotes.data.model.SortOrder.ASC;
@@ -49,7 +51,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final var userId = userRepository.save(new UserRequest("qg", "test")).id();
+    final Integer userId = userRepository.save(new UserRequest("qg", "test")).id();
     groupId = groupRepository.save(new GroupRequest("quoter-group", "Quoter Group", LocalDateTime.now(), userId)).id();
     quote = instance.save(groupId, QuoteGenerator.getQuoteRequest());
   }
@@ -57,9 +59,9 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should save group quote")
   void shouldSaveGroupQuote() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
 
-    final var quote = instance.save(groupId, quoteRequest);
+    final Quote quote = instance.save(groupId, quoteRequest);
 
     assertThat(quote).isNotNull();
     assertThat(quote.id()).isNotNegative();
@@ -68,7 +70,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
     assertThat(quote.context()).isEqualTo(quoteRequest.context());
     assertThat(quote.creatorId()).isEqualTo(quoteRequest.creatorId());
 
-    final var isInserted = dsl.fetchExists(dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id()))));
+    final boolean isInserted = dsl.fetchExists(dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id()))));
 
     assertThat(isInserted).isTrue();
   }
@@ -76,10 +78,10 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find group quote by id")
   void shouldFindGroupQuoteById() {
-    final var quoteRequest = QuoteGenerator.getQuoteRequest();
-    final var savedQuote = instance.save(groupId, quoteRequest);
+    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
+    final Quote savedQuote = instance.save(groupId, quoteRequest);
 
-    final var quote = instance.findById(groupId, savedQuote.id());
+    final Quote quote = instance.findById(groupId, savedQuote.id());
 
     assertThat(quote).isNotNull();
     assertThat(quote.id()).isNotNegative();
@@ -92,14 +94,14 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all group quotes")
   void shouldFindAllGroupQuotes() {
-    final var sortedAuthorAsc = instance.findAll(groupId, AUTHOR, ASC);
-    final var sortedAuthorDesc = instance.findAll(groupId, AUTHOR, DESC);
+    final List<Quote> sortedAuthorAsc = instance.findAll(groupId, AUTHOR, ASC);
+    final List<Quote> sortedAuthorDesc = instance.findAll(groupId, AUTHOR, DESC);
 
-    final var sortedCreationAsc = instance.findAll(groupId, CREATION_DATE, ASC);
-    final var sortedCreationDesc = instance.findAll(groupId, CREATION_DATE, DESC);
+    final List<Quote> sortedCreationAsc = instance.findAll(groupId, CREATION_DATE, ASC);
+    final List<Quote> sortedCreationDesc = instance.findAll(groupId, CREATION_DATE, DESC);
 
-    final var sortedTextAsc = instance.findAll(groupId, TEXT, ASC);
-    final var sortedTextDesc = instance.findAll(groupId, TEXT, DESC);
+    final List<Quote> sortedTextAsc = instance.findAll(groupId, TEXT, ASC);
+    final List<Quote> sortedTextDesc = instance.findAll(groupId, TEXT, DESC);
 
     assertThat(sortedAuthorAsc).map(Quote::author).isSortedAccordingTo(Comparator.naturalOrder());
     assertThat(sortedAuthorDesc).map(Quote::author).isSortedAccordingTo(Comparator.reverseOrder());
@@ -114,7 +116,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find random group quotes")
   void shouldFindRandomGroupQuotes() {
-    final var quotes = instance.findRandoms(groupId, 8);
+    final List<Quote> quotes = instance.findRandoms(groupId, 8);
 
     assertThat(quotes).contains(quote);
   }
@@ -122,7 +124,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find group quote count")
   void shouldFindGroupQuoteCount() {
-    final var count = instance.count(groupId);
+    final Integer count = instance.count(groupId);
 
     assertThat(count).isGreaterThan(1);
   }

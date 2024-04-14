@@ -28,10 +28,10 @@ class AuthorizerTest {
   @ValueSource(booleans = {true,false})
   @DisplayName("Should decide on user")
   void shouldDecideUser(final boolean expected) {
-    final var principal = UserGenerator.getUserPrincipal();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
     willReturn(expected).given(service).isUserInGroup(anyInt(), anyInt());
 
-    final var result = instance.isUserInGroup(principal, 1);
+    final boolean result = instance.isUserInGroup(principal, 1);
 
     then(service).should().isUserInGroup(1, 1);
     assertThat(result).isEqualTo(expected);
@@ -41,10 +41,10 @@ class AuthorizerTest {
   @Test
   @DisplayName("Should allow user")
   void shouldAllowUser() {
-    final var principal = UserGenerator.getUserPrincipal();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
     willReturn(true).given(service).isUserInGroup(anyInt(), anyInt());
 
-    final var result = instance.isUserInGroup(principal, 1);
+    final boolean result = instance.isUserInGroup(principal, 1);
 
     then(service).should().isUserInGroup(1, 1);
     assertThat(result).isTrue();
@@ -53,10 +53,10 @@ class AuthorizerTest {
   @Test
   @DisplayName("Should disallow user")
   void shouldDisallowUser() {
-    final var principal = UserGenerator.getUserPrincipal();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
     willReturn(false).given(service).isUserInGroup(anyInt(), anyInt());
 
-    final var result = instance.isUserInGroup(principal, 999);
+    final boolean result = instance.isUserInGroup(principal, 999);
 
     then(service).should().isUserInGroup(999, 1);
     assertThat(result).isFalse();

@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,7 +24,7 @@ class QuoteControllerIT extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return success on valid input")
   void shouldReturnSuccessOnValidInput() throws Exception {
-    final var result = mockMvc.perform(get("/quotes/count"))
+    final MvcResult result = mockMvc.perform(get("/quotes/count"))
       .andExpect(status().isOk())
       .andReturn();
 

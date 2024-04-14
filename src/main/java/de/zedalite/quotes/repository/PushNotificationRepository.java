@@ -29,12 +29,12 @@ public class PushNotificationRepository {
    * @throws NotifierException if an error occurs while sending the push notification
    */
   public void sendToTopic(final String topic, final PushNotification pushNotification) throws NotifierException {
-    final var notification = Notification.builder()
+    final Notification notification = Notification.builder()
       .setTitle(pushNotification.title())
       .setBody(pushNotification.body())
       .build();
 
-    final var message = Message.builder()
+    final Message message = Message.builder()
       .setTopic(topic)
       .setNotification(notification)
       .putAllData(pushNotification.data())

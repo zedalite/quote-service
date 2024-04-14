@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import de.zedalite.quotes.auth.UserPrincipal;
 import de.zedalite.quotes.data.model.AuthRequest;
 import de.zedalite.quotes.data.model.AuthResponse;
 import de.zedalite.quotes.data.model.User;
@@ -32,8 +33,8 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should signup user")
   void shouldSignupUser() {
-    final var userRequest = new UserRequest("tester", "test");
-    final var expectedUser = new User(1, "tester", "test", "TESTER", LocalDateTime.now());
+    final UserRequest userRequest = new UserRequest("tester", "test");
+    final User expectedUser = new User(1, "tester", "test", "TESTER", LocalDateTime.now());
     willReturn(expectedUser).given(service).create(any(UserRequest.class));
 
     instance.signup(userRequest);
@@ -44,8 +45,8 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should login user")
   void shouldLoginUser() {
-    final var authRequest = new AuthRequest("tester", "test");
-    final var expectedUserResponse = new AuthResponse("uezhag");
+    final AuthRequest authRequest = new AuthRequest("tester", "test");
+    final AuthResponse expectedUserResponse = new AuthResponse("uezhag");
     willReturn(expectedUserResponse).given(service).authenticate(any(AuthRequest.class));
 
     instance.login(authRequest);
@@ -56,8 +57,8 @@ class AuthControllerTest {
   @Test
   @DisplayName("Should refresh user token")
   void shouldRefreshUserToken() {
-    final var expectedUserResponse = new AuthResponse("uezhag");
-    final var principal = UserGenerator.getUserPrincipal();
+    final AuthResponse expectedUserResponse = new AuthResponse("uezhag");
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
     willReturn(expectedUserResponse).given(service).refreshToken(anyString());
 
