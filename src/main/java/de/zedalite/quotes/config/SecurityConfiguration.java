@@ -1,6 +1,9 @@
 package de.zedalite.quotes.config;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import de.zedalite.quotes.security.JwtAuthenticationFilter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +16,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration
 public class SecurityConfiguration {
 
@@ -26,9 +25,11 @@ public class SecurityConfiguration {
 
   private final List<String> corsAllowedOrigins;
 
-  public SecurityConfiguration(final JwtAuthenticationFilter jwtAuthFilter,
-                               final AuthenticationProvider authenticationProvider,
-                               final @Value("${app.security.cors.allowedOrigins}") List<String> corsAllowedOrigins) {
+  public SecurityConfiguration(
+    final JwtAuthenticationFilter jwtAuthFilter,
+    final AuthenticationProvider authenticationProvider,
+    final @Value("${app.security.cors.allowedOrigins}") List<String> corsAllowedOrigins
+  ) {
     this.jwtAuthFilter = jwtAuthFilter;
     this.authenticationProvider = authenticationProvider;
     this.corsAllowedOrigins = corsAllowedOrigins;
@@ -39,9 +40,7 @@ public class SecurityConfiguration {
     http
       .cors(c -> c.configurationSource(getCorsConfiguration()))
       .csrf(AbstractHttpConfigurer::disable)
-      .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/actuator/*").permitAll()
-        .anyRequest().authenticated())
+      .authorizeHttpRequests(authz -> authz.requestMatchers("/actuator/*").permitAll().anyRequest().authenticated())
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authenticationProvider)
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

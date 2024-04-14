@@ -1,5 +1,10 @@
 package de.zedalite.quotes.repository;
 
+import static de.zedalite.quotes.data.model.SortField.*;
+import static de.zedalite.quotes.data.model.SortOrder.ASC;
+import static de.zedalite.quotes.data.model.SortOrder.DESC;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.jooq.quotes.tables.GroupQuotes;
 import de.zedalite.quotes.data.model.GroupRequest;
@@ -7,6 +12,9 @@ import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -15,15 +23,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-
-import static de.zedalite.quotes.data.model.SortField.*;
-import static de.zedalite.quotes.data.model.SortOrder.ASC;
-import static de.zedalite.quotes.data.model.SortOrder.DESC;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,7 +47,6 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
 
   private Quote quote;
 
-
   @BeforeAll
   void setup() {
     final Integer userId = userRepository.save(new UserRequest("qg", "test")).id();
@@ -70,7 +68,9 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
     assertThat(quote.context()).isEqualTo(quoteRequest.context());
     assertThat(quote.creatorId()).isEqualTo(quoteRequest.creatorId());
 
-    final boolean isInserted = dsl.fetchExists(dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id()))));
+    final boolean isInserted = dsl.fetchExists(
+      dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id())))
+    );
 
     assertThat(isInserted).isTrue();
   }

@@ -6,9 +6,8 @@ import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupUserService {

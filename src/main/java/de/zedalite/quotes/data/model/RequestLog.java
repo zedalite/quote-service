@@ -4,32 +4,31 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record RequestLog(
+  @NotBlank String method,
 
-  @NotBlank
-  String method,
+  @NotBlank String uri,
 
-  @NotBlank
-  String uri,
+  @NotBlank String query,
 
-  @NotBlank
-  String query,
+  @NotNull Integer status,
 
-  @NotNull
-  Integer status,
+  @NotBlank String client,
 
-  @NotBlank
-  String client,
+  @NotBlank String user,
 
-  @NotBlank
-  String user,
-
-  @NotNull
-  Long time
-
+  @NotNull Long time
 ) {
-
   @Override
   public String toString() {
-    return String.format("request [%s %s%s, status=%s, client=%s, user=%s, duration=%sms]", method, uri, query, status, client, user, time);
+    return String.format(
+      "request [%s %s%s, status=%s, client=%s, user=%s, duration=%sms]",
+      method,
+      uri,
+      query,
+      status,
+      client,
+      user,
+      time
+    );
   }
 }

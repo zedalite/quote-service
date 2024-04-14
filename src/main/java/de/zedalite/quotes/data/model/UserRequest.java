@@ -10,21 +10,12 @@ import jakarta.validation.constraints.Size;
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record UserRequest(
+  @NotBlank @Size(max = 32) String name,
 
-  @NotBlank
-  @Size(max = 32)
-  String name,
+  @NotBlank @Size(max = 64) String email,
 
-  @NotBlank
-  @Size(max = 64)
-  String email,
-
-  @NotBlank
-  @Size(max = 32)
-  String displayName
-
+  @NotBlank @Size(max = 32) String displayName
 ) {
-
   public UserRequest(final String name, final String email) {
     this(name, email, name);
   }

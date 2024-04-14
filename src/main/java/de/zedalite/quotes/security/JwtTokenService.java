@@ -9,14 +9,13 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.net.URL;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenService {
@@ -27,9 +26,7 @@ public class JwtTokenService {
   private List<String> jwtIssuer;
 
   public JwtTokenService(final @Value("${app.security.jwk.url}") URL jwkHost) {
-    this.jwkProvider = new JwkProviderBuilder(jwkHost)
-      .cached(10, 24, TimeUnit.HOURS)
-      .build();
+    this.jwkProvider = new JwkProviderBuilder(jwkHost).cached(10, 24, TimeUnit.HOURS).build();
   }
 
   public String validateToken(final String token) {
@@ -66,7 +63,4 @@ public class JwtTokenService {
       }
     };
   }
-
-
-
 }

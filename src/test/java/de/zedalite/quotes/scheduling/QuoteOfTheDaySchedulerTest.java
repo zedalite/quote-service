@@ -1,5 +1,7 @@
 package de.zedalite.quotes.scheduling;
 
+import static org.mockito.BDDMockito.then;
+
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import de.zedalite.quotes.service.GroupService;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class QuoteOfTheDaySchedulerTest {

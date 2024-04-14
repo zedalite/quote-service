@@ -1,5 +1,11 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.*;
+
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
@@ -9,21 +15,14 @@ import de.zedalite.quotes.fixtures.QuoteGenerator;
 import de.zedalite.quotes.repository.GroupQuoteOfTheDayRepository;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.UserRepository;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GroupQuoteOfTheDayServiceTest {
@@ -39,7 +38,6 @@ class GroupQuoteOfTheDayServiceTest {
 
   @Mock
   private UserRepository userRepository;
-
 
   @Test
   @DisplayName("Should find quote of the day")

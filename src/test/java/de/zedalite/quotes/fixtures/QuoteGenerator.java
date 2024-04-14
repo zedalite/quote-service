@@ -5,7 +5,6 @@ import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.User;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

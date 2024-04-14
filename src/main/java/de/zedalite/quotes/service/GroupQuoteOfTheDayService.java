@@ -11,11 +11,10 @@ import de.zedalite.quotes.repository.GroupQuoteOfTheDayRepository;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import de.zedalite.quotes.utils.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupQuoteOfTheDayService {
@@ -30,13 +29,17 @@ public class GroupQuoteOfTheDayService {
 
   private final UserRepository userRepository;
 
-  public GroupQuoteOfTheDayService(final GroupQuoteOfTheDayRepository repository, final GroupQuoteRepository groupQuoteRepository, final UserRepository userRepository) {
+  public GroupQuoteOfTheDayService(
+    final GroupQuoteOfTheDayRepository repository,
+    final GroupQuoteRepository groupQuoteRepository,
+    final UserRepository userRepository
+  ) {
     this.repository = repository;
     this.groupQuoteRepository = groupQuoteRepository;
     this.userRepository = userRepository;
   }
 
-  public QuoteMessage findQuoteOfTheDay(final Integer id) throws  ResourceNotFoundException {
+  public QuoteMessage findQuoteOfTheDay(final Integer id) throws ResourceNotFoundException {
     if (groupQuoteRepository.count(id) < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
 
     Quote qotd;

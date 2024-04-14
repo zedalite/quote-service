@@ -1,5 +1,9 @@
 package de.zedalite.quotes.web;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+
 import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
@@ -9,10 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willReturn;
 
 @ExtendWith(MockitoExtension.class)
 class GroupQuoteOfTheDayControllerTest {

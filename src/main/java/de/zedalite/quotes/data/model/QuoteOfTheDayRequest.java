@@ -5,22 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.springframework.lang.NonNull;
-
 import java.time.LocalDate;
+import org.springframework.lang.NonNull;
 
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record QuoteOfTheDayRequest(
+  @NonNull @PositiveOrZero Integer quoteId,
 
-  @NonNull
-  @PositiveOrZero
-  Integer quoteId,
-
-  @NonNull
-  @PastOrPresent
-  LocalDate creationDate
-
-) {
-}
+  @NonNull @PastOrPresent LocalDate creationDate
+) {}

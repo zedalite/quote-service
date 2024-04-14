@@ -2,16 +2,14 @@ package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.model.RequestLog;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.util.Objects;
-
 @Mapper
 public interface RequestMapper {
-
   RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
 
   @Mapping(target = "uri", source = "request.requestURI")

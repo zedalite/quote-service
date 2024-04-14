@@ -1,5 +1,12 @@
 package de.zedalite.quotes.service;
 
+import static de.zedalite.quotes.data.model.SortField.CREATION_DATE;
+import static de.zedalite.quotes.data.model.SortOrder.DESC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
+
 import de.zedalite.quotes.data.model.PushNotification;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteMessage;
@@ -11,21 +18,13 @@ import de.zedalite.quotes.fixtures.QuoteGenerator;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.PushNotificationRepository;
 import de.zedalite.quotes.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static de.zedalite.quotes.data.model.SortField.CREATION_DATE;
-import static de.zedalite.quotes.data.model.SortOrder.DESC;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GroupQuoteServiceTest {
@@ -127,9 +126,9 @@ class GroupQuoteServiceTest {
   void shouldFindGroupQuote() {
     final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).findById(1, 2);
-    
+
     instance.find(1, 2);
-    
+
     then(repository).should().findById(1, 2);
   }
 

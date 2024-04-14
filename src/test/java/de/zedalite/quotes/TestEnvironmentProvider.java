@@ -22,6 +22,7 @@ public abstract class TestEnvironmentProvider {
 
   @MockBean
   FirebaseApp firebaseApp;
+
   @MockBean
   FirebaseMessaging firebaseMessaging;
 

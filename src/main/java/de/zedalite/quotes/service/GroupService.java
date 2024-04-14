@@ -5,9 +5,8 @@ import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.repository.GroupRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupService {

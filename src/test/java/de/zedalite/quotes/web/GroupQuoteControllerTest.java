@@ -1,26 +1,25 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.UserPrincipal;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+
 import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.SortField;
 import de.zedalite.quotes.data.model.SortOrder;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupQuoteService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willReturn;
 
 @ExtendWith(MockitoExtension.class)
 class GroupQuoteControllerTest {

@@ -16,16 +16,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Quotes", description = "Operations related to quotes")
 @RequestMapping("quotes")
 public class QuoteController {
+
   private final QuoteService service;
 
   public QuoteController(final QuoteService service) {
     this.service = service;
   }
 
-  @Operation(summary = "Get the number of saved quotes",
+  @Operation(
+    summary = "Get the number of saved quotes",
     responses = {
-      @ApiResponse(responseCode = "200", description = "Quotes found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class))}),
-      @ApiResponse(responseCode = "404", description = "Quotes not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
+      @ApiResponse(
+        responseCode = "200",
+        description = "Quotes found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Quotes not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+      ),
+    }
+  )
   @GetMapping("count")
   public Integer getQuotesCount() {
     return service.count();

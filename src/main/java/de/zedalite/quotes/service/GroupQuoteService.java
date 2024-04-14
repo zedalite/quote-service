@@ -9,15 +9,14 @@ import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.PushNotificationRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import de.zedalite.quotes.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupQuoteService {
@@ -35,7 +34,11 @@ public class GroupQuoteService {
   @Value("${notification.topic.quote-creation}")
   private String quoteCreationTopic;
 
-  public GroupQuoteService(final GroupQuoteRepository repository, final UserRepository userRepository, final PushNotificationRepository notifierRepository) {
+  public GroupQuoteService(
+    final GroupQuoteRepository repository,
+    final UserRepository userRepository,
+    final PushNotificationRepository notifierRepository
+  ) {
     this.repository = repository;
     this.userRepository = userRepository;
     this.notifierRepository = notifierRepository;
@@ -50,7 +53,8 @@ public class GroupQuoteService {
       final PushNotification notification = new PushNotification(
         "New Quote",
         quote.author() + " says " + quote.truncateText() + "...",
-        Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id())));
+        Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id()))
+      );
       // TODO send to specific group topic or user notification token
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
 
@@ -106,9 +110,7 @@ public class GroupQuoteService {
   }
 
   private List<QuoteMessage> getQuoteMessages(final List<Quote> quotes) {
-    return quotes.stream()
-      .map(this::getQuoteMessage)
-      .toList();
+    return quotes.stream().map(this::getQuoteMessage).toList();
   }
 
   private List<User> getMentions(final List<Integer> userIds) {

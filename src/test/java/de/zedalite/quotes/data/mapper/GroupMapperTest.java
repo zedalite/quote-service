@@ -1,15 +1,14 @@
 package de.zedalite.quotes.data.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.model.Group;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
-
-import java.time.LocalDateTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class GroupMapperTest {
 
@@ -38,5 +37,4 @@ class GroupMapperTest {
 
     assertThat(group).isNull();
   }
-
 }

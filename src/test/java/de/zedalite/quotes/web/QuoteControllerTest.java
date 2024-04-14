@@ -1,5 +1,8 @@
 package de.zedalite.quotes.web;
 
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+
 import de.zedalite.quotes.service.QuoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,9 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willReturn;
 
 @ExtendWith(MockitoExtension.class)
 class QuoteControllerTest {

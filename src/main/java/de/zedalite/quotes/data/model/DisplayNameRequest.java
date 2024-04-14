@@ -9,11 +9,4 @@ import jakarta.validation.constraints.Size;
 @JsonSerialize
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-public record DisplayNameRequest(
-
-  @NotBlank
-  @Size(max = 32)
-  String displayName
-
-) {
-}
+public record DisplayNameRequest(@NotBlank @Size(max = 32) String displayName) {}

@@ -2,7 +2,6 @@ package de.zedalite.quotes.fixtures;
 
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,5 +21,4 @@ public class GroupGenerator {
       new Group(2, "outerspace", "Outer Space", LocalDateTime.now(), 1)
     );
   }
-
 }

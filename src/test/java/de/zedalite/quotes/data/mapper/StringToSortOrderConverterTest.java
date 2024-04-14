@@ -1,13 +1,13 @@
 package de.zedalite.quotes.data.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import de.zedalite.quotes.data.model.SortOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StringToSortOrderConverterTest {
 
@@ -15,7 +15,7 @@ class StringToSortOrderConverterTest {
 
   @ParameterizedTest(name = "Convert \"{0}\" to {1}")
   @DisplayName("Should convert string to sortOrder")
-  @CsvSource({"asc,ASC", "desc,DESC"})
+  @CsvSource({ "asc,ASC", "desc,DESC" })
   void shouldConvertStringToSortField(final String source, final SortOrder expected) {
     assertThat(instance.convert(source)).isEqualTo(expected);
   }

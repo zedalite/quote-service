@@ -1,5 +1,9 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.BDDMockito.*;
+
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.User;
@@ -8,18 +12,13 @@ import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupRepository;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GroupServiceTest {
@@ -145,7 +144,4 @@ class GroupServiceTest {
 
     assertThatCode(() -> instance.findAllIds()).isInstanceOf(ResourceNotFoundException.class);
   }
-
-
-
 }

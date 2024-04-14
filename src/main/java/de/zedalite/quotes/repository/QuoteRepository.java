@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class QuoteRepository {
+
   private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
   private static final String QUOTE_NOT_FOUND = "Quote not found";
   private static final Quotes QUOTES = Quotes.QUOTES_.as("quotes");
@@ -26,7 +27,8 @@ public class QuoteRepository {
   }
 
   public Quote save(final QuoteRequest quote) throws QuoteNotFoundException {
-    final QuotesRecord savedQuote = dsl.insertInto(QUOTES)
+    final QuotesRecord savedQuote = dsl
+      .insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
       .set(QUOTES.CREATION_DATE, quote.creationDate())
       .set(QUOTES.TEXT, quote.text())

@@ -1,5 +1,9 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
+
 import de.zedalite.quotes.data.model.DisplayNameRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
@@ -8,18 +12,13 @@ import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -121,6 +120,8 @@ class UserServiceTest {
     willReturn(user).given(repository).findById(1);
     willThrow(UserNotFoundException.class).given(repository).update(1, userRequest);
 
-    assertThatCode(() -> instance.updateDisplayName(1, displayNameRequest)).isInstanceOf(ResourceNotFoundException.class);
+    assertThatCode(() -> instance.updateDisplayName(1, displayNameRequest)).isInstanceOf(
+      ResourceNotFoundException.class
+    );
   }
 }

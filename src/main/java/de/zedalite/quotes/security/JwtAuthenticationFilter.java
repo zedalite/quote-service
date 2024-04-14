@@ -1,10 +1,13 @@
 package de.zedalite.quotes.security;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,10 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,7 +28,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response, @NotNull final FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(
+    @NotNull final HttpServletRequest request,
+    @NotNull final HttpServletResponse response,
+    @NotNull final FilterChain filterChain
+  ) throws ServletException, IOException {
     final String header = request.getHeader(AUTHORIZATION);
 
     if (header != null && header.startsWith("Bearer ")) {
@@ -38,7 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       try {
         final String username = tokenService.validateToken(token);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+          userDetails,
+          null,
+          userDetails.getAuthorities()
+        );
         SecurityContextHolder.getContext().setAuthentication(authentication);
       } catch (final JWTVerificationException ex) {
         filterChain.doFilter(request, response);

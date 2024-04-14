@@ -1,18 +1,17 @@
 package de.zedalite.quotes.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -35,7 +34,9 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @BeforeAll
   void setup() {
     userId = userRepository.save(new UserRequest("grouper", "test")).id();
-    groupId = groupRepository.save(new GroupRequest("groupers-group", "GroupersGroup", LocalDateTime.now(), userId)).id();
+    groupId = groupRepository
+      .save(new GroupRequest("groupers-group", "GroupersGroup", LocalDateTime.now(), userId))
+      .id();
   }
 
   @Test
@@ -50,7 +51,9 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should find all group users")
   void shouldFindAllGroupUsers() {
     final Integer userId = userRepository.save(new UserRequest("operator", "op")).id();
-    final Integer groupId = groupRepository.save(new GroupRequest("new-group", "New Group", LocalDateTime.now(), userId)).id();
+    final Integer groupId = groupRepository
+      .save(new GroupRequest("new-group", "New Group", LocalDateTime.now(), userId))
+      .id();
     instance.save(groupId, userId);
 
     final List<User> users = instance.findAll(groupId);

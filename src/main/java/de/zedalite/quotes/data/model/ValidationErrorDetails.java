@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,15 +12,9 @@ import java.util.List;
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record ValidationErrorDetails(
+  @NotNull @PastOrPresent LocalDateTime timestamp,
 
-  @NotNull
-  @PastOrPresent
-  LocalDateTime timestamp,
-
-  @NotNull
-  String message,
+  @NotNull String message,
 
   List<Violation> violations
-
-) {
-}
+) {}

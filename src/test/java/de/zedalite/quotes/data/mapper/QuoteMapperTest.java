@@ -1,17 +1,16 @@
 package de.zedalite.quotes.data.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class QuoteMapperTest {
 
@@ -45,8 +44,22 @@ class QuoteMapperTest {
   @Test
   @DisplayName("Should map quoteRecords to quotes")
   void shouldMapQuoteRecordsToQuotes() {
-    final QuotesRecord quoteRecSonar = new QuotesRecord(0, "sonar", LocalDateTime.MIN, "I like code coverage.", "sub", 3);
-    final QuotesRecord quoteRecMapper = new QuotesRecord(1, "mapper", LocalDateTime.MAX, "Mappers facilitate the work.", null, 2);
+    final QuotesRecord quoteRecSonar = new QuotesRecord(
+      0,
+      "sonar",
+      LocalDateTime.MIN,
+      "I like code coverage.",
+      "sub",
+      3
+    );
+    final QuotesRecord quoteRecMapper = new QuotesRecord(
+      1,
+      "mapper",
+      LocalDateTime.MAX,
+      "Mappers facilitate the work.",
+      null,
+      2
+    );
     final List<QuotesRecord> quotesRecords = List.of(quoteRecSonar, quoteRecMapper);
 
     final List<Quote> quotes = instance.mapToQuoteList(quotesRecords);

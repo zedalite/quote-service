@@ -1,5 +1,10 @@
 package de.zedalite.quotes.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+
 import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupUserService;
@@ -12,13 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willReturn;
-
 @ExtendWith(MockitoExtension.class)
 class AuthorizerTest {
+
   @InjectMocks
   private Authorizer instance;
 
@@ -26,7 +27,7 @@ class AuthorizerTest {
   private GroupUserService service;
 
   @ParameterizedTest(name = "Allow User: {0}")
-  @ValueSource(booleans = {true,false})
+  @ValueSource(booleans = { true, false })
   @DisplayName("Should decide on user")
   void shouldDecideUser(final boolean expected) {
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
@@ -37,7 +38,6 @@ class AuthorizerTest {
     then(service).should().isUserInGroup(1, 1);
     assertThat(result).isEqualTo(expected);
   }
-
 
   @Test
   @DisplayName("Should allow user")

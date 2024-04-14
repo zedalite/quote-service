@@ -7,13 +7,12 @@ import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides methods for interacting with the database to perform CRUD operations on quotes.
@@ -35,7 +34,8 @@ public class GroupRepository {
 
   @CachePut(value = "groups", key = "#result.id()", unless = "#result == null")
   public Group save(final GroupRequest group) throws QuoteNotFoundException {
-    final Optional<GroupsRecord> savedGroup = dsl.insertInto(GROUPS)
+    final Optional<GroupsRecord> savedGroup = dsl
+      .insertInto(GROUPS)
       .set(GROUPS.NAME, group.name())
       .set(GROUPS.DISPLAY_NAME, group.displayName())
       .set(GROUPS.CREATION_DATE, group.creationDate())
@@ -48,7 +48,8 @@ public class GroupRepository {
 
   @Cacheable(value = "groups", key = "#id", unless = "#result == null")
   public Group findById(final Integer id) throws GroupNotFoundException {
-    final Optional<GroupsRecord> group = dsl.selectFrom(GROUPS)
+    final Optional<GroupsRecord> group = dsl
+      .selectFrom(GROUPS)
       .where(GROUPS.ID.eq(id))
       .fetchOptionalInto(GroupsRecord.class);
     if (group.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
@@ -56,16 +57,13 @@ public class GroupRepository {
   }
 
   public List<Group> findAll() {
-    final List<GroupsRecord> groups = dsl.selectFrom(GROUPS)
-      .fetchInto(GroupsRecord.class);
+    final List<GroupsRecord> groups = dsl.selectFrom(GROUPS).fetchInto(GroupsRecord.class);
     if (groups.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
     return GROUP_MAPPER.mapToGroups(groups);
   }
 
   public List<Integer> findAllIds() {
-    final List<Integer> ids = dsl.select(GROUPS.ID)
-      .from(GROUPS)
-      .fetchInto(Integer.class);
+    final List<Integer> ids = dsl.select(GROUPS.ID).from(GROUPS).fetchInto(Integer.class);
     if (ids.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
     return ids;
   }

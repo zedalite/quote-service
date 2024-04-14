@@ -1,5 +1,10 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.never;
+
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
@@ -7,6 +12,7 @@ import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,13 +21,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class GroupUserServiceTest {
@@ -43,7 +42,7 @@ class GroupUserServiceTest {
 
     instance.create(1, 2);
 
-    then(repository).should().save(1,2);
+    then(repository).should().save(1, 2);
   }
 
   @Test
@@ -114,7 +113,7 @@ class GroupUserServiceTest {
   }
 
   @ParameterizedTest(name = "User in Group: {0}")
-  @ValueSource(booleans = {true,false})
+  @ValueSource(booleans = { true, false })
   @DisplayName("Should determine if user is in group")
   void shouldDetermineIfUserIsInGroup(final Boolean isInGroup) {
     willReturn(isInGroup).given(repository).isUserInGroup(1, 2);
@@ -123,5 +122,4 @@ class GroupUserServiceTest {
 
     assertThat(result).isEqualTo(isInGroup);
   }
-
 }

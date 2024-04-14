@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QuoteService {
+
   private final QuoteRepository repository;
 
   public QuoteService(final QuoteRepository repository) {

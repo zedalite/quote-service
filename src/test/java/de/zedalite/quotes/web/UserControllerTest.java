@@ -1,22 +1,21 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.UserPrincipal;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+
 import de.zedalite.quotes.data.model.DisplayNameRequest;
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willReturn;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -48,7 +47,6 @@ class UserControllerTest {
 
     then(service).should().find(1);
   }
-
 
   @Test
   @DisplayName("Should patch displayName")

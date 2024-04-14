@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class StringToSortFieldConverter implements Converter<String, SortField> {
+
   @Override
   public SortField convert(final @NotNull String source) {
     return SortField.getByName(source);

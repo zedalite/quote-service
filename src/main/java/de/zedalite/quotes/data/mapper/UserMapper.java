@@ -2,10 +2,9 @@ package de.zedalite.quotes.data.mapper;
 
 import de.zedalite.quotes.data.jooq.users.tables.records.UsersRecord;
 import de.zedalite.quotes.data.model.User;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-
-import java.util.List;
 
 /**
  * This interface represents the UserMapper which is responsible for mapping the UsersRecord object to User object.

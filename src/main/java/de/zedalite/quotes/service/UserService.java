@@ -7,9 +7,8 @@ import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
@@ -17,7 +16,6 @@ public class UserService {
   public static final String USER_ALREADY_EXITS = "User already exits";
 
   private final UserRepository repository;
-
 
   public UserService(final UserRepository repository) {
     this.repository = repository;

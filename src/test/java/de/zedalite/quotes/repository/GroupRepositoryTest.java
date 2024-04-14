@@ -1,21 +1,20 @@
 package de.zedalite.quotes.repository;
 
+import static org.assertj.core.api.Assertions.*;
+
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.exception.GroupNotFoundException;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

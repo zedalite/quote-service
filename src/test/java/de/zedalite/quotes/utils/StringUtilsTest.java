@@ -1,12 +1,11 @@
 package de.zedalite.quotes.utils;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class StringUtilsTest {
 
@@ -23,7 +22,7 @@ class StringUtilsTest {
 
     final List<Integer> userIds = StringUtils.extractUserIds(text);
 
-    assertThat(userIds).containsAll(List.of(2,2313,13,3));
+    assertThat(userIds).containsAll(List.of(2, 2313, 13, 3));
   }
 
   @Test
@@ -45,5 +44,4 @@ class StringUtilsTest {
 
     assertThat(userIds).isEmpty();
   }
-
 }

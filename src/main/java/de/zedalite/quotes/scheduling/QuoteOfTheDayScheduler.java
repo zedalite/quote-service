@@ -22,7 +22,10 @@ public class QuoteOfTheDayScheduler {
 
   private final GroupService groupService;
 
-  public QuoteOfTheDayScheduler(final GroupQuoteOfTheDayService groupQuoteOfTheDayService, final GroupService groupService) {
+  public QuoteOfTheDayScheduler(
+    final GroupQuoteOfTheDayService groupQuoteOfTheDayService,
+    final GroupService groupService
+  ) {
     this.groupQuoteOfTheDayService = groupQuoteOfTheDayService;
     this.groupService = groupService;
   }
@@ -44,7 +47,6 @@ public class QuoteOfTheDayScheduler {
       }
     }
     LOGGER.info("Quotes of the day reset.");
-
   }
 
   /**

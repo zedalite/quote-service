@@ -9,12 +9,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonDeserialize
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 public record Violation(
+  @NotNull String field,
 
-  @NotNull
-  String field,
-
-  @NotNull
-  String message
-
-) {
-}
+  @NotNull String message
+) {}
