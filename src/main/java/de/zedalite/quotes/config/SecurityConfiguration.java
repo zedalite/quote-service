@@ -1,6 +1,7 @@
 package de.zedalite.quotes.config;
 
 import de.zedalite.quotes.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -23,9 +24,14 @@ public class SecurityConfiguration {
 
   private final AuthenticationProvider authenticationProvider;
 
-  public SecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
+  private final List<String> corsAllowedOrigins;
+
+  public SecurityConfiguration(final JwtAuthenticationFilter jwtAuthFilter,
+                               final AuthenticationProvider authenticationProvider,
+                               final @Value("${app.security.cors.allowedOrigins}") List<String> corsAllowedOrigins) {
     this.jwtAuthFilter = jwtAuthFilter;
     this.authenticationProvider = authenticationProvider;
+    this.corsAllowedOrigins = corsAllowedOrigins;
   }
 
   @Bean
@@ -44,7 +50,7 @@ public class SecurityConfiguration {
 
   private CorsConfigurationSource getCorsConfiguration() {
     final CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("https://example.com")); // TODO set acutal addresses via properties
+    configuration.setAllowedOrigins(corsAllowedOrigins);
 
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
