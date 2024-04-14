@@ -40,7 +40,7 @@ public class GroupController {
       @ApiResponse(responseCode = "200", description = "Group created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Group.class))}),
       @ApiResponse(responseCode = "400", description = "Group not created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class))})})
   @PostMapping()
-  public Group postGroup(@RequestBody @Valid final GroupRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+  public Group postGroup(@RequestBody @Valid final GroupRequest request, @AuthenticationPrincipal final UserPrincipal principal) {
     return service.create(request, principal.getId());
   }
 }

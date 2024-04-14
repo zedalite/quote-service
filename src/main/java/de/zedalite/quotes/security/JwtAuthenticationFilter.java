@@ -23,13 +23,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtTokenService tokenService;
   private final UserDetailsService userDetailsService;
 
-  public JwtAuthenticationFilter(final JwtTokenService tokenService, UserDetailsService userDetailsService) {
+  public JwtAuthenticationFilter(final JwtTokenService tokenService, final UserDetailsService userDetailsService) {
     this.tokenService = tokenService;
     this.userDetailsService = userDetailsService;
   }
 
   @Override
-  protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response, @NotNull final FilterChain filterChain) throws ServletException, IOException {
     final String header = request.getHeader(AUTHORIZATION);
 
     if (header != null && header.startsWith("Bearer ")) {
@@ -40,9 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-      } catch (JWTVerificationException ex) {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        // TODO handling works, but find out why client gets 403, request logger correctly gets 401
+      } catch (final JWTVerificationException ex) {
+        filterChain.doFilter(request, response);
         return;
       }
     }

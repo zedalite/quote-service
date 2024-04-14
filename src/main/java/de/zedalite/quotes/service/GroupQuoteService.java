@@ -55,10 +55,10 @@ public class GroupQuoteService {
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
 
       return quote;
-    } catch (NotifierException ex) {
+    } catch (final NotifierException ex) {
       LOGGER.warn("PushNotification for quote creation failed");
       return quote;
-    } catch (QuoteNotFoundException ex) {
+    } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -73,7 +73,7 @@ public class GroupQuoteService {
     try {
       final List<Quote> quotes = repository.findAll(id, field, order);
       return getQuoteMessages(quotes);
-    } catch (QuoteNotFoundException ex) {
+    } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -82,7 +82,7 @@ public class GroupQuoteService {
     try {
       final Quote quote = repository.findById(id, quoteId);
       return getQuoteMessage(quote);
-    } catch (QuoteNotFoundException ex) {
+    } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -90,7 +90,7 @@ public class GroupQuoteService {
   public List<QuoteMessage> findRandoms(final Integer id, final Integer quantity) {
     try {
       return getQuoteMessages(repository.findRandoms(id, quantity));
-    } catch (QuoteNotFoundException ex) {
+    } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -111,7 +111,7 @@ public class GroupQuoteService {
       .toList();
   }
 
-  private List<User> getMentions(List<Integer> userIds) {
+  private List<User> getMentions(final List<Integer> userIds) {
     return userIds.isEmpty() ? Collections.emptyList() : userRepository.findAllByIds(userIds);
   }
 }

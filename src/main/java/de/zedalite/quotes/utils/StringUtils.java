@@ -21,10 +21,10 @@ public final class StringUtils {
       .toList();
   }
 
-  private static Integer parseToInt(String number) {
+  private static Integer parseToInt(final String number) {
     try {
       return Integer.parseInt(number);
-    } catch(NumberFormatException e) {
+    } catch(final NumberFormatException e) {
       return null;
     }
   }

@@ -56,7 +56,7 @@ public class GroupQuoteOfTheDayService {
     return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
   }
 
-  private List<User> getMentions(List<Integer> userIds) {
+  private List<User> getMentions(final List<Integer> userIds) {
     return userIds.isEmpty() ? Collections.emptyList() : userRepository.findAllByIds(userIds);
   }
 }

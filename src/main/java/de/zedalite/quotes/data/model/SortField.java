@@ -9,7 +9,7 @@ public enum SortField {
 
   private final String name;
 
-  SortField(String name) {
+  SortField(final String name) {
     this.name = name;
   }
 

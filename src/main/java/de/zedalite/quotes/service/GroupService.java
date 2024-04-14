@@ -21,7 +21,7 @@ public class GroupService {
   public Group create(final GroupRequest request) {
     try {
       return repository.save(request);
-    } catch (GroupNotFoundException ex) {
+    } catch (final GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -35,7 +35,7 @@ public class GroupService {
   public Group find(final Integer id) {
     try {
       return repository.findById(id);
-    } catch (GroupNotFoundException ex) {
+    } catch (final GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -43,7 +43,7 @@ public class GroupService {
   public List<Group> findAll() {
     try {
       return repository.findAll();
-    } catch (GroupNotFoundException ex) {
+    } catch (final GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -51,7 +51,7 @@ public class GroupService {
   public List<Integer> findAllIds() {
     try {
       return repository.findAllIds();
-    } catch (GroupNotFoundException ex) {
+    } catch (final GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }

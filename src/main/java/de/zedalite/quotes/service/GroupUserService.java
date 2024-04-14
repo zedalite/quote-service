@@ -34,7 +34,7 @@ public class GroupUserService {
       } else {
         return repository.save(id, userId);
       }
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -42,7 +42,7 @@ public class GroupUserService {
   public User find(final Integer id, final Integer userId) {
     try {
       return repository.findById(id, userId);
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -50,7 +50,7 @@ public class GroupUserService {
   public List<User> findAll(final Integer id) {
     try {
       return repository.findAll(id);
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }

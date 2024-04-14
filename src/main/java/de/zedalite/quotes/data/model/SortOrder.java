@@ -8,7 +8,7 @@ public enum SortOrder {
 
   private final String name;
 
-  SortOrder(String name) {
+  SortOrder(final String name) {
     this.name = name;
   }
 

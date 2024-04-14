@@ -15,7 +15,7 @@ public class AuthenticationConfig {
 
   private final UserRepository userRepository;
 
-  public AuthenticationConfig(UserRepository userRepository) {
+  public AuthenticationConfig(final UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
@@ -32,7 +32,7 @@ public class AuthenticationConfig {
   }
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+  public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();
   }
 }

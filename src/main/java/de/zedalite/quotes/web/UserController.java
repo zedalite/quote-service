@@ -59,7 +59,7 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "Display name patched"),
       @ApiResponse(responseCode = "404", description = "User not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PatchMapping("displayname")
-  public void patchDisplayName(@RequestBody @Valid final DisplayNameRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+  public void patchDisplayName(@RequestBody @Valid final DisplayNameRequest request, @AuthenticationPrincipal final UserPrincipal principal) {
     service.updateDisplayName(principal.getId(), request);
   }
 }

@@ -69,7 +69,7 @@ public class GroupQuoteController {
       @ApiResponse(responseCode = "403", description = "Principal is no group member", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})})
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @PostMapping("{id}/quotes")
-  public QuoteMessage postQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+  public QuoteMessage postQuote(@PathVariable("id") final Integer id, @RequestBody @Valid final QuoteRequest request, @AuthenticationPrincipal final UserPrincipal principal) {
     return service.create(id, request, principal.getId());
   }
 

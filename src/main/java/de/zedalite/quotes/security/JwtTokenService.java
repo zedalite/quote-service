@@ -50,7 +50,7 @@ public class JwtTokenService {
       public RSAPublicKey getPublicKeyById(final String keyId) {
         try {
           return (RSAPublicKey) jwkProvider.get(keyId).getPublicKey();
-        } catch (JwkException e) {
+        } catch (final JwkException e) {
           throw new JWTDecodeException(e.getMessage());
         }
       }

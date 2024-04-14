@@ -30,7 +30,7 @@ public class RequestLogger extends OncePerRequestFilter {
   private static final RequestMapper REQUEST_MAPPER = RequestMapper.INSTANCE;
 
   @Override
-  protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
     final Instant start = Instant.now();
     try {
       filterChain.doFilter(request, response);

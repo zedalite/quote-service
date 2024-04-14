@@ -30,7 +30,7 @@ public class UserService {
       } else {
         return repository.save(request);
       }
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -38,7 +38,7 @@ public class UserService {
   public List<User> findAll() {
     try {
       return repository.findAll();
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -46,7 +46,7 @@ public class UserService {
   public User find(final Integer id) throws ResourceNotFoundException {
     try {
       return repository.findById(id);
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
@@ -56,7 +56,7 @@ public class UserService {
       final User user = find(id);
       final UserRequest userRequest = new UserRequest(user.name(), user.email(), request.displayName());
       repository.update(id, userRequest);
-    } catch (UserNotFoundException ex) {
+    } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
