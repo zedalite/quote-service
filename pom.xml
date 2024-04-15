@@ -10,10 +10,10 @@
   </parent>
 
   <groupId>de.zedalite</groupId>
-  <artifactId>quote-api</artifactId>
+  <artifactId>quote-service</artifactId>
   <version>1.3.0-SNAPSHOT</version>
-  <name>quote-api</name>
-  <description>Quote API</description>
+  <name>quote-service</name>
+  <description>Quote Service - A RESTful API acting as a link between the frontend and the datasource.</description>
   <packaging>jar</packaging>
 
   <properties>
