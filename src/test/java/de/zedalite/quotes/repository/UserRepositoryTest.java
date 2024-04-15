@@ -54,20 +54,20 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all by ids")
   void shouldFindAllByIds() {
-    final Integer id = instance.findByName("tester").id();
+    final Integer id = instance.findByName("repoTester").id();
     final List<User> users = instance.findAllByIds(List.of(id));
 
     assertThat(users).hasSize(1);
-    assertThat(users.getFirst().name()).isEqualTo("tester");
+    assertThat(users.getFirst().name()).isEqualTo("repoTester");
   }
 
   @Test
   @DisplayName("Should find user by name")
   void shouldFindUserByName() {
-    final User user = instance.findByName("tester");
+    final User user = instance.findByName("repoTester");
 
     assertThat(user).isNotNull();
-    assertThat(user.name()).isEqualTo("tester");
+    assertThat(user.name()).isEqualTo("repoTester");
   }
 
   @Test
@@ -79,11 +79,11 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find user by id")
   void shouldFindUserById() {
-    final Integer id = instance.findByName("tester").id();
+    final Integer id = instance.findByName("repoTester").id();
     final User user = instance.findById(id);
 
     assertThat(user).isNotNull();
-    assertThat(user.name()).isEqualTo("tester");
+    assertThat(user.name()).isEqualTo("repoTester");
   }
 
   @Test
