@@ -13,10 +13,6 @@ public enum SortField {
     this.name = name;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public static SortField getByName(final String name) {
     return Arrays.stream(SortField.values())
       .filter(sortField -> sortField.name.equals(name))

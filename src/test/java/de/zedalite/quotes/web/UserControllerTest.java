@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.willReturn;
 import de.zedalite.quotes.data.model.DisplayNameRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserPrincipal;
+import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
 import java.util.List;
@@ -57,5 +58,15 @@ class UserControllerTest {
     instance.patchDisplayName(request, principal);
 
     then(service).should().updateDisplayName(principal.getId(), request);
+  }
+
+  @Test
+  @DisplayName("Should create user")
+  void shouldCreateUser() {
+    final UserRequest userRequest = UserGenerator.getUserRequest();
+
+    instance.postUser(userRequest);
+
+    then(service).should().create(userRequest);
   }
 }

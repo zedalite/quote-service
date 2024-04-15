@@ -12,10 +12,6 @@ public enum SortOrder {
     this.name = name;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public static SortOrder getByName(final String name) {
     return Arrays.stream(SortOrder.values())
       .filter(sortOrder -> sortOrder.name.equals(name))

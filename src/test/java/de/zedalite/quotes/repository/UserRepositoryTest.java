@@ -1,13 +1,15 @@
 package de.zedalite.quotes.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
+
+import java.util.List;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.exception.UserNotFoundException;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    instance.save(new UserRequest("tester", "email@test.com"));
+    instance.save(new UserRequest("repoTester", "email@test.com"));
   }
 
   @Test
