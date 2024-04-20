@@ -3,12 +3,13 @@ package de.zedalite.quotes.data.model;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
+import java.util.Optional;
 
 @JsonSerialize
 @JsonDeserialize
-public record ValidationErrorDetails(
-  @Schema(description = "List of validation violations") @NotEmpty List<Violation> violations
-)
-  implements ErrorDetails {}
+public record GroupResponse(
+  @Schema(description = "Group") @NotNull Group group,
+
+  @Schema(description = "Creator") Optional<UserResponse> creator
+) {}

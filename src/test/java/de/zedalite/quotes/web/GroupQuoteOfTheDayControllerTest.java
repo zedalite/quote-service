@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
-import de.zedalite.quotes.data.model.QuoteMessage;
+import de.zedalite.quotes.data.model.QuoteResponse;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ class GroupQuoteOfTheDayControllerTest {
   @Test
   @DisplayName("Should get quote of the day")
   void shouldGetQuoteOfTheDay() {
-    final QuoteMessage expectedQuote = QuoteGenerator.getQuoteMessage();
+    final QuoteResponse expectedQuote = QuoteGenerator.getQuoteMessage();
     willReturn(expectedQuote).given(service).findQuoteOfTheDay(anyInt());
 
     instance.getQuoteOfTheDay(1);

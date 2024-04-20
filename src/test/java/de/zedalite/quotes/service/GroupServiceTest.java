@@ -1,17 +1,19 @@
 package de.zedalite.quotes.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
+import de.zedalite.quotes.data.model.GroupResponse;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupRepository;
+import de.zedalite.quotes.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,74 +31,69 @@ class GroupServiceTest {
   @Mock
   private GroupRepository groupRepository;
 
-  @Test
-  @DisplayName("Should create group")
-  void shouldCreateGroup() {
-    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
-    final Group expectedGroup = GroupGenerator.getGroup();
-    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
-
-    instance.create(groupRequest);
-
-    then(groupRepository).should().save(groupRequest);
-  }
+  @Mock
+  private UserRepository userRepository;
 
   @Test
   @DisplayName("Should create group with creator")
   void shouldCreateGroupWithCreator() {
     final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
     final Group expectedGroup = GroupGenerator.getGroup();
-    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
+    final User expectedUser = UserGenerator.getUser();
+    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class), anyInt());
+    willReturn(expectedUser).given(userRepository).findById(anyInt());
 
     instance.create(groupRequest, 1);
 
-    then(groupRepository).should().save(groupRequest);
-  }
-
-  @Test
-  @DisplayName("Should create group with creatorId")
-  void shouldCreateGroupWithCreatorId() {
-    final User user = UserGenerator.getUser();
-    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
-    final Group expectedGroup = GroupGenerator.getGroup();
-    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
-
-    instance.create(groupRequest, 1);
-
-    then(groupRepository).should().save(groupRequest.withCreatorId(user.id()));
-  }
-
-  @Test
-  @DisplayName("Should create group with creatorId when requestCreatorId not present")
-  void shouldCreateGroupWithCreatorIdWhenRequestCreatorIdNotPresent() {
-    final User user = UserGenerator.getUser();
-    final GroupRequest groupRequest = GroupGenerator.getGroupRequest().withCreatorId(null);
-    final Group expectedGroup = GroupGenerator.getGroup();
-    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class));
-
-    instance.create(groupRequest, 1);
-
-    then(groupRepository).should().save(groupRequest.withCreatorId(user.id()));
+    then(groupRepository).should().save(groupRequest, 1);
   }
 
   @Test
   @DisplayName("Should throw exception when group not created")
   void shouldThrowExceptionWhenGroupNotCreated() {
     final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
-    willThrow(GroupNotFoundException.class).given(groupRepository).save(any(GroupRequest.class));
+    willThrow(GroupNotFoundException.class).given(groupRepository).save(any(GroupRequest.class), anyInt());
 
-    assertThatCode(() -> instance.create(groupRequest)).isInstanceOf(ResourceNotFoundException.class);
+    assertThatCode(() -> instance.create(groupRequest, 1)).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test
   @DisplayName("Should find group by id")
   void shouldFindGroupById() {
     final Group expectedGroup = GroupGenerator.getGroup();
+    final User expectedUser = UserGenerator.getUser();
+    willReturn(expectedGroup).given(groupRepository).findById(anyInt());
+    willReturn(expectedUser).given(userRepository).findById(anyInt());
+
+    final GroupResponse group = instance.find(1);
+
+    assertThat(group.group().id()).isEqualTo(expectedGroup.id());
+    assertThat(group.creator()).isPresent();
+  }
+
+  @Test
+  @DisplayName("Should find group by id without creator")
+  void shouldFindGroupByIdWithoutCreator() {
+    final Group expectedGroup = GroupGenerator.getGroupNoCreator();
     willReturn(expectedGroup).given(groupRepository).findById(anyInt());
 
-    final Group group = instance.find(1);
+    final GroupResponse group = instance.find(1);
 
-    assertThat(group.id()).isEqualTo(expectedGroup.id());
+    assertThat(group.group().id()).isEqualTo(expectedGroup.id());
+    assertThat(group.creator()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("Should still find group by id when creator throws exception")
+  void shouldFindGroupByIdWhenCreatorThrowsException() {
+    final Group expectedGroup = GroupGenerator.getGroup();
+    willReturn(expectedGroup).given(groupRepository).findById(anyInt());
+    willThrow(UserNotFoundException.class).given(userRepository).findById(anyInt());
+
+    final GroupResponse group = instance.find(1);
+
+    assertThat(group.group().id()).isEqualTo(expectedGroup.id());
+    assertThat(group.creator()).isEmpty();
   }
 
   @Test
@@ -105,25 +102,6 @@ class GroupServiceTest {
     willThrow(GroupNotFoundException.class).given(groupRepository).findById(anyInt());
 
     assertThatCode(() -> instance.find(1)).isInstanceOf(ResourceNotFoundException.class);
-  }
-
-  @Test
-  @DisplayName("Should find all groups")
-  void shouldFindAllGroups() {
-    final List<Group> expectedGroups = GroupGenerator.getGroups();
-    willReturn(expectedGroups).given(groupRepository).findAll();
-
-    instance.findAll();
-
-    then(groupRepository).should().findAll();
-  }
-
-  @Test
-  @DisplayName("Should throw exception when groups not found")
-  void shouldThrowExceptionWhenGroupsNotFound() {
-    willThrow(GroupNotFoundException.class).given(groupRepository).findAll();
-
-    assertThatCode(() -> instance.findAll()).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test

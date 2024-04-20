@@ -6,6 +6,7 @@ import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class QuoteMapperTest {
     assertThat(quote.creationDate()).isEqualTo(LocalDateTime.MIN);
     assertThat(quote.text()).isEqualTo("Successful test.");
     assertThat(quote.context()).isEqualTo("sub");
-    assertThat(quote.creatorId()).isEqualTo(2);
+    assertThat(quote.creatorId()).isEqualTo(Optional.of(2));
   }
 
   @ParameterizedTest
@@ -75,7 +76,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteSonar.creationDate()).isEqualTo(LocalDateTime.MIN);
     softly.assertThat(quoteSonar.text()).isEqualTo("I like code coverage.");
     softly.assertThat(quoteSonar.context()).isEqualTo("sub");
-    softly.assertThat(quoteSonar.creatorId()).isEqualTo(3);
+    softly.assertThat(quoteSonar.creatorId()).isEqualTo(Optional.of(3));
 
     softly.assertThat(quoteMapper).isNotNull();
     softly.assertThat(quoteMapper.id()).isEqualTo(1);
@@ -83,7 +84,7 @@ class QuoteMapperTest {
     softly.assertThat(quoteMapper.creationDate()).isEqualTo(LocalDateTime.MAX);
     softly.assertThat(quoteMapper.text()).isEqualTo("Mappers facilitate the work.");
     softly.assertThat(quoteMapper.context()).isNull();
-    softly.assertThat(quoteMapper.creatorId()).isEqualTo(2);
+    softly.assertThat(quoteMapper.creatorId()).isEqualTo(Optional.of(2));
 
     softly.assertAll();
   }

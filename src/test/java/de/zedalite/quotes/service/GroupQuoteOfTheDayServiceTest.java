@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.*;
 
 import de.zedalite.quotes.data.model.Quote;
-import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
+import de.zedalite.quotes.data.model.QuoteResponse;
 import de.zedalite.quotes.exception.QotdNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
@@ -47,10 +47,10 @@ class GroupQuoteOfTheDayServiceTest {
     willReturn(10).given(groupQuoteRepository).count(anyInt());
     willReturn(expectedQotd).given(repository).findByDate(anyInt(), any(LocalDate.class));
 
-    final QuoteMessage quoteOfTheDay = instance.findQuoteOfTheDay(1);
+    final QuoteResponse quoteOfTheDay = instance.findQuoteOfTheDay(1);
 
     assertThat(quoteOfTheDay).isNotNull();
-    assertThat(quoteOfTheDay.id()).isEqualTo(expectedQotd.id());
+    assertThat(quoteOfTheDay.quote().id()).isEqualTo(expectedQotd.id());
   }
 
   @Test
@@ -70,11 +70,11 @@ class GroupQuoteOfTheDayServiceTest {
     willThrow(QotdNotFoundException.class).given(repository).findByDate(anyInt(), any(LocalDate.class));
     willReturn(List.of(expectedQotd)).given(groupQuoteRepository).findRandoms(anyInt(), anyInt());
 
-    final QuoteMessage quoteOfTheDay = instance.findQuoteOfTheDay(1);
+    final QuoteResponse quoteOfTheDay = instance.findQuoteOfTheDay(1);
 
     then(repository).should().save(expectedQotd.id(), new QuoteOfTheDayRequest(expectedQotd.id(), LocalDate.now()));
 
     assertThat(quoteOfTheDay).isNotNull();
-    assertThat(quoteOfTheDay.id()).isEqualTo(expectedQotd.id());
+    assertThat(quoteOfTheDay.quote().id()).isEqualTo(expectedQotd.id());
   }
 }

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
+import de.zedalite.quotes.data.model.ErrorResponse;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.data.model.Violation;
 import java.util.List;
@@ -26,10 +26,10 @@ class GlobalControllerExceptionHandlerTest {
   void shouldHandleResourceNotFoundException() {
     final ResourceNotFoundException exception = new ResourceNotFoundException("Resource not found");
 
-    final ErrorDetails errorDetails = instance.handleNotFoundException(exception);
+    final ErrorResponse errorResponse = instance.handleNotFoundException(exception);
 
-    assertThat(errorDetails).isNotNull();
-    assertThat(errorDetails.message()).isEqualTo("Resource not found");
+    assertThat(errorResponse).isNotNull();
+    assertThat(errorResponse.message()).isEqualTo("Resource not found");
   }
 
   @ParameterizedTest
@@ -40,10 +40,10 @@ class GlobalControllerExceptionHandlerTest {
       .getDeclaredConstructor(String.class)
       .newInstance("Resource can't be accessed");
 
-    final ErrorDetails errorDetails = instance.handleForbiddenException(exception);
+    final ErrorResponse errorResponse = instance.handleForbiddenException(exception);
 
-    assertThat(errorDetails).isNotNull();
-    assertThat(errorDetails.message()).isEqualTo("Resource can't be accessed");
+    assertThat(errorResponse).isNotNull();
+    assertThat(errorResponse.message()).isEqualTo("Resource can't be accessed");
   }
 
   @Test
@@ -65,7 +65,6 @@ class GlobalControllerExceptionHandlerTest {
     final ValidationErrorDetails errorDetails = instance.handleNotValidException(exception);
 
     assertThat(errorDetails).isNotNull();
-    assertThat(errorDetails.message()).isEqualTo("Validation failed");
     assertThat(errorDetails.violations()).containsOnly(new Violation("name", "size must be between 0 and 32"));
   }
 }

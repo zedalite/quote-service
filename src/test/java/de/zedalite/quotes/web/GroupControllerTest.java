@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
-import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
+import de.zedalite.quotes.data.model.GroupResponse;
 import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
@@ -30,7 +30,7 @@ class GroupControllerTest {
   @Test
   @DisplayName("Should get group")
   void shouldGetGroup() {
-    final Group expectedGroup = GroupGenerator.getGroup();
+    final GroupResponse expectedGroup = GroupGenerator.getGroupResponse();
     willReturn(expectedGroup).given(service).find(anyInt());
 
     instance.getGroup(1);
@@ -42,7 +42,7 @@ class GroupControllerTest {
   @DisplayName("Should post group")
   void shouldPostGroup() {
     final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
-    final Group expectedGroup = GroupGenerator.getGroup();
+    final GroupResponse expectedGroup = GroupGenerator.getGroupResponse();
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
     willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyInt());

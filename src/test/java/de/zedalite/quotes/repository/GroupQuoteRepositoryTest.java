@@ -12,9 +12,9 @@ import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -47,11 +47,13 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
 
   private Quote quote;
 
+  private Integer userId;
+
   @BeforeAll
   void setup() {
-    final Integer userId = userRepository.save(new UserRequest("qg", "test")).id();
-    groupId = groupRepository.save(new GroupRequest("quoter-group", "Quoter Group", LocalDateTime.now(), userId)).id();
-    quote = instance.save(groupId, QuoteGenerator.getQuoteRequest());
+    userId = userRepository.save(new UserRequest("qg", "test", "Quote Group")).id();
+    groupId = groupRepository.save(new GroupRequest("quoter-group", "Quoter Group"), userId).id();
+    quote = instance.save(groupId, QuoteGenerator.getQuoteRequest(), userId);
   }
 
   @Test
@@ -59,14 +61,14 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   void shouldSaveGroupQuote() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
 
-    final Quote quote = instance.save(groupId, quoteRequest);
+    final Quote quote = instance.save(groupId, quoteRequest, userId);
 
     assertThat(quote).isNotNull();
     assertThat(quote.id()).isNotNegative();
     assertThat(quote.author()).isEqualTo(quoteRequest.author());
     assertThat(quote.text()).isEqualTo(quoteRequest.text());
     assertThat(quote.context()).isEqualTo(quoteRequest.context());
-    assertThat(quote.creatorId()).isEqualTo(quoteRequest.creatorId());
+    assertThat(quote.creatorId()).isEqualTo(Optional.of(userId));
 
     final boolean isInserted = dsl.fetchExists(
       dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id())))
@@ -79,7 +81,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should find group quote by id")
   void shouldFindGroupQuoteById() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
-    final Quote savedQuote = instance.save(groupId, quoteRequest);
+    final Quote savedQuote = instance.save(groupId, quoteRequest, userId);
 
     final Quote quote = instance.findById(groupId, savedQuote.id());
 
@@ -88,7 +90,7 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
     assertThat(quote.author()).isEqualTo(quoteRequest.author());
     assertThat(quote.text()).isEqualTo(quoteRequest.text());
     assertThat(quote.context()).isEqualTo(quoteRequest.context());
-    assertThat(quote.creatorId()).isEqualTo(quoteRequest.creatorId());
+    assertThat(quote.creatorId()).isEqualTo(Optional.of(userId));
   }
 
   @Test

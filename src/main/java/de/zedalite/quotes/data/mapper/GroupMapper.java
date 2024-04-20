@@ -6,7 +6,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = OptionalMapper.class)
 public interface GroupMapper {
   GroupMapper INSTANCE = Mappers.getMapper(GroupMapper.class);
 

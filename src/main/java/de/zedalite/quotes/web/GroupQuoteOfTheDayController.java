@@ -1,7 +1,7 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
-import de.zedalite.quotes.data.model.QuoteMessage;
+import de.zedalite.quotes.data.model.ErrorResponse;
+import de.zedalite.quotes.data.model.QuoteResponse;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,27 +24,28 @@ public class GroupQuoteOfTheDayController {
 
   @Operation(
     summary = "Get group quote of the day",
+    description = "Get group quote of the day",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group quote of the day found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteMessage.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quote of the day not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/qotd")
-  public QuoteMessage getQuoteOfTheDay(@PathVariable("id") final Integer id) {
+  public QuoteResponse getQuoteOfTheDay(@PathVariable("id") final Integer id) {
     return service.findQuoteOfTheDay(id);
   }
 }

@@ -9,6 +9,7 @@ import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.SortField;
 import de.zedalite.quotes.data.model.SortOrder;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -36,14 +37,14 @@ public class GroupQuoteRepository {
   }
 
   @CachePut(value = "group_quotes", key = "{#id,#result.id}", unless = "#result == null")
-  public Quote save(final Integer id, final QuoteRequest quote) {
+  public Quote save(final Integer id, final QuoteRequest quote, final Integer creatorId) {
     final Optional<QuotesRecord> savedQuoteRec = dsl
       .insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
-      .set(QUOTES.CREATION_DATE, quote.creationDate())
+      .set(QUOTES.CREATION_DATE, LocalDateTime.now())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.CONTEXT, quote.context())
-      .set(QUOTES.CREATOR_ID, quote.creatorId())
+      .set(QUOTES.CREATOR_ID, creatorId)
       .returning()
       .fetchOptionalInto(QuotesRecord.class);
     if (savedQuoteRec.isEmpty()) throw new QuoteNotFoundException(GROUP_QUOTE_NOT_FOUND);

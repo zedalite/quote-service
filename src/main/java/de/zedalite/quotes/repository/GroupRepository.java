@@ -7,6 +7,7 @@ import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -33,13 +34,13 @@ public class GroupRepository {
   }
 
   @CachePut(value = "groups", key = "#result.id()", unless = "#result == null")
-  public Group save(final GroupRequest group) throws QuoteNotFoundException {
+  public Group save(final GroupRequest group, final Integer creatorId) throws QuoteNotFoundException {
     final Optional<GroupsRecord> savedGroup = dsl
       .insertInto(GROUPS)
       .set(GROUPS.NAME, group.name())
       .set(GROUPS.DISPLAY_NAME, group.displayName())
-      .set(GROUPS.CREATION_DATE, group.creationDate())
-      .set(GROUPS.CREATOR_ID, group.creatorId())
+      .set(GROUPS.CREATION_DATE, LocalDateTime.now())
+      .set(GROUPS.CREATOR_ID, creatorId)
       .returning()
       .fetchOptionalInto(GroupsRecord.class);
     if (savedGroup.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);

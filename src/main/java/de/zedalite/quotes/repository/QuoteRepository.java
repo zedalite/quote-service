@@ -6,6 +6,7 @@ import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
+import java.time.LocalDateTime;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
@@ -26,14 +27,14 @@ public class QuoteRepository {
     return dsl.fetchCount(QUOTES);
   }
 
-  public Quote save(final QuoteRequest quote) throws QuoteNotFoundException {
+  public Quote save(final QuoteRequest quote, final Integer creatorId) throws QuoteNotFoundException {
     final QuotesRecord savedQuote = dsl
       .insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
-      .set(QUOTES.CREATION_DATE, quote.creationDate())
+      .set(QUOTES.CREATION_DATE, LocalDateTime.now())
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.CONTEXT, quote.context())
-      .set(QUOTES.CREATOR_ID, quote.creatorId())
+      .set(QUOTES.CREATOR_ID, creatorId)
       .returning()
       .fetchOneInto(QuotesRecord.class);
     if (savedQuote == null) throw new QuoteNotFoundException(QUOTE_NOT_FOUND);

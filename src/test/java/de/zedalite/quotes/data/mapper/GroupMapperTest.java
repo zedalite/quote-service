@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.model.Group;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +27,7 @@ class GroupMapperTest {
     assertThat(group.name()).isEqualTo("group");
     assertThat(group.displayName()).isEqualTo("GROUP");
     assertThat(group.creationDate()).isEqualTo(LocalDateTime.MIN);
-    assertThat(group.creatorId()).isOne();
+    assertThat(group.creatorId()).isEqualTo(Optional.of(1));
   }
 
   @ParameterizedTest

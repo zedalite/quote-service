@@ -8,8 +8,8 @@ import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.exception.GroupNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,27 +31,25 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final Integer userId = userRepository.save(new UserRequest("grouptester", "test")).id();
-    final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2")).id();
+    final Integer userId = userRepository.save(new UserRequest("grouptester", "test", "Group Tester")).id();
+    final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2", "Group Tester 2")).id();
 
-    instance.save(new GroupRequest("test-group", "TESTGROUP", LocalDateTime.now(), userId));
-    instance.save(new GroupRequest("best-quoter", "The Best Quoter", LocalDateTime.now(), userId2));
+    instance.save(new GroupRequest("test-group", "TESTGROUP"), userId);
+    instance.save(new GroupRequest("best-quoter", "The Best Quoter"), userId2);
   }
 
   @Test
   @DisplayName("Should save group")
   void shouldSaveGroup() {
-    final LocalDateTime creationDate = LocalDateTime.of(2023, 11, 15, 15, 0, 0);
-    final GroupRequest groupRequest = new GroupRequest("test-group", "TestGroup", creationDate, 1);
+    final GroupRequest groupRequest = new GroupRequest("test-group", "TestGroup");
 
-    final Group savedGroup = instance.save(groupRequest);
+    final Group savedGroup = instance.save(groupRequest, 1);
 
     assertThat(savedGroup).isNotNull();
     assertThat(savedGroup.id()).isNotNull();
     assertThat(savedGroup.name()).isEqualTo("test-group");
     assertThat(savedGroup.displayName()).isEqualTo("TestGroup");
-    assertThat(savedGroup.creationDate()).isEqualTo(creationDate);
-    assertThat(savedGroup.creatorId()).isEqualTo(1);
+    assertThat(savedGroup.creatorId()).isEqualTo(Optional.of(1));
   }
 
   @Test

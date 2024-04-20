@@ -1,7 +1,6 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.*;
-import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,84 +24,145 @@ public class UserController {
 
   @Operation(
     summary = "Create a new user",
+    description = "Create a new user",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Users created",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "400",
         description = "Users not created",
-        content = {
-          @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class)),
-        }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "User creation not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "User not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PostMapping
-  public User postUser(@Valid @RequestBody final UserRequest user) {
-    // TODO necessary plausibilities check to avoid fake user creation?
+  public UserResponse postUser(@Valid @RequestBody final UserRequest user) {
     return service.create(user);
   }
 
   @Operation(
-    summary = "Get a user",
+    summary = "Get your user details",
+    description = "Get your user details",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "User found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "User retrieval not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "User not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
-  @GetMapping("{id}")
-  public User getUser(@PathVariable("id") final Integer id) {
-    return service.find(id);
+  @GetMapping("me")
+  public UserResponse getUser(@AuthenticationPrincipal final UserPrincipal principal) {
+    return service.find(principal.getId());
   }
 
   @Operation(
-    summary = "Get all users",
+    summary = "Patch your name",
+    description = "Patch your name",
     responses = {
       @ApiResponse(
         responseCode = "200",
-        description = "Users found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }
+        description = "Name patched",
+        content = { @Content(mediaType = "application/json") }
       ),
       @ApiResponse(
-        responseCode = "404",
-        description = "Users not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        responseCode = "403",
+        description = "User patching not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
-    }
-  )
-  @GetMapping
-  public List<User> getUsers() {
-    // TODO decide if necessary for non-admins?
-    return service.findAll();
-  }
-
-  @Operation(
-    summary = "Patch user's display name",
-    responses = {
-      @ApiResponse(responseCode = "200", description = "Display name patched"),
       @ApiResponse(
         responseCode = "404",
         description = "User not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
-  @PatchMapping("displayname")
+  @PatchMapping("me/name")
+  public void patchName(
+    @RequestBody @Valid final UserNameRequest request,
+    @AuthenticationPrincipal final UserPrincipal principal
+  ) {
+    service.updateName(principal.getId(), request);
+  }
+
+  @Operation(
+    summary = "Patch your display name",
+    description = "Patch your display name",
+    responses = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "Display name patched",
+        content = { @Content(mediaType = "application/json") }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "User patching not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "User not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+    }
+  )
+  @PatchMapping("me/displayname")
   public void patchDisplayName(
-    @RequestBody @Valid final DisplayNameRequest request,
+    @RequestBody @Valid final UserDisplayNameRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
   ) {
     service.updateDisplayName(principal.getId(), request);
+  }
+
+  @Operation(
+    summary = "Patch your email",
+    description = "Patch your email",
+    responses = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "Email patched",
+        content = { @Content(mediaType = "application/json") }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "User patching not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "User not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+    }
+  )
+  @PatchMapping("me/email")
+  public void patchEmail(
+    @RequestBody @Valid final UserEmailRequest request,
+    @AuthenticationPrincipal final UserPrincipal principal
+  ) {
+    service.updateEmail(principal.getId(), request);
   }
 }

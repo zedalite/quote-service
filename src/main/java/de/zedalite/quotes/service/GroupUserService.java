@@ -1,6 +1,8 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GroupUserService {
+
+  private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
 
   private static final String GROUP_USER_ALREADY_EXITS = "Group user already exits";
 
@@ -38,17 +42,17 @@ public class GroupUserService {
     }
   }
 
-  public User find(final Integer id, final Integer userId) {
+  public UserResponse find(final Integer id, final Integer userId) {
     try {
-      return repository.findById(id, userId);
+      return getResponse(repository.findById(id, userId));
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public List<User> findAll(final Integer id) {
+  public List<UserResponse> findAll(final Integer id) {
     try {
-      return repository.findAll(id);
+      return getResponses(repository.findAll(id));
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
@@ -56,5 +60,13 @@ public class GroupUserService {
 
   public boolean isUserInGroup(final Integer id, final Integer userId) {
     return repository.isUserInGroup(id, userId);
+  }
+
+  private List<UserResponse> getResponses(final List<User> users) {
+    return USER_MAPPER.mapToResponses(users);
+  }
+
+  private UserResponse getResponse(final User user) {
+    return USER_MAPPER.mapToResponse(user);
   }
 }

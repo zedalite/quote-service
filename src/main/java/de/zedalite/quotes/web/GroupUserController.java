@@ -1,8 +1,7 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
-import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.data.model.ValidationErrorDetails;
+import de.zedalite.quotes.data.model.ErrorResponse;
+import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.service.GroupUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,73 +25,81 @@ public class GroupUserController {
 
   @Operation(
     summary = "Get all group users",
+    description = "Get all group users",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group user found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group user not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/users")
-  public List<User> getUsers(@PathVariable("id") final Integer id) {
+  public List<UserResponse> getUsers(@PathVariable("id") final Integer id) {
     return service.findAll(id);
   }
 
   @Operation(
     summary = "Get a group user by its id",
+    description = "Get a group user by its id",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group user found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group user not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/users/{userId}")
-  public User getUser(@PathVariable("id") final Integer id, @PathVariable("userId") final Integer userId) {
+  public UserResponse getUser(@PathVariable("id") final Integer id, @PathVariable("userId") final Integer userId) {
     return service.find(id, userId);
   }
 
   @Operation(
     summary = "Create a new group user",
+    description = "Create a new group user",
     responses = {
-      @ApiResponse(responseCode = "200", description = "Group user created"),
+      @ApiResponse(
+        responseCode = "200",
+        description = "Group user created",
+        content = @Content(mediaType = "application/json")
+      ),
       @ApiResponse(
         responseCode = "400",
         description = "Group user not created",
-        content = {
-          @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class)),
-        }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = {
-          @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class)),
-        }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Group/User not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )

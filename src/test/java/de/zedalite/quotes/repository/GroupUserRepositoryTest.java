@@ -6,9 +6,11 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
-import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -31,12 +33,11 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
 
   private Integer groupId;
 
+  //TODO refactor Usergenerator with random usersnames
   @BeforeAll
   void setup() {
-    userId = userRepository.save(new UserRequest("grouper", "test")).id();
-    groupId = groupRepository
-      .save(new GroupRequest("groupers-group", "GroupersGroup", LocalDateTime.now(), userId))
-      .id();
+    userId = userRepository.save(new UserRequest("grouper", "test", "Grouper")).id();
+    groupId = groupRepository.save(new GroupRequest("groupers-group", "GroupersGroup"), userId).id();
   }
 
   @Test
@@ -50,10 +51,8 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all group users")
   void shouldFindAllGroupUsers() {
-    final Integer userId = userRepository.save(new UserRequest("operator", "op")).id();
-    final Integer groupId = groupRepository
-      .save(new GroupRequest("new-group", "New Group", LocalDateTime.now(), userId))
-      .id();
+    final Integer userId = userRepository.save(new UserRequest("operator", "op", "Operator")).id();
+    final Integer groupId = groupRepository.save(new GroupRequest("new-group", "New Group"), userId).id();
     instance.save(groupId, userId);
 
     final List<User> users = instance.findAll(groupId);

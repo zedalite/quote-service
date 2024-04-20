@@ -1,5 +1,6 @@
 package de.zedalite.quotes.service;
 
+import de.zedalite.quotes.data.model.CountResponse;
 import de.zedalite.quotes.repository.QuoteRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ public class QuoteService {
     this.repository = repository;
   }
 
-  public Integer count() {
-    return repository.count();
+  public CountResponse count() {
+    return new CountResponse(repository.count());
   }
 }

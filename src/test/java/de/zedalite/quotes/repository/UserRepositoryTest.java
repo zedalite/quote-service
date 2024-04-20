@@ -2,7 +2,6 @@ package de.zedalite.quotes.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.User;
@@ -18,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(value = "classpath:test-no-cache.properties")
 class UserRepositoryTest extends TestEnvironmentProvider {
 
@@ -27,13 +26,13 @@ class UserRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    instance.save(new UserRequest("repoTester", "email@test.com"));
+    instance.save(new UserRequest("repoTester", "email@test.com", "Repo Tester"));
   }
 
   @Test
   @DisplayName("Should save user")
   void shouldSaveUser() {
-    final UserRequest user = new UserRequest("newuser", "email@test.com");
+    final UserRequest user = new UserRequest("newuser", "email@test.com", "New User");
 
     final User savedUser = instance.save(user);
 
@@ -89,7 +88,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should update user")
   void shouldUpdateUser() {
-    final Integer userId = instance.save(new UserRequest("super", "email@test.com")).id();
+    final Integer userId = instance.save(new UserRequest("super", "email@test.com", "Super")).id();
     final UserRequest request = new UserRequest("mega", "email@test.com", "MEGA");
 
     final User updatedUser = instance.update(userId, request);
@@ -102,7 +101,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return true when username is taken")
   void shouldReturnTrueWhenUsernameIsTaken() {
-    instance.save(new UserRequest("definitelyTaken", "taken"));
+    instance.save(new UserRequest("definitelyTaken", "taken", "Taken User"));
 
     final boolean isTaken = instance.isUsernameTaken("definitelyTaken");
 
@@ -120,7 +119,7 @@ class UserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should return false when username is already taken")
   void shouldReturnFalseWhenUsernameIsAlreadyTaken() {
-    instance.save(new UserRequest("takenName", "taken"));
+    instance.save(new UserRequest("takenName", "taken", "Taken Name"));
 
     final boolean isAvailable = instance.isUsernameAvailable("takenName");
 

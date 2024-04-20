@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupUserService;
 import java.util.List;
@@ -38,7 +39,7 @@ class GroupUserControllerTest {
   @Test
   @DisplayName("Should get group user")
   void shouldGetGroupUser() {
-    final User expectedUser = UserGenerator.getUser();
+    final UserResponse expectedUser = UserGenerator.getUserResponse();
     willReturn(expectedUser).given(service).find(anyInt(), anyInt());
 
     instance.getUser(1, 1);

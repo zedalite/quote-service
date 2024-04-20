@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.zedalite.quotes.TestEnvironmentProvider;
+import de.zedalite.quotes.data.model.CountResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,18 @@ class QuoteControllerIT extends TestEnvironmentProvider {
   @Autowired
   private MockMvc mockMvc;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @Test
   @DisplayName("Should return success on valid input")
   void shouldReturnSuccessOnValidInput() throws Exception {
     final MvcResult result = mockMvc.perform(get("/quotes/count")).andExpect(status().isOk()).andReturn();
 
-    assertThat(Integer.parseInt(result.getResponse().getContentAsString())).isNotNegative();
+    final CountResponse count = objectMapper.readValue(result.getResponse().getContentAsString(), CountResponse.class);
+
+    System.out.println(count);
+
+    assertThat(count.count()).isNotNegative();
   }
 }

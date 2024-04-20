@@ -7,10 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
-import de.zedalite.quotes.data.model.PushNotification;
-import de.zedalite.quotes.data.model.Quote;
-import de.zedalite.quotes.data.model.QuoteMessage;
-import de.zedalite.quotes.data.model.QuoteRequest;
+import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.exception.NotifierException;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
@@ -46,37 +43,11 @@ class GroupQuoteServiceTest {
   void shouldCreateGroupQuote() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
     final Quote expectedQuote = QuoteGenerator.getQuote();
-    willReturn(expectedQuote).given(repository).save(1, quoteRequest);
+    willReturn(expectedQuote).given(repository).save(1, quoteRequest, 5);
 
-    instance.create(1, quoteRequest);
+    instance.create(1, quoteRequest, 5);
 
-    then(repository).should().save(1, quoteRequest);
-    then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
-  }
-
-  @Test
-  @DisplayName("Should create group quote with creator")
-  void shouldCreateGroupQuoteWithCreator() {
-    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
-    final Quote expectedQuote = QuoteGenerator.getQuote();
-    willReturn(expectedQuote).given(repository).save(1, quoteRequest);
-
-    instance.create(1, quoteRequest, 2);
-
-    then(repository).should().save(1, quoteRequest);
-    then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
-  }
-
-  @Test
-  @DisplayName("Should create group quote with principal as creator")
-  void shouldCreateGroupQuoteWithPrincipalAsCreator() {
-    final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest().withCreatorId(null);
-    final Quote expectedQuote = QuoteGenerator.getQuote();
-    willReturn(expectedQuote).given(repository).save(1, quoteRequest.withCreatorId(2));
-
-    instance.create(1, quoteRequest, 2);
-
-    then(repository).should().save(1, quoteRequest.withCreatorId(2));
+    then(repository).should().save(1, quoteRequest, 5);
     then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
   }
 
@@ -85,21 +56,21 @@ class GroupQuoteServiceTest {
   void shouldCreateGroupQuoteWithFailedNotification() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
     final Quote expectedQuote = QuoteGenerator.getQuote();
-    willReturn(expectedQuote).given(repository).save(1, quoteRequest);
+    willReturn(expectedQuote).given(repository).save(1, quoteRequest, 5);
     willThrow(NotifierException.class).given(notifierRepository).sendToTopic(any(), any(PushNotification.class));
 
-    instance.create(1, quoteRequest, 2);
+    instance.create(1, quoteRequest, 5);
 
-    then(repository).should().save(1, quoteRequest);
+    then(repository).should().save(1, quoteRequest, 5);
   }
 
   @Test
   @DisplayName("Should throw exception when group quote not created")
   void shouldThrowExceptionWhenGroupQuoteNotCreated() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
-    willThrow(QuoteNotFoundException.class).given(repository).save(1, quoteRequest);
+    willThrow(QuoteNotFoundException.class).given(repository).save(1, quoteRequest, 5);
 
-    assertThatCode(() -> instance.create(1, quoteRequest)).isInstanceOf(ResourceNotFoundException.class);
+    assertThatCode(() -> instance.create(1, quoteRequest, 5)).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test
@@ -108,7 +79,7 @@ class GroupQuoteServiceTest {
     final List<Quote> expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(repository).findAll(1, CREATION_DATE, DESC);
 
-    final List<QuoteMessage> quotes = instance.findAll(1, CREATION_DATE, DESC);
+    final List<QuoteResponse> quotes = instance.findAll(1, CREATION_DATE, DESC);
 
     assertThat(quotes).hasSize(expectedQuotes.size());
   }
@@ -146,7 +117,7 @@ class GroupQuoteServiceTest {
     final List<Quote> expectedQuotes = QuoteGenerator.getQuotes();
     willReturn(expectedQuotes).given(repository).findRandoms(1, 3);
 
-    final List<QuoteMessage> quotes = instance.findRandoms(1, 3);
+    final List<QuoteResponse> quotes = instance.findRandoms(1, 3);
 
     assertThat(quotes).hasSize(expectedQuotes.size());
   }
@@ -164,9 +135,9 @@ class GroupQuoteServiceTest {
   void shouldCountQuotes() {
     willReturn(5).given(repository).count(1);
 
-    final Integer count = instance.count(1);
+    final CountResponse count = instance.count(1);
 
-    assertThat(count).isEqualTo(5);
+    assertThat(count.count()).isEqualTo(5);
     then(repository).should().count(1);
   }
 }

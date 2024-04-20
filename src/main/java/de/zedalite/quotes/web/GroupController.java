@@ -1,10 +1,6 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
-import de.zedalite.quotes.data.model.Group;
-import de.zedalite.quotes.data.model.GroupRequest;
-import de.zedalite.quotes.data.model.UserPrincipal;
-import de.zedalite.quotes.data.model.ValidationErrorDetails;
+import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,43 +24,58 @@ public class GroupController {
 
   @Operation(
     summary = "Get a group by its id",
+    description = "Get a group by its id",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Group.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "Group retrieval not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @GetMapping("{id}")
-  public Group getGroup(@PathVariable("id") final Integer id) {
+  public GroupResponse getGroup(@PathVariable("id") final Integer id) {
     return service.find(id);
   }
 
   @Operation(
     summary = "Create a new group",
+    description = "Create a new group",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group created",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Group.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "400",
         description = "Group not created",
-        content = {
-          @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class)),
-        }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "Group creation not allowed",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Group not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PostMapping
-  public Group postGroup(
+  public GroupResponse postGroup(
     @RequestBody @Valid final GroupRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
   ) {

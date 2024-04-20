@@ -4,13 +4,9 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
-import de.zedalite.quotes.data.model.DisplayNameRequest;
-import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.data.model.UserPrincipal;
-import de.zedalite.quotes.data.model.UserRequest;
+import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.UserService;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,36 +24,15 @@ class UserControllerTest {
   private UserService service;
 
   @Test
-  @DisplayName("Should get users")
-  void shouldGetUsers() {
-    final List<User> expectedUsers = UserGenerator.getUsers();
-    willReturn(expectedUsers).given(service).findAll();
-
-    instance.getUsers();
-
-    then(service).should().findAll();
-  }
-
-  @Test
   @DisplayName("Should get user")
   void shouldGetUser() {
-    final User expectedUser = UserGenerator.getUser();
+    final UserPrincipal userPrincipal = UserGenerator.getUserPrincipal();
+    final UserResponse expectedUser = UserGenerator.getUserResponse();
     willReturn(expectedUser).given(service).find(anyInt());
 
-    instance.getUser(1);
+    instance.getUser(userPrincipal);
 
-    then(service).should().find(1);
-  }
-
-  @Test
-  @DisplayName("Should patch displayName")
-  void shouldPatchDisplayName() {
-    final DisplayNameRequest request = UserGenerator.getDisplayNameRequest();
-    final UserPrincipal principal = UserGenerator.getUserPrincipal();
-
-    instance.patchDisplayName(request, principal);
-
-    then(service).should().updateDisplayName(principal.getId(), request);
+    then(service).should().find(userPrincipal.getId());
   }
 
   @Test
@@ -68,5 +43,38 @@ class UserControllerTest {
     instance.postUser(userRequest);
 
     then(service).should().create(userRequest);
+  }
+
+  @Test
+  @DisplayName("Should patch name")
+  void shouldPatchName() {
+    final UserNameRequest request = UserGenerator.getUserNameRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+
+    instance.patchName(request, principal);
+
+    then(service).should().updateName(principal.getId(), request);
+  }
+
+  @Test
+  @DisplayName("Should patch displayName")
+  void shouldPatchDisplayName() {
+    final UserDisplayNameRequest request = UserGenerator.getDisplayNameRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+
+    instance.patchDisplayName(request, principal);
+
+    then(service).should().updateDisplayName(principal.getId(), request);
+  }
+
+  @Test
+  @DisplayName("Should patch email")
+  void shouldPatchEmail() {
+    final UserEmailRequest request = UserGenerator.getUserEmailRequest();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+
+    instance.patchEmail(request, principal);
+
+    then(service).should().updateEmail(principal.getId(), request);
   }
 }

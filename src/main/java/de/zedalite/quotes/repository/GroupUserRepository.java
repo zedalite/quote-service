@@ -7,7 +7,6 @@ import de.zedalite.quotes.exception.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +25,6 @@ public class GroupUserRepository {
     this.dsl = dsl;
   }
 
-  @CachePut(value = "group_users", key = "{#id,#userId}", unless = "#result == false")
   public Boolean save(final Integer id, final Integer userId) {
     final boolean isSaved =
       dsl.insertInto(GROUP_USERS).set(GROUP_USERS.GROUP_ID, id).set(GROUP_USERS.USER_ID, userId).execute() == 1;

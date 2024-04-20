@@ -1,9 +1,8 @@
 package de.zedalite.quotes.exception;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
+import de.zedalite.quotes.data.model.ErrorResponse;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.data.model.Violation;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,25 +23,21 @@ public class GlobalControllerExceptionHandler {
 
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ErrorDetails handleNotFoundException(final ResourceNotFoundException ex) {
-    return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
+  public ErrorResponse handleNotFoundException(final ResourceNotFoundException ex) {
+    return new ErrorResponse(ex.getMessage());
   }
 
   @ExceptionHandler({ ResourceAlreadyExitsException.class, ResourceAccessException.class })
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  public ErrorDetails handleForbiddenException(final RuntimeException ex) {
-    return new ErrorDetails(LocalDateTime.now(), ex.getMessage());
+  public ErrorResponse handleForbiddenException(final RuntimeException ex) {
+    return new ErrorResponse(ex.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ValidationErrorDetails handleNotValidException(final MethodArgumentNotValidException ex) {
     final List<Violation> violations = new ArrayList<>();
-    final ValidationErrorDetails details = new ValidationErrorDetails(
-      LocalDateTime.now(),
-      "Validation failed",
-      violations
-    );
+    final ValidationErrorDetails details = new ValidationErrorDetails(violations);
     for (final FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
       details
         .violations()

@@ -3,6 +3,7 @@ package de.zedalite.quotes.web;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
+import de.zedalite.quotes.data.model.CountResponse;
 import de.zedalite.quotes.service.QuoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,9 +28,10 @@ class QuoteControllerTest {
   @Test
   @DisplayName("Should get quote count")
   void shouldGetQuoteCount() {
-    willReturn(5).given(service).count();
+    final CountResponse count = new CountResponse(5);
+    willReturn(count).given(service).count();
 
-    instance.getQuotesCount();
+    instance.getQuotes();
 
     then(service).should().count();
   }

@@ -1,7 +1,6 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.*;
-import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.service.GroupQuoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,27 +27,28 @@ public class GroupQuoteController {
 
   @Operation(
     summary = "Get all group quotes",
+    description = "Get all group quotes",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group quote found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteMessage.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quotes not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes")
-  public List<QuoteMessage> getQuotes(
+  public List<QuoteResponse> getQuotes(
     @PathVariable("id") final Integer id,
     @RequestParam(defaultValue = "CREATION_DATE") @Valid final SortField field,
     @RequestParam(defaultValue = "DESC") @Valid final SortOrder order
@@ -58,77 +58,87 @@ public class GroupQuoteController {
 
   @Operation(
     summary = "Get a group quote by its id",
+    description = "Get a group quote by its id",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group quote found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteMessage.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quote not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/{quoteId}")
-  public QuoteMessage getQuote(@PathVariable("id") final Integer id, @PathVariable("quoteId") final Integer quoteId) {
+  public QuoteResponse getQuote(@PathVariable("id") final Integer id, @PathVariable("quoteId") final Integer quoteId) {
     return service.find(id, quoteId);
   }
 
   @Operation(
-    summary = "Get the number of saved quotes",
+    summary = "Get the count of saved quotes",
+    description = "Get the count of saved quotes",
     responses = {
-      @ApiResponse(responseCode = "200", description = "Group quotes count found"),
+      @ApiResponse(
+        responseCode = "200",
+        description = "Group quotes count found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CountResponse.class)) }
+      ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quotes not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/count")
-  public Integer getQuotesCount(@PathVariable("id") final Integer id) {
+  public CountResponse getQuotesCount(@PathVariable("id") final Integer id) {
     return service.count(id);
   }
 
   @Operation(
     summary = "Create a new group quote",
+    description = "Create a new group quote",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group quote created",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "400",
         description = "Group quote not created",
-        content = {
-          @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrorDetails.class)),
-        }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Group quote not found",
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @PostMapping("{id}/quotes")
-  public QuoteMessage postQuote(
+  public QuoteResponse postQuote(
     @PathVariable("id") final Integer id,
     @RequestBody @Valid final QuoteRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
@@ -138,29 +148,30 @@ public class GroupQuoteController {
 
   @Operation(
     summary = "Get random group quotes",
+    description = "Get random group quotes",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Group quotes found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quotes not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/randoms")
-  public List<QuoteMessage> getRandomQuotes(
+  public List<QuoteResponse> getRandomQuotes(
     @PathVariable("id") final Integer id,
-    @RequestParam(defaultValue = "8") @PositiveOrZero final Integer quantity
+    @RequestParam(defaultValue = "32") @PositiveOrZero final Integer quantity
   ) {
     return service.findRandoms(id, quantity);
   }

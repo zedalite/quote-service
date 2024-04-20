@@ -6,7 +6,6 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,26 +27,24 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final Integer userId = userRepository.save(new UserRequest("quotetester", "test")).id();
-    final Integer userId2 = userRepository.save(new UserRequest("quotetester2", "test2")).id();
+    final Integer userId = userRepository.save(new UserRequest("quotetester", "test", "Quote Tester")).id();
+    final Integer userId2 = userRepository.save(new UserRequest("quotetester2", "test2", "Quote Tester 2")).id();
 
-    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "quotes are cool", "in quotversum", null));
-    instance.save(new QuoteRequest("quoter", LocalDateTime.now(), "One more quotes", "#2", userId));
-    instance.save(new QuoteRequest("quotexpert", LocalDateTime.now(), "I'm an expert", null, userId2));
+    instance.save(new QuoteRequest("quoter", "quotes are cool", "in quotversum"), null);
+    instance.save(new QuoteRequest("quoter", "One more quotes", "#2"), userId);
+    instance.save(new QuoteRequest("quotexpert", "I'm an expert", null), userId2);
   }
 
   @Test
   @DisplayName("Should save quote")
   void shouldSaveQuote() {
-    final LocalDateTime dateTime = LocalDateTime.of(2023, 5, 29, 21, 0, 0);
-    final QuoteRequest quote = new QuoteRequest("test", dateTime, "tests are important", "42", 2);
+    final QuoteRequest quote = new QuoteRequest("test", "tests are important", "42");
 
-    final Quote savedQuote = instance.save(quote);
+    final Quote savedQuote = instance.save(quote, 2);
 
     assertThat(savedQuote).isNotNull();
     assertThat(savedQuote.id()).isNotNull();
     assertThat(savedQuote.author()).isEqualTo("test");
-    assertThat(savedQuote.creationDate()).isEqualTo(LocalDateTime.of(2023, 5, 29, 21, 0, 0));
     assertThat(savedQuote.text()).isEqualTo("tests are important");
     assertThat(savedQuote.context()).isEqualTo("42");
   }

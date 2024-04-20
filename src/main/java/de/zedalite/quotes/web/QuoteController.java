@@ -1,7 +1,7 @@
 package de.zedalite.quotes.web;
 
-import de.zedalite.quotes.data.model.ErrorDetails;
-import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.CountResponse;
+import de.zedalite.quotes.data.model.ErrorResponse;
 import de.zedalite.quotes.service.QuoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,22 +24,23 @@ public class QuoteController {
   }
 
   @Operation(
-    summary = "Get the number of saved quotes",
+    summary = "Get the count of saved quotes",
+    description = "Get the count of saved quotes",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "Quotes found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Quote.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CountResponse.class)) }
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Quotes not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class)) }
+        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
       ),
     }
   )
   @GetMapping("count")
-  public Integer getQuotesCount() {
+  public CountResponse getQuotes() {
     return service.count();
   }
 }

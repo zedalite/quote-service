@@ -7,7 +7,6 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.*;
 import de.zedalite.quotes.exception.QotdNotFoundException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,13 +38,9 @@ class GroupQuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    exampleQuoteId = quoteRepository
-      .save(new QuoteRequest("qotd", LocalDateTime.now(), "I'm the best", null, null))
-      .id();
-    final Integer exampleUserId = userRepository.save(new UserRequest("qotd_user", "qotd_user", "QOTD_USER")).id();
-    exampleGroupId = groupRepository
-      .save(new GroupRequest("qotd_group", "QOTD_GROUP", LocalDateTime.now(), exampleUserId))
-      .id();
+    Integer exampleUserId = userRepository.save(new UserRequest("qotd_user", "qotd_user", "QOTD_USER")).id();
+    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", "I'm the best", null), exampleUserId).id();
+    exampleGroupId = groupRepository.save(new GroupRequest("qotd_group", "QOTD_GROUP"), exampleUserId).id();
     instance.save(exampleGroupId, new QuoteOfTheDayRequest(exampleQuoteId, LocalDate.now()));
   }
 

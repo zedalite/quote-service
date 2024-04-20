@@ -2,8 +2,8 @@ package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
-import de.zedalite.quotes.data.model.QuoteMessage;
 import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
+import de.zedalite.quotes.data.model.QuoteResponse;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.QotdNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
@@ -21,7 +21,7 @@ public class GroupQuoteOfTheDayService {
 
   private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
 
-  private static final String MIN_QUOTES_COUNT = "Minimum number of quotes not reached (10)";
+  private static final String MIN_QUOTES_COUNT = "Minimum count of quotes not reached (10)";
 
   private final GroupQuoteOfTheDayRepository repository;
 
@@ -39,7 +39,7 @@ public class GroupQuoteOfTheDayService {
     this.userRepository = userRepository;
   }
 
-  public QuoteMessage findQuoteOfTheDay(final Integer id) throws ResourceNotFoundException {
+  public QuoteResponse findQuoteOfTheDay(final Integer id) throws ResourceNotFoundException {
     if (groupQuoteRepository.count(id) < 10) throw new ResourceNotFoundException(MIN_QUOTES_COUNT);
 
     Quote qotd;
@@ -50,13 +50,13 @@ public class GroupQuoteOfTheDayService {
       repository.save(id, new QuoteOfTheDayRequest(qotd.id(), LocalDate.now()));
     }
 
-    return getQuoteMessage(qotd);
+    return getResponse(qotd);
   }
 
-  private QuoteMessage getQuoteMessage(final Quote quote) {
+  private QuoteResponse getResponse(final Quote quote) {
     final List<User> mentions = getMentions(StringUtils.extractUserIds(quote.text()));
 
-    return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
+    return QUOTE_MAPPER.mapToResponse(quote, mentions);
   }
 
   private List<User> getMentions(final List<Integer> userIds) {

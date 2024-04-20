@@ -2,6 +2,7 @@ package de.zedalite.quotes.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.zedalite.quotes.data.model.CountResponse;
 import de.zedalite.quotes.repository.QuoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ class QuoteServiceTest {
   @Test
   @DisplayName("Should count quotes")
   void shouldCountQuotes() {
-    final Integer count = instance.count();
+    final CountResponse count = instance.count();
 
-    assertThat(count).isNotNegative();
+    assertThat(count.count()).isNotNegative();
   }
 }

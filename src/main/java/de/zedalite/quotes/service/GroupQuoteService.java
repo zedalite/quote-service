@@ -12,7 +12,6 @@ import de.zedalite.quotes.utils.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,16 +43,16 @@ public class GroupQuoteService {
     this.notifierRepository = notifierRepository;
   }
 
-  public QuoteMessage create(final Integer id, final QuoteRequest request) {
-    QuoteMessage quote = null;
+  public QuoteResponse create(final Integer id, final QuoteRequest request, final Integer creatorId) {
+    QuoteResponse quote = null;
     try {
-      quote = getQuoteMessage(repository.save(id, request));
+      quote = getResponse(repository.save(id, request, creatorId));
 
       // TODO extract notification build?
       final PushNotification notification = new PushNotification(
         "New Quote",
-        quote.author() + " says " + quote.truncateText() + "...",
-        Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.id()))
+        quote.quote().author() + " says " + quote.quote().truncateText() + "...",
+        Map.of("type", "NEW_QUOTE", "quoteId", String.valueOf(quote.quote().id()))
       );
       // TODO send to specific group topic or user notification token
       notifierRepository.sendToTopic(quoteCreationTopic, notification);
@@ -67,50 +66,44 @@ public class GroupQuoteService {
     }
   }
 
-  public QuoteMessage create(final Integer id, final QuoteRequest request, final Integer creatorId) {
-    final Integer creatorIdOrDefault = Objects.requireNonNullElse(request.creatorId(), creatorId);
-
-    return create(id, request.withCreatorId(creatorIdOrDefault));
-  }
-
-  public List<QuoteMessage> findAll(final Integer id, final SortField field, final SortOrder order) {
+  public List<QuoteResponse> findAll(final Integer id, final SortField field, final SortOrder order) {
     try {
       final List<Quote> quotes = repository.findAll(id, field, order);
-      return getQuoteMessages(quotes);
+      return getResponses(quotes);
     } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public QuoteMessage find(final Integer id, final Integer quoteId) {
+  public QuoteResponse find(final Integer id, final Integer quoteId) {
     try {
       final Quote quote = repository.findById(id, quoteId);
-      return getQuoteMessage(quote);
+      return getResponse(quote);
     } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public List<QuoteMessage> findRandoms(final Integer id, final Integer quantity) {
+  public List<QuoteResponse> findRandoms(final Integer id, final Integer quantity) {
     try {
-      return getQuoteMessages(repository.findRandoms(id, quantity));
+      return getResponses(repository.findRandoms(id, quantity));
     } catch (final QuoteNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public Integer count(final Integer id) {
-    return repository.count(id);
+  public CountResponse count(final Integer id) {
+    return new CountResponse(repository.count(id));
   }
 
-  private QuoteMessage getQuoteMessage(final Quote quote) {
+  private List<QuoteResponse> getResponses(final List<Quote> quotes) {
+    return quotes.stream().map(this::getResponse).toList();
+  }
+
+  private QuoteResponse getResponse(final Quote quote) {
     final List<User> mentions = getMentions(StringUtils.extractUserIds(quote.text()));
 
-    return QUOTE_MAPPER.mapToQuoteMessage(quote, mentions);
-  }
-
-  private List<QuoteMessage> getQuoteMessages(final List<Quote> quotes) {
-    return quotes.stream().map(this::getQuoteMessage).toList();
+    return QUOTE_MAPPER.mapToResponse(quote, mentions);
   }
 
   private List<User> getMentions(final List<Integer> userIds) {
