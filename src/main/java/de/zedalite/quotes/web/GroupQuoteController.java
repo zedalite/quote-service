@@ -96,7 +96,10 @@ public class GroupQuoteController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/{quoteId}")
-  public ResponseEntity<QuoteResponse> getQuote(@PathVariable("id") final Integer id, @PathVariable("quoteId") final Integer quoteId) {
+  public ResponseEntity<QuoteResponse> getQuote(
+    @PathVariable("id") final Integer id,
+    @PathVariable("quoteId") final Integer quoteId
+  ) {
     return ResponseEntity.ok(service.find(id, quoteId));
   }
 

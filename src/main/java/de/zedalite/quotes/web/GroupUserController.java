@@ -85,7 +85,10 @@ public class GroupUserController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/users/{userId}")
-  public ResponseEntity<UserResponse> getUser(@PathVariable("id") final Integer id, @PathVariable("userId") final Integer userId) {
+  public ResponseEntity<UserResponse> getUser(
+    @PathVariable("id") final Integer id,
+    @PathVariable("userId") final Integer userId
+  ) {
     return ResponseEntity.ok(service.find(id, userId));
   }
 
