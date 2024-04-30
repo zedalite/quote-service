@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import de.zedalite.quotes.data.model.ErrorResponse;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.data.model.Violation;
+import de.zedalite.quotes.web.GlobalControllerExceptionHandler;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class GlobalControllerExceptionHandlerTest {
   void shouldHandleResourceNotFoundException() {
     final ResourceNotFoundException exception = new ResourceNotFoundException("Resource not found");
 
-    final ErrorResponse errorResponse = instance.handleNotFoundException(exception);
+    final ErrorResponse errorResponse = instance.handleNotFoundException(exception).getBody();
 
     assertThat(errorResponse).isNotNull();
     assertThat(errorResponse.message()).isEqualTo("Resource not found");
@@ -40,7 +41,7 @@ class GlobalControllerExceptionHandlerTest {
       .getDeclaredConstructor(String.class)
       .newInstance("Resource can't be accessed");
 
-    final ErrorResponse errorResponse = instance.handleForbiddenException(exception);
+    final ErrorResponse errorResponse = instance.handleForbiddenException(exception).getBody();
 
     assertThat(errorResponse).isNotNull();
     assertThat(errorResponse.message()).isEqualTo("Resource can't be accessed");
@@ -62,7 +63,7 @@ class GlobalControllerExceptionHandlerTest {
       bindingResult
     );
 
-    final ValidationErrorDetails errorDetails = instance.handleNotValidException(exception);
+    final ValidationErrorDetails errorDetails = instance.handleNotValidException(exception).getBody();
 
     assertThat(errorDetails).isNotNull();
     assertThat(errorDetails.violations()).containsOnly(new Violation("name", "size must be between 0 and 32"));

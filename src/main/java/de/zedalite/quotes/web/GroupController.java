@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,23 +30,23 @@ public class GroupController {
       @ApiResponse(
         responseCode = "200",
         description = "Group found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class))
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Group retrieval not allowed",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
     }
   )
   @GetMapping("{id}")
-  public GroupResponse getGroup(@PathVariable("id") final Integer id) {
-    return service.find(id);
+  public ResponseEntity<GroupResponse> getGroup(@PathVariable("id") final Integer id) {
+    return ResponseEntity.ok(service.find(id));
   }
 
   @Operation(
@@ -55,30 +56,30 @@ public class GroupController {
       @ApiResponse(
         responseCode = "200",
         description = "Group created",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class))
       ),
       @ApiResponse(
         responseCode = "400",
         description = "Group not created",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Group creation not allowed",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
     }
   )
   @PostMapping
-  public GroupResponse postGroup(
+  public ResponseEntity<GroupResponse> postGroup(
     @RequestBody @Valid final GroupRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
   ) {
-    return service.create(request, principal.getId());
+    return ResponseEntity.ok(service.create(request, principal.getId()));
   }
 }

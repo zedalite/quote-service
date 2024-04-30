@@ -3,7 +3,7 @@ package de.zedalite.quotes.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
-import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +23,12 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
   private QuoteRepository instance;
 
   @Autowired
+  private GroupRepository groupRepository;
+
+  @Autowired
+  private GroupQuoteRepository groupQuoteRepository;
+
+  @Autowired
   private UserRepository userRepository;
 
   @BeforeAll
@@ -30,23 +36,11 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
     final Integer userId = userRepository.save(new UserRequest("quotetester", "test", "Quote Tester")).id();
     final Integer userId2 = userRepository.save(new UserRequest("quotetester2", "test2", "Quote Tester 2")).id();
 
-    instance.save(new QuoteRequest("quoter", "quotes are cool", "in quotversum"), null);
-    instance.save(new QuoteRequest("quoter", "One more quotes", "#2"), userId);
-    instance.save(new QuoteRequest("quotexpert", "I'm an expert", null), userId2);
-  }
+    final Integer groupId = groupRepository.save(new GroupRequest("group1", "GROUP 1"), userId).id();
 
-  @Test
-  @DisplayName("Should save quote")
-  void shouldSaveQuote() {
-    final QuoteRequest quote = new QuoteRequest("test", "tests are important", "42");
-
-    final Quote savedQuote = instance.save(quote, 2);
-
-    assertThat(savedQuote).isNotNull();
-    assertThat(savedQuote.id()).isNotNull();
-    assertThat(savedQuote.author()).isEqualTo("test");
-    assertThat(savedQuote.text()).isEqualTo("tests are important");
-    assertThat(savedQuote.context()).isEqualTo("42");
+    groupQuoteRepository.save(groupId, new QuoteRequest("quoter", "quotes are cool", "in quotversum"), null);
+    groupQuoteRepository.save(groupId, new QuoteRequest("quoter", "One more quotes", "#2"), userId);
+    groupQuoteRepository.save(groupId, new QuoteRequest("quotexpert", "I'm an expert", null), userId2);
   }
 
   @Test

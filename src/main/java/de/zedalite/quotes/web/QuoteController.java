@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,17 +31,17 @@ public class QuoteController {
       @ApiResponse(
         responseCode = "200",
         description = "Quotes found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CountResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = CountResponse.class))
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Quotes not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
     }
   )
   @GetMapping("count")
-  public CountResponse getQuotes() {
-    return service.count();
+  public ResponseEntity<CountResponse> getQuotes() {
+    return ResponseEntity.ok(service.count());
   }
 }

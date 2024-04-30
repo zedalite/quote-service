@@ -38,7 +38,14 @@ public class SecurityConfiguration {
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http
       .cors(c -> c.configurationSource(getCorsConfiguration()))
-      .authorizeHttpRequests(authz -> authz.requestMatchers("/actuator/*").permitAll().anyRequest().authenticated())
+      .authorizeHttpRequests(
+        authz ->
+          authz
+            .requestMatchers("/actuator/**", "/v3/api-docs/**", "/swagger-ui/**")
+            .permitAll()
+            .anyRequest()
+            .authenticated()
+      )
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authenticationProvider)
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

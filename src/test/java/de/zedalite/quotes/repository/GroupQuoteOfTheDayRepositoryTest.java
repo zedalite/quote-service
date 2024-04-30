@@ -24,7 +24,7 @@ class GroupQuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
   private GroupQuoteOfTheDayRepository instance;
 
   @Autowired
-  private QuoteRepository quoteRepository;
+  private GroupQuoteRepository groupQuoteRepository;
 
   @Autowired
   private GroupRepository groupRepository;
@@ -39,8 +39,10 @@ class GroupQuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
   @BeforeAll
   void setup() {
     Integer exampleUserId = userRepository.save(new UserRequest("qotd_user", "qotd_user", "QOTD_USER")).id();
-    exampleQuoteId = quoteRepository.save(new QuoteRequest("qotd", "I'm the best", null), exampleUserId).id();
     exampleGroupId = groupRepository.save(new GroupRequest("qotd_group", "QOTD_GROUP"), exampleUserId).id();
+    exampleQuoteId = groupQuoteRepository
+      .save(exampleGroupId, new QuoteRequest("qotd", "I'm the best", null), exampleUserId)
+      .id();
     instance.save(exampleGroupId, new QuoteOfTheDayRequest(exampleQuoteId, LocalDate.now()));
   }
 

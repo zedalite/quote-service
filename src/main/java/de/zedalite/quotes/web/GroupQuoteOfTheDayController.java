@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,23 +30,23 @@ public class GroupQuoteOfTheDayController {
       @ApiResponse(
         responseCode = "200",
         description = "Group quote of the day found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuoteResponse.class))
       ),
       @ApiResponse(
         responseCode = "403",
         description = "Principal is no group member",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
       @ApiResponse(
         responseCode = "404",
         description = "Group quote of the day not found",
-        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
       ),
     }
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/qotd")
-  public QuoteResponse getQuoteOfTheDay(@PathVariable("id") final Integer id) {
-    return service.findQuoteOfTheDay(id);
+  public ResponseEntity<QuoteResponse> getQuoteOfTheDay(@PathVariable("id") final Integer id) {
+    return ResponseEntity.ok(service.findQuoteOfTheDay(id));
   }
 }
