@@ -32,7 +32,7 @@ class GroupQuoteControllerTest {
     final List<QuoteResponse> expectedQuotes = QuoteGenerator.getQuoteMessages();
     willReturn(expectedQuotes).given(service).findAll(anyInt(), any(SortField.class), any(SortOrder.class));
 
-    instance.getQuotes(1, SortField.CREATION_DATE, SortOrder.ASC);
+    instance.getAll(1, SortField.CREATION_DATE, SortOrder.ASC);
 
     then(service).should().findAll(1, SortField.CREATION_DATE, SortOrder.ASC);
   }
@@ -43,7 +43,7 @@ class GroupQuoteControllerTest {
     final QuoteResponse expectedQuote = QuoteGenerator.getQuoteMessage();
     willReturn(expectedQuote).given(service).find(anyInt(), anyInt());
 
-    instance.getQuote(1, 8);
+    instance.get(1, 8);
 
     then(service).should().find(1, 8);
   }
@@ -67,7 +67,7 @@ class GroupQuoteControllerTest {
     final QuoteResponse expectedQuote = QuoteGenerator.getQuoteMessage();
     willReturn(expectedQuote).given(service).create(anyInt(), any(QuoteRequest.class), anyInt());
 
-    instance.postQuote(1, quoteRequest, principal);
+    instance.createQuote(1, quoteRequest, principal);
 
     then(service).should().create(1, quoteRequest, 1);
   }

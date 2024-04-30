@@ -50,7 +50,7 @@ class GroupUserControllerTest {
   @Test
   @DisplayName("Should post group user")
   void shouldPostGroupUser() {
-    instance.postUser(1, 1);
+    instance.createUser(1, 1);
 
     then(service).should().create(1, 1);
   }

@@ -30,7 +30,7 @@ class UserControllerTest {
     final UserResponse expectedUser = UserGenerator.getUserResponse();
     willReturn(expectedUser).given(service).find(anyInt());
 
-    instance.getUser(userPrincipal);
+    instance.get(userPrincipal);
 
     then(service).should().find(userPrincipal.getId());
   }
@@ -40,7 +40,7 @@ class UserControllerTest {
   void shouldCreateUser() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
 
-    instance.postUser(userRequest);
+    instance.create(userRequest);
 
     then(service).should().create(userRequest);
   }

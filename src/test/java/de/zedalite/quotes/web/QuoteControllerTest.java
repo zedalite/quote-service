@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @ExtendWith(MockitoExtension.class)
 class QuoteControllerTest {
@@ -22,16 +21,13 @@ class QuoteControllerTest {
   @Mock
   private QuoteService service;
 
-  @Mock
-  private SecurityContextHolder securityContextHolder;
-
   @Test
   @DisplayName("Should get quote count")
   void shouldGetQuoteCount() {
     final CountResponse count = new CountResponse(5);
     willReturn(count).given(service).count();
 
-    instance.getQuotes();
+    instance.getCount();
 
     then(service).should().count();
   }

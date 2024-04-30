@@ -47,7 +47,7 @@ class GroupControllerTest {
 
     willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyInt());
 
-    instance.postGroup(groupRequest, principal);
+    instance.createGroup(groupRequest, principal);
 
     then(service).should().create(groupRequest, 1);
   }
