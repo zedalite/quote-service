@@ -26,6 +26,7 @@ public class GroupController {
   @Operation(
     summary = "Get a group by its id",
     description = "Get a group by its id",
+    operationId = "getGroup",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -52,6 +53,7 @@ public class GroupController {
   @Operation(
     summary = "Create a new group",
     description = "Create a new group",
+    operationId = "createGroup",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -76,7 +78,7 @@ public class GroupController {
     }
   )
   @PostMapping
-  public ResponseEntity<GroupResponse> postGroup(
+  public ResponseEntity<GroupResponse> createGroup(
     @RequestBody @Valid final GroupRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
   ) {

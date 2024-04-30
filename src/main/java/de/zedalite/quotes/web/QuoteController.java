@@ -27,6 +27,7 @@ public class QuoteController {
   @Operation(
     summary = "Get the count of saved quotes",
     description = "Get the count of saved quotes",
+    operationId = "getQuoteCount",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -41,7 +42,7 @@ public class QuoteController {
     }
   )
   @GetMapping("count")
-  public ResponseEntity<CountResponse> getQuotes() {
+  public ResponseEntity<CountResponse> getCount() {
     return ResponseEntity.ok(service.count());
   }
 }

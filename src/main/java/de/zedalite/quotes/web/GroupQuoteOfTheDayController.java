@@ -26,6 +26,7 @@ public class GroupQuoteOfTheDayController {
   @Operation(
     summary = "Get group quote of the day",
     description = "Get group quote of the day",
+    operationId = "getGroupQuoteOfTheDay",
     responses = {
       @ApiResponse(
         responseCode = "200",

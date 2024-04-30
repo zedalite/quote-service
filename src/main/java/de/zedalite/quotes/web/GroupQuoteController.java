@@ -42,6 +42,7 @@ public class GroupQuoteController {
   @Operation(
     summary = "Get all group quotes",
     description = "Get all group quotes",
+    operationId = "getGroupQuotes",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -65,7 +66,7 @@ public class GroupQuoteController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes")
-  public ResponseEntity<List<QuoteResponse>> getQuotes(
+  public ResponseEntity<List<QuoteResponse>> getAll(
     @PathVariable("id") final Integer id,
     @RequestParam(defaultValue = "CREATION_DATE") @Valid final SortField field,
     @RequestParam(defaultValue = "DESC") @Valid final SortOrder order
@@ -76,6 +77,7 @@ public class GroupQuoteController {
   @Operation(
     summary = "Get a group quote by its id",
     description = "Get a group quote by its id",
+    operationId = "getGroupQuote",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -96,7 +98,7 @@ public class GroupQuoteController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/quotes/{quoteId}")
-  public ResponseEntity<QuoteResponse> getQuote(
+  public ResponseEntity<QuoteResponse> get(
     @PathVariable("id") final Integer id,
     @PathVariable("quoteId") final Integer quoteId
   ) {
@@ -106,6 +108,7 @@ public class GroupQuoteController {
   @Operation(
     summary = "Get the count of saved quotes",
     description = "Get the count of saved quotes",
+    operationId = "getGroupQuoteCount",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -133,6 +136,7 @@ public class GroupQuoteController {
   @Operation(
     summary = "Create a new group quote",
     description = "Create a new group quote",
+    operationId = "createGroupQuote",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -158,7 +162,7 @@ public class GroupQuoteController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @PostMapping("{id}/quotes")
-  public ResponseEntity<QuoteResponse> postQuote(
+  public ResponseEntity<QuoteResponse> createQuote(
     @PathVariable("id") final Integer id,
     @RequestBody @Valid final QuoteRequest request,
     @AuthenticationPrincipal final UserPrincipal principal
@@ -169,6 +173,7 @@ public class GroupQuoteController {
   @Operation(
     summary = "Get random group quotes",
     description = "Get random group quotes",
+    operationId = "getRandomGroupQuotes",
     responses = {
       @ApiResponse(
         responseCode = "200",

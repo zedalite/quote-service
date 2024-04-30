@@ -33,6 +33,7 @@ public class GroupUserController {
   @Operation(
     summary = "Get all group users",
     description = "Get all group users",
+    operationId = "getGroupUsers",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -65,6 +66,7 @@ public class GroupUserController {
   @Operation(
     summary = "Get a group user by its id",
     description = "Get a group user by its id",
+    operationId = "getGroupUser",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -95,6 +97,7 @@ public class GroupUserController {
   @Operation(
     summary = "Create a new group user",
     description = "Create a new group user",
+    operationId = "createGroupUser",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -120,7 +123,7 @@ public class GroupUserController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @PostMapping("{id}/users")
-  public ResponseEntity<Void> postUser(@PathVariable("id") final Integer id, @RequestBody final Integer userId) {
+  public ResponseEntity<Void> createUser(@PathVariable("id") final Integer id, @RequestBody final Integer userId) {
     service.create(id, userId);
     return ResponseEntity.ok().build();
   }

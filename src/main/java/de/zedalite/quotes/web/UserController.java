@@ -26,6 +26,7 @@ public class UserController {
   @Operation(
     summary = "Create a new user",
     description = "Create a new user",
+    operationId = "createUser",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -50,13 +51,14 @@ public class UserController {
     }
   )
   @PostMapping
-  public ResponseEntity<UserResponse> postUser(@Valid @RequestBody final UserRequest user) {
+  public ResponseEntity<UserResponse> create(@Valid @RequestBody final UserRequest user) {
     return ResponseEntity.ok(service.create(user));
   }
 
   @Operation(
     summary = "Get your user details",
     description = "Get your user details",
+    operationId = "getUser",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -76,13 +78,14 @@ public class UserController {
     }
   )
   @GetMapping("me")
-  public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal final UserPrincipal principal) {
+  public ResponseEntity<UserResponse> get(@AuthenticationPrincipal final UserPrincipal principal) {
     return ResponseEntity.ok(service.find(principal.getId()));
   }
 
   @Operation(
     summary = "Patch your name",
     description = "Patch your name",
+    operationId = "patchUserName",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -113,6 +116,7 @@ public class UserController {
   @Operation(
     summary = "Patch your display name",
     description = "Patch your display name",
+    operationId = "patchUserDisplayName",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -143,6 +147,7 @@ public class UserController {
   @Operation(
     summary = "Patch your email",
     description = "Patch your email",
+    operationId = "patchUserEmail",
     responses = {
       @ApiResponse(
         responseCode = "200",
