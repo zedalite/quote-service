@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
@@ -34,15 +35,18 @@ class GroupUserServiceTest {
   @Mock
   private UserRepository userRepository;
 
-  @Test
+  @ParameterizedTest
+  @ValueSource(booleans = { true, false })
   @DisplayName("Should create group user")
-  void shouldCreateGroupUser() {
+  void shouldCreateGroupUser(final boolean isUserSaved) {
     willReturn(false).given(userRepository).doesUserNonExist(2);
     willReturn(false).given(repository).isUserInGroup(1, 2);
+    willReturn(isUserSaved).given(repository).save(anyInt(), anyInt());
 
-    instance.create(1, 2);
+    final Boolean result = instance.create(1, 2);
 
     then(repository).should().save(1, 2);
+    assertThat(result).isEqualTo(isUserSaved);
   }
 
   @Test
@@ -80,9 +84,10 @@ class GroupUserServiceTest {
     final User expectedUser = UserGenerator.getUser();
     willReturn(expectedUser).given(repository).findById(1, 2);
 
-    instance.find(1, 2);
+    final UserResponse result = instance.find(1, 2);
 
     then(repository).should().findById(1, 2);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -99,9 +104,10 @@ class GroupUserServiceTest {
     final List<User> expectedUsers = UserGenerator.getUsers();
     willReturn(expectedUsers).given(repository).findAll(1);
 
-    instance.findAll(1);
+    final List<UserResponse> result = instance.findAll(1);
 
     then(repository).should().findAll(1);
+    assertThat(result).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test

@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class GroupQuoteControllerTest {
@@ -29,23 +32,27 @@ class GroupQuoteControllerTest {
   @Test
   @DisplayName("Should get group quotes")
   void shouldGetGroupQuotes() {
-    final List<QuoteResponse> expectedQuotes = QuoteGenerator.getQuoteMessages();
+    final List<QuoteResponse> expectedQuotes = QuoteGenerator.getQuoteResponses();
     willReturn(expectedQuotes).given(service).findAll(anyInt(), any(SortField.class), any(SortOrder.class));
 
-    instance.getAll(1, SortField.CREATION_DATE, SortOrder.ASC);
+    final ResponseEntity<List<QuoteResponse>> response = instance.getAll(1, SortField.CREATION_DATE, SortOrder.ASC);
 
     then(service).should().findAll(1, SortField.CREATION_DATE, SortOrder.ASC);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   @DisplayName("Should get group quote")
   void shouldGetGroupQuote() {
-    final QuoteResponse expectedQuote = QuoteGenerator.getQuoteMessage();
+    final QuoteResponse expectedQuote = QuoteGenerator.getQuoteResponse();
     willReturn(expectedQuote).given(service).find(anyInt(), anyInt());
 
-    instance.get(1, 8);
+    final ResponseEntity<QuoteResponse> response = instance.get(1, 8);
 
     then(service).should().find(1, 8);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -54,9 +61,11 @@ class GroupQuoteControllerTest {
     final CountResponse count = new CountResponse(5);
     willReturn(count).given(service).count(anyInt());
 
-    instance.getQuotesCount(1);
+    final ResponseEntity<CountResponse> response = instance.getQuotesCount(1);
 
     then(service).should().count(1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -64,22 +73,26 @@ class GroupQuoteControllerTest {
   void shouldPostGroupQuote() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
-    final QuoteResponse expectedQuote = QuoteGenerator.getQuoteMessage();
+    final QuoteResponse expectedQuote = QuoteGenerator.getQuoteResponse();
     willReturn(expectedQuote).given(service).create(anyInt(), any(QuoteRequest.class), anyInt());
 
-    instance.createQuote(1, quoteRequest, principal);
+    final ResponseEntity<QuoteResponse> response = instance.createQuote(1, quoteRequest, principal);
 
     then(service).should().create(1, quoteRequest, 1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   @DisplayName("Should get random group quotes")
   void shouldGetRandomGroupQuotes() {
-    final List<QuoteResponse> expectedQuote = QuoteGenerator.getQuoteMessages();
+    final List<QuoteResponse> expectedQuote = QuoteGenerator.getQuoteResponses();
     willReturn(expectedQuote).given(service).findRandoms(anyInt(), anyInt());
 
-    instance.getRandomQuotes(1, 8);
+    final ResponseEntity<List<QuoteResponse>> response = instance.getRandomQuotes(1, 8);
 
     then(service).should().findRandoms(1, 8);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

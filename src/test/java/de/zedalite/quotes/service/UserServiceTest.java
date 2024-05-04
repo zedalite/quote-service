@@ -1,5 +1,6 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -31,11 +32,14 @@ class UserServiceTest {
   @DisplayName("Should create user when it not exist")
   void shouldCreateUserWhenItNotExist() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
+    final User user = UserGenerator.getUser();
     willReturn(false).given(repository).isUsernameTaken(anyString());
+    willReturn(user).given(repository).save(any(UserRequest.class));
 
-    instance.create(userRequest);
+    final UserResponse result = instance.create(userRequest);
 
     then(repository).should().save(userRequest);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -64,9 +68,10 @@ class UserServiceTest {
     final User user = UserGenerator.getUser();
     willReturn(user).given(repository).findById(1);
 
-    instance.find(1);
+    final UserResponse result = instance.find(1);
 
     then(repository).should().findById(1);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -108,8 +113,6 @@ class UserServiceTest {
   @DisplayName("Should not update displayname when user not exists")
   void shouldNotUpdateDisplaynameWhenUserNotExists() {
     final UserDisplayNameRequest userDisplayNameRequest = UserGenerator.getDisplayNameRequest();
-    final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), user.email(), userDisplayNameRequest.displayName());
     willThrow(UserNotFoundException.class).given(repository).findById(anyInt());
 
     assertThatCode(() -> instance.updateDisplayName(1, userDisplayNameRequest)).isInstanceOf(

@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class GroupControllerTest {
@@ -33,9 +36,11 @@ class GroupControllerTest {
     final GroupResponse expectedGroup = GroupGenerator.getGroupResponse();
     willReturn(expectedGroup).given(service).find(anyInt());
 
-    instance.getGroup(1);
+    final ResponseEntity<GroupResponse> response = instance.getGroup(1);
 
     then(service).should().find(1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -47,8 +52,10 @@ class GroupControllerTest {
 
     willReturn(expectedGroup).given(service).create(any(GroupRequest.class), anyInt());
 
-    instance.createGroup(groupRequest, principal);
+    final ResponseEntity<GroupResponse> response = instance.createGroup(groupRequest, principal);
 
     then(service).should().create(groupRequest, 1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

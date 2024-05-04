@@ -1,5 +1,6 @@
 package de.zedalite.quotes.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +55,7 @@ class JwtAuthenticationFilterTest {
     instance.doFilterInternal(request, response, filterChain);
 
     then(filterChain).should().doFilter(request, response);
+    assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
   }
 
   @Test

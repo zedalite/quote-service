@@ -43,9 +43,10 @@ class GroupServiceTest {
     willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class), anyInt());
     willReturn(expectedUser).given(userRepository).findById(anyInt());
 
-    instance.create(groupRequest, 1);
+    final GroupResponse result = instance.create(groupRequest, 1);
 
     then(groupRepository).should().save(groupRequest, 1);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -110,9 +111,10 @@ class GroupServiceTest {
     final List<Integer> expectedIds = GroupGenerator.getGroups().stream().map(Group::id).toList();
     willReturn(expectedIds).given(groupRepository).findAllIds();
 
-    instance.findAllIds();
+    final List<Integer> result = instance.findAllIds();
 
     then(groupRepository).should().findAllIds();
+    assertThat(result).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test

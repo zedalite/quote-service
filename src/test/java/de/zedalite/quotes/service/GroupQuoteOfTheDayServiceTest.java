@@ -4,14 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.anyList;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.BDDMockito.willThrow;
 
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteOfTheDayRequest;
 import de.zedalite.quotes.data.model.QuoteResponse;
+import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.QotdNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
+import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupQuoteOfTheDayRepository;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.UserRepository;
@@ -42,15 +47,18 @@ class GroupQuoteOfTheDayServiceTest {
   @Test
   @DisplayName("Should find quote of the day")
   void shouldFindQuoteOfTheDay() {
-    final Quote expectedQotd = QuoteGenerator.getQuote();
+    final Quote expectedQotd = QuoteGenerator.getQuoteWithMentions();
+    final List<User> expectedUsers = List.of(UserGenerator.getUser());
 
     willReturn(10).given(groupQuoteRepository).count(anyInt());
     willReturn(expectedQotd).given(repository).findByDate(anyInt(), any(LocalDate.class));
+    willReturn(expectedUsers).given(userRepository).findAllByIds(anyList());
 
     final QuoteResponse quoteOfTheDay = instance.findQuoteOfTheDay(1);
 
     assertThat(quoteOfTheDay).isNotNull();
     assertThat(quoteOfTheDay.quote().id()).isEqualTo(expectedQotd.id());
+    assertThat(quoteOfTheDay.mentions()).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test

@@ -4,7 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.model.Quote;
+import de.zedalite.quotes.data.model.QuoteResponse;
+import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.fixtures.QuoteGenerator;
+import de.zedalite.quotes.fixtures.UserGenerator;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.SoftAssertions;
@@ -96,5 +101,42 @@ class QuoteMapperTest {
     final List<Quote> quotes = instance.mapToQuoteList(quotesRecords);
 
     assertThat(quotes).isNull();
+  }
+
+  @Test
+  @DisplayName("Should map quote and mentions to quote response")
+  void shouldMapQuoteAndMentionsToQuoteResponse() {
+    final Quote quote = QuoteGenerator.getQuote();
+    final List<User> mentions = UserGenerator.getUsers();
+
+    final QuoteResponse quoteResponse = instance.mapToResponse(quote, mentions);
+
+    assertThat(quoteResponse).isNotNull();
+    assertThat(quoteResponse.quote()).isNotNull();
+    assertThat(quoteResponse.mentions()).isNotNull().hasSizeGreaterThanOrEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("Should map quote and empty mentions to quote response")
+  void shouldMapQuoteAndEmptyMentionsToQuoteResponse() {
+    final Quote quote = QuoteGenerator.getQuote();
+    final List<User> mentions = Collections.emptyList();
+
+    final QuoteResponse quoteResponse = instance.mapToResponse(quote, mentions);
+
+    assertThat(quoteResponse).isNotNull();
+    assertThat(quoteResponse.quote()).isNotNull();
+    assertThat(quoteResponse.mentions()).isNotNull().isEmpty();
+  }
+
+  @Test
+  @DisplayName("Should map empty quote and empty mentions to null")
+  void shouldMapEmptyQuoteAndEmptyMentionsToNull() {
+    final Quote quote = null;
+    final List<User> mentions = null;
+
+    final QuoteResponse result = instance.mapToResponse(quote, mentions);
+
+    assertThat(result).isNull();
   }
 }

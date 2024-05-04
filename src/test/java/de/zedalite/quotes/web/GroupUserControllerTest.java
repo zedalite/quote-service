@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class GroupUserControllerTest {
@@ -31,9 +34,11 @@ class GroupUserControllerTest {
     final List<User> expectedUsers = UserGenerator.getUsers();
     willReturn(expectedUsers).given(service).findAll(anyInt());
 
-    instance.getUsers(1);
+    final ResponseEntity<List<UserResponse>> response = instance.getUsers(1);
 
     then(service).should().findAll(1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -42,16 +47,20 @@ class GroupUserControllerTest {
     final UserResponse expectedUser = UserGenerator.getUserResponse();
     willReturn(expectedUser).given(service).find(anyInt(), anyInt());
 
-    instance.getUser(1, 1);
+    final ResponseEntity<UserResponse> response = instance.getUser(1, 1);
 
     then(service).should().find(1, 1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   @DisplayName("Should post group user")
   void shouldPostGroupUser() {
-    instance.createUser(1, 1);
+    final ResponseEntity<Void> response = instance.createUser(1, 1);
 
     then(service).should().create(1, 1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

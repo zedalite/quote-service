@@ -1,4 +1,4 @@
-package de.zedalite.quotes.exception;
+package de.zedalite.quotes.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -7,7 +7,9 @@ import static org.mockito.Mockito.mock;
 import de.zedalite.quotes.data.model.ErrorResponse;
 import de.zedalite.quotes.data.model.ValidationErrorDetails;
 import de.zedalite.quotes.data.model.Violation;
-import de.zedalite.quotes.web.GlobalControllerExceptionHandler;
+import de.zedalite.quotes.exception.ResourceAccessException;
+import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,5 +69,16 @@ class GlobalControllerExceptionHandlerTest {
 
     assertThat(errorDetails).isNotNull();
     assertThat(errorDetails.violations()).containsOnly(new Violation("name", "size must be between 0 and 32"));
+  }
+
+  @Test
+  @DisplayName("Should handle unexpected RuntimeException")
+  void shouldHandleUnexpectedRuntimeException() {
+    final RuntimeException exception = new RuntimeException("Unexpected exception");
+
+    final ErrorResponse errorResponse = instance.handleInternalServerException(exception).getBody();
+
+    assertThat(errorResponse).isNotNull();
+    assertThat(errorResponse.message()).isEqualTo("Internal Server Error");
   }
 }

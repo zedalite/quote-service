@@ -12,6 +12,7 @@ import de.zedalite.quotes.exception.NotifierException;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
+import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.PushNotificationRepository;
 import de.zedalite.quotes.repository.UserRepository;
@@ -42,13 +43,18 @@ class GroupQuoteServiceTest {
   @DisplayName("Should create group quote")
   void shouldCreateGroupQuote() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
-    final Quote expectedQuote = QuoteGenerator.getQuote();
-    willReturn(expectedQuote).given(repository).save(1, quoteRequest, 5);
+    final Quote expectedQuote = QuoteGenerator.getQuoteWithMentions();
+    final List<User> expectedUsers = List.of(UserGenerator.getUser());
 
-    instance.create(1, quoteRequest, 5);
+    willReturn(expectedQuote).given(repository).save(1, quoteRequest, 5);
+    willReturn(expectedUsers).given(userRepository).findAllByIds(anyList());
+
+    final QuoteResponse result = instance.create(1, quoteRequest, 5);
 
     then(repository).should().save(1, quoteRequest, 5);
     then(notifierRepository).should().sendToTopic(any(), any(PushNotification.class));
+    assertThat(result).isNotNull();
+    assertThat(result.mentions()).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test
@@ -59,9 +65,10 @@ class GroupQuoteServiceTest {
     willReturn(expectedQuote).given(repository).save(1, quoteRequest, 5);
     willThrow(NotifierException.class).given(notifierRepository).sendToTopic(any(), any(PushNotification.class));
 
-    instance.create(1, quoteRequest, 5);
+    final QuoteResponse result = instance.create(1, quoteRequest, 5);
 
     then(repository).should().save(1, quoteRequest, 5);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -98,9 +105,10 @@ class GroupQuoteServiceTest {
     final Quote expectedQuote = QuoteGenerator.getQuote();
     willReturn(expectedQuote).given(repository).findById(1, 2);
 
-    instance.find(1, 2);
+    final QuoteResponse result = instance.find(1, 2);
 
     then(repository).should().findById(1, 2);
+    assertThat(result).isNotNull();
   }
 
   @Test

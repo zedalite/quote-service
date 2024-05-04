@@ -22,11 +22,14 @@ public class JwtTokenService {
 
   private final JwkProvider jwkProvider;
 
-  @Value("${app.security.jwt.issuer}")
-  private List<String> jwtIssuer;
+  private final List<String> jwtIssuer;
 
-  public JwtTokenService(final @Value("${app.security.jwk.url}") URL jwkHost) {
+  public JwtTokenService(
+    final @Value("${app.security.jwk.url}") URL jwkHost,
+    final @Value("${app.security.jwt.issuer}") List<String> jwtIssuer
+  ) {
     this.jwkProvider = new JwkProviderBuilder(jwkHost).cached(10, 24, TimeUnit.HOURS).build();
+    this.jwtIssuer = jwtIssuer;
   }
 
   public String validateToken(final String token) {
@@ -54,12 +57,12 @@ public class JwtTokenService {
 
       @Override
       public RSAPrivateKey getPrivateKey() {
-        return null;
+        throw new UnsupportedOperationException();
       }
 
       @Override
       public String getPrivateKeyId() {
-        return "";
+        throw new UnsupportedOperationException();
       }
     };
   }

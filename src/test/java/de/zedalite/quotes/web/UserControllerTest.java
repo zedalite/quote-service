@@ -1,5 +1,6 @@
 package de.zedalite.quotes.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -30,9 +33,11 @@ class UserControllerTest {
     final UserResponse expectedUser = UserGenerator.getUserResponse();
     willReturn(expectedUser).given(service).find(anyInt());
 
-    instance.get(userPrincipal);
+    final ResponseEntity<UserResponse> response = instance.get(userPrincipal);
 
     then(service).should().find(userPrincipal.getId());
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -40,9 +45,11 @@ class UserControllerTest {
   void shouldCreateUser() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
 
-    instance.create(userRequest);
+    final ResponseEntity<UserResponse> response = instance.create(userRequest);
 
     then(service).should().create(userRequest);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -51,9 +58,11 @@ class UserControllerTest {
     final UserNameRequest request = UserGenerator.getUserNameRequest();
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
-    instance.patchName(request, principal);
+    final ResponseEntity<Void> response = instance.patchName(request, principal);
 
     then(service).should().updateName(principal.getId(), request);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -62,9 +71,11 @@ class UserControllerTest {
     final UserDisplayNameRequest request = UserGenerator.getDisplayNameRequest();
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
-    instance.patchDisplayName(request, principal);
+    final ResponseEntity<Void> response = instance.patchDisplayName(request, principal);
 
     then(service).should().updateDisplayName(principal.getId(), request);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -73,8 +84,10 @@ class UserControllerTest {
     final UserEmailRequest request = UserGenerator.getUserEmailRequest();
     final UserPrincipal principal = UserGenerator.getUserPrincipal();
 
-    instance.patchEmail(request, principal);
+    final ResponseEntity<Void> response = instance.patchEmail(request, principal);
 
     then(service).should().updateEmail(principal.getId(), request);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

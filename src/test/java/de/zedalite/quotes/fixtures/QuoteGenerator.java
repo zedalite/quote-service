@@ -21,7 +21,18 @@ public class QuoteGenerator {
     return new Quote(1, "tester", LocalDateTime.now(), "quotes are awesome", "@Home", Optional.of(1));
   }
 
-  public static QuoteResponse getQuoteMessage() {
+  public static Quote getQuoteWithMentions() {
+    return new Quote(
+      1,
+      "mention_tester",
+      LocalDateTime.now(),
+      "<@2>, mentioning a person is awesome",
+      "@Work",
+      Optional.of(2)
+    );
+  }
+
+  public static QuoteResponse getQuoteResponse() {
     return QUOTE_MAPPER.mapToResponse(getQuote(), getMentions());
   }
 
@@ -33,7 +44,7 @@ public class QuoteGenerator {
     );
   }
 
-  public static List<QuoteResponse> getQuoteMessages() {
+  public static List<QuoteResponse> getQuoteResponses() {
     return getQuotes().stream().map(quote -> QUOTE_MAPPER.mapToResponse(quote, getMentions())).toList();
   }
 

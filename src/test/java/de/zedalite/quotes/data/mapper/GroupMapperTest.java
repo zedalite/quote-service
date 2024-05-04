@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.model.Group;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,26 @@ class GroupMapperTest {
   @NullSource
   void shouldMapEmptyGroupRecordToNull(final GroupsRecord groupsRecord) {
     final Group group = instance.mapToGroup(groupsRecord);
+
+    assertThat(group).isNull();
+  }
+
+  @Test
+  @DisplayName("Should map groupRecords to groups")
+  void shouldMapGroupRecordsToGroups() {
+    final GroupsRecord groupRec1 = new GroupsRecord(0, "group", "GROUP", LocalDateTime.MIN, 1);
+    final GroupsRecord groupRec2 = new GroupsRecord(1, "group2", "GROUP_2", LocalDateTime.MIN, 1);
+
+    final List<Group> groups = instance.mapToGroups(List.of(groupRec1, groupRec2));
+
+    assertThat(groups).hasSize(2);
+  }
+
+  @ParameterizedTest
+  @DisplayName("Should map empty groupRecords to null")
+  @NullSource
+  void shouldMapEmptyGroupRecordsToNull(final List<GroupsRecord> groupsRecords) {
+    final List<Group> group = instance.mapToGroups(groupsRecords);
 
     assertThat(group).isNull();
   }

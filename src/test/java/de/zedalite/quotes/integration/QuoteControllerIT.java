@@ -36,8 +36,6 @@ class QuoteControllerIT extends TestEnvironmentProvider {
 
     final CountResponse count = objectMapper.readValue(result.getResponse().getContentAsString(), CountResponse.class);
 
-    System.out.println(count);
-
     assertThat(count.count()).isNotNegative();
   }
 }

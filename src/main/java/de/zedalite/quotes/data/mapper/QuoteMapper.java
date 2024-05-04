@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * This class is responsible for mapping the QuotesRecord entity to Quote entity.
  */
-@Mapper(uses = OptionalMapper.class)
+@Mapper(uses = { OptionalMapper.class, UserMapper.class })
 public interface QuoteMapper {
   QuoteMapper INSTANCE = Mappers.getMapper(QuoteMapper.class);
 
