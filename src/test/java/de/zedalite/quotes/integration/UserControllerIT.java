@@ -2,7 +2,6 @@ package de.zedalite.quotes.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,13 +10,11 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.UserGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,8 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @TestPropertySource("classpath:test.properties")
 @AutoConfigureMockMvc
-@WithMockUser
-@Disabled("Need to mock userdetailsservice")
+@WithMockUser(roles = "GUEST")
 class UserControllerIT extends TestEnvironmentProvider {
 
   @Autowired
@@ -47,15 +43,9 @@ class UserControllerIT extends TestEnvironmentProvider {
       .getResponse()
       .getContentAsString();
 
-    final Integer userId = objectMapper.readValue(responseJson, User.class).id();
+    final String responseName = objectMapper.readValue(responseJson, User.class).name();
 
-    final MockHttpServletResponse response = mockMvc
-      .perform(get("/users/" + userId))
-      .andExpect(status().isOk())
-      .andReturn()
-      .getResponse();
-
-    assertThat(response.getContentAsString()).contains(userRequest.name());
+    assertThat(responseName).contains(userRequest.name());
   }
 
   @Test

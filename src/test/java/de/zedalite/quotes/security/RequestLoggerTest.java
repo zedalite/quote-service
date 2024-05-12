@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @TestPropertySource("classpath:test.properties")
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(roles = "MEMBER")
 @ExtendWith(OutputCaptureExtension.class)
 class RequestLoggerTest extends TestEnvironmentProvider {
 

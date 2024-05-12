@@ -1,5 +1,7 @@
 package de.zedalite.quotes.config;
 
+import static de.zedalite.quotes.data.model.UserAuthorityRole.GUEST;
+import static de.zedalite.quotes.data.model.UserAuthorityRole.MEMBER;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import de.zedalite.quotes.security.JwtAuthenticationFilter;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,6 +38,7 @@ public class SecurityConfiguration {
   }
 
   @Bean
+  @SuppressWarnings("java:S4502") //The web application does not use cookies to authenticate users.
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
     http
       .cors(c -> c.configurationSource(getCorsConfiguration()))
@@ -43,9 +47,12 @@ public class SecurityConfiguration {
           authz
             .requestMatchers("/actuator/**", "/v3/api-docs/**", "/swagger-ui/**")
             .permitAll()
+            .requestMatchers("/users")
+            .hasRole(GUEST.toString())
             .anyRequest()
-            .authenticated()
+            .hasRole(MEMBER.toString())
       )
+      .csrf(AbstractHttpConfigurer::disable) // https://security.stackexchange.com/questions/170388/do-i-need-csrf-token-if-im-using-bearer-jwt
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authenticationProvider)
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

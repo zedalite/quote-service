@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @TestPropertySource("classpath:test.properties")
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(roles = "MEMBER")
 class QuoteControllerIT extends TestEnvironmentProvider {
 
   @Autowired

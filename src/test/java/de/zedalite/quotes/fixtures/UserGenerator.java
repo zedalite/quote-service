@@ -3,6 +3,7 @@ package de.zedalite.quotes.fixtures;
 import de.zedalite.quotes.data.model.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class UserGenerator {
 
@@ -19,7 +20,10 @@ public class UserGenerator {
   }
 
   public static UserPrincipal getUserPrincipal() {
-    return new UserPrincipal(new User(1, "tester", "test", "TESTER", LocalDateTime.now()));
+    return new UserPrincipal(
+      new User(1, "tester", "test", "TESTER", LocalDateTime.now()),
+      List.of(new SimpleGrantedAuthority("ROLE_MEMBER"))
+    );
   }
 
   public static List<User> getUsers() {

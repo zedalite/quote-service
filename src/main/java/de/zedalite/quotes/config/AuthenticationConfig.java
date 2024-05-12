@@ -1,7 +1,6 @@
 package de.zedalite.quotes.config;
 
-import de.zedalite.quotes.data.model.UserPrincipal;
-import de.zedalite.quotes.repository.UserRepository;
+import de.zedalite.quotes.security.AuthenticationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,15 +12,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 public class AuthenticationConfig {
 
-  private final UserRepository userRepository;
+  private final AuthenticationService authenticationService;
 
-  public AuthenticationConfig(final UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public AuthenticationConfig(final AuthenticationService authenticationService) {
+    this.authenticationService = authenticationService;
   }
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return username -> new UserPrincipal(userRepository.findByName(username));
+    return authenticationService::getUser;
   }
 
   @Bean
