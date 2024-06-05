@@ -1,8 +1,11 @@
 package de.zedalite.quotes.repository;
 
 import de.zedalite.quotes.data.jooq.quotes.tables.GroupUsers;
+import de.zedalite.quotes.data.jooq.quotes.tables.Groups;
 import de.zedalite.quotes.data.jooq.users.tables.Users;
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class GroupUserRepository {
+
+  private static final Groups GROUPS = Groups.GROUPS.as("groups");
 
   private static final Users USERS = Users.USERS_.as("users");
 
@@ -43,14 +48,24 @@ public class GroupUserRepository {
     return user.get();
   }
 
-  public List<User> findAll(final Integer id) {
+  public List<User> findUsers(final Integer groupId) {
     final List<User> users = dsl
       .select(USERS)
       .from(GROUP_USERS.join(USERS).on(GROUP_USERS.USER_ID.eq(USERS.ID)))
-      .where(GROUP_USERS.GROUP_ID.eq(id))
+      .where(GROUP_USERS.GROUP_ID.eq(groupId))
       .fetchInto(User.class);
     if (users.isEmpty()) throw new UserNotFoundException(GROUP_USER_NOT_FOUND);
     return users;
+  }
+
+  public List<Group> findGroups(final Integer userId) {
+    final List<Group> groups = dsl
+      .select(GROUPS)
+      .from(GROUP_USERS.join(GROUPS).on(GROUP_USERS.GROUP_ID.eq(GROUPS.ID)))
+      .where(GROUP_USERS.USER_ID.eq(userId))
+      .fetchInto(Group.class);
+    if (groups.isEmpty()) throw new GroupNotFoundException(GROUP_USER_NOT_FOUND);
+    return groups;
   }
 
   public boolean isUserInGroup(final Integer id, final Integer userId) {

@@ -102,18 +102,18 @@ class GroupUserServiceTest {
   @DisplayName("Should find group users")
   void shouldFindGroupUsers() {
     final List<User> expectedUsers = UserGenerator.getUsers();
-    willReturn(expectedUsers).given(repository).findAll(1);
+    willReturn(expectedUsers).given(repository).findUsers(1);
 
     final List<UserResponse> result = instance.findAll(1);
 
-    then(repository).should().findAll(1);
+    then(repository).should().findUsers(1);
     assertThat(result).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test
   @DisplayName("Should not find group users when user non exist")
   void shouldNotFindGroupUsersWhenUserNonExist() {
-    willThrow(UserNotFoundException.class).given(repository).findAll(1);
+    willThrow(UserNotFoundException.class).given(repository).findUsers(1);
 
     assertThatCode(() -> instance.findAll(1)).isInstanceOf(ResourceNotFoundException.class);
   }

@@ -52,7 +52,7 @@ public class GroupUserService {
 
   public List<UserResponse> findAll(final Integer id) {
     try {
-      return getResponses(repository.findAll(id));
+      return getResponses(repository.findUsers(id));
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }

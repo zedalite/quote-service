@@ -55,7 +55,7 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
     final Integer groupId = groupRepository.save(new GroupRequest("new-group", "New Group"), userId).id();
     instance.save(groupId, userId);
 
-    final List<User> users = instance.findAll(groupId);
+    final List<User> users = instance.findUsers(groupId);
 
     assertThat(users).hasSizeGreaterThanOrEqualTo(1);
   }
