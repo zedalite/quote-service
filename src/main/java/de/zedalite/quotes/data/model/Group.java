@@ -12,7 +12,7 @@ import java.util.Optional;
 public record Group(
   @Schema(description = "Unique identifier", example = "1") @NotNull @PositiveOrZero Integer id,
 
-  @Schema(description = "Unique name", example = "carlovers") @NotBlank @Size(max = 32) String name,
+  @Schema(description = "Unique invite code", example = "vjh345jg") @NotBlank @Size(max = 8) String inviteCode,
 
   @Schema(description = "Visual presentation of the name", example = "The Car Lovers")
   @NotBlank

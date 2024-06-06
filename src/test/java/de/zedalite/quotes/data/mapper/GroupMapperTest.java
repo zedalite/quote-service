@@ -19,13 +19,13 @@ class GroupMapperTest {
   @Test
   @DisplayName("Should map groupsRecord to group")
   void shouldMapGroupsRecordToGroup() {
-    final GroupsRecord groupRec = new GroupsRecord(0, "group", "GROUP", LocalDateTime.MIN, 1);
+    final GroupsRecord groupRec = new GroupsRecord(0, "groupcode", "GROUP", LocalDateTime.MIN, 1);
 
     final Group group = instance.mapToGroup(groupRec);
 
     assertThat(group).isNotNull();
     assertThat(group.id()).isZero();
-    assertThat(group.name()).isEqualTo("group");
+    assertThat(group.inviteCode()).isEqualTo("groupcode");
     assertThat(group.displayName()).isEqualTo("GROUP");
     assertThat(group.creationDate()).isEqualTo(LocalDateTime.MIN);
     assertThat(group.creatorId()).isEqualTo(Optional.of(1));

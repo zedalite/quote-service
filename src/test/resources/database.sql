@@ -86,6 +86,37 @@ CREATE SCHEMA users;
 
 ALTER SCHEMA users OWNER TO "quote";
 
+--
+-- Name: generate_unique_group_invite_code(); Type: FUNCTION; Schema: quotes; Owner: quote
+--
+
+CREATE FUNCTION quotes.generate_unique_group_invite_code() RETURNS trigger
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    characters TEXT := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    generated_code VARCHAR(8);
+BEGIN
+    LOOP
+        -- Generate a random alphanumeric string of 8 characters
+        generated_code := '';
+        FOR i IN 1..8 LOOP
+            generated_code := generated_code || substr(characters, floor(random() * length(characters) + 1)::int, 1);
+        END LOOP;
+
+        -- Ensure the code is unique
+        IF NOT EXISTS (SELECT 1 FROM quotes.groups WHERE invite_code = generated_code) THEN
+            NEW.invite_code := generated_code;
+            EXIT;
+        END IF;
+    END LOOP;
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION quotes.generate_unique_group_invite_code() OWNER TO "quote";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -120,7 +151,7 @@ ALTER TABLE quotes.group_users OWNER TO "quote";
 
 CREATE TABLE quotes.groups (
                                id integer NOT NULL,
-                               name character varying(32) NOT NULL,
+                               invite_code character varying(8) NOT NULL,
                                display_name character varying(32) NOT NULL,
                                creation_date timestamp without time zone DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
                                creator_id integer
@@ -287,6 +318,12 @@ ALTER TABLE ONLY users.users
 
 
 --
+-- Name: groups generate_group_invite_code_trigger; Type: TRIGGER; Schema: quotes; Owner: quote
+--
+
+CREATE TRIGGER generate_group_invite_code_trigger BEFORE INSERT ON quotes.groups FOR EACH ROW WHEN ((new.invite_code IS NULL)) EXECUTE FUNCTION quotes.generate_unique_group_invite_code();
+
+--
 -- Name: group_quotes group_quotes_group_id_fkey; Type: FK CONSTRAINT; Schema: quotes; Owner: quote
 --
 
@@ -316,6 +353,14 @@ ALTER TABLE ONLY quotes.group_users
 
 ALTER TABLE ONLY quotes.group_users
     ADD CONSTRAINT group_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES users.users(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
+-- Name: users groups_invite_code_key; Type: CONSTRAINT; Schema: quotes; Owner: quote
+--
+
+ALTER TABLE ONLY quotes.groups
+    ADD CONSTRAINT groups_invite_code_key UNIQUE (invite_code);
 
 
 --

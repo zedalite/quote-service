@@ -37,7 +37,7 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @BeforeAll
   void setup() {
     userId = userRepository.save(new UserRequest("grouper", "test", "Grouper")).id();
-    groupId = groupRepository.save(new GroupRequest("groupers-group", "GroupersGroup"), userId).id();
+    groupId = groupRepository.save(new GroupRequest("groupers-group", "Groupers"), userId).id();
   }
 
   @Test
@@ -52,7 +52,7 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @DisplayName("Should find all group users")
   void shouldFindAllGroupUsers() {
     final Integer userId = userRepository.save(new UserRequest("operator", "op", "Operator")).id();
-    final Integer groupId = groupRepository.save(new GroupRequest("new-group", "New Group"), userId).id();
+    final Integer groupId = groupRepository.save(new GroupRequest("new-group", "NewGr"), userId).id();
     instance.save(groupId, userId);
 
     final List<User> users = instance.findUsers(groupId);

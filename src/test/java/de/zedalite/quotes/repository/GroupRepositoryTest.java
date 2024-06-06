@@ -34,21 +34,21 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
     final Integer userId = userRepository.save(new UserRequest("grouptester", "test", "Group Tester")).id();
     final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2", "Group Tester 2")).id();
 
-    instance.save(new GroupRequest("test-group", "TESTGROUP"), userId);
-    instance.save(new GroupRequest("best-quoter", "The Best Quoter"), userId2);
+    instance.save(new GroupRequest("test-group", "TESTGR"), userId);
+    instance.save(new GroupRequest("best-quoter", "BstQtr"), userId2);
   }
 
   @Test
   @DisplayName("Should save group")
   void shouldSaveGroup() {
-    final GroupRequest groupRequest = new GroupRequest("test-group", "TestGroup");
+    final GroupRequest groupRequest = new GroupRequest("test-group", "testcode");
 
     final Group savedGroup = instance.save(groupRequest, 1);
 
     assertThat(savedGroup).isNotNull();
     assertThat(savedGroup.id()).isNotNull();
-    assertThat(savedGroup.name()).isEqualTo("test-group");
-    assertThat(savedGroup.displayName()).isEqualTo("TestGroup");
+    assertThat(savedGroup.inviteCode()).isEqualTo("testcode");
+    assertThat(savedGroup.displayName()).isEqualTo("test-group");
     assertThat(savedGroup.creatorId()).isEqualTo(Optional.of(1));
   }
 

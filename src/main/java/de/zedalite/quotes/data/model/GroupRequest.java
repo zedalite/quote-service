@@ -9,10 +9,10 @@ import jakarta.validation.constraints.Size;
 @JsonSerialize
 @JsonDeserialize
 public record GroupRequest(
-  @Schema(description = "Unique name", example = "carlovers") @NotBlank @Size(max = 32) String name,
-
   @Schema(description = "Visual presentation of the name", example = "The Car Lovers")
   @NotBlank
   @Size(max = 32)
-  String displayName
+  String displayName,
+
+  @Schema(description = "Unique invite code to join the group", example = "bestcode") @Size(max = 8) String inviteCode
 ) {}
