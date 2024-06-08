@@ -1,12 +1,12 @@
 package de.zedalite.quotes.service;
 
 import de.zedalite.quotes.data.mapper.GroupMapper;
-import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.GroupResponse;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.GroupNotFoundException;
+import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.repository.GroupRepository;
@@ -21,12 +21,8 @@ public class GroupService {
 
   private static final GroupMapper GROUP_MAPPER = GroupMapper.INSTANCE;
 
-  private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
-
   private final GroupRepository repository;
-
   private final UserRepository userRepository;
-
   private final GroupUserRepository groupUserRepository;
 
   public GroupService(
@@ -86,6 +82,20 @@ public class GroupService {
       creator = Optional.empty();
     }
     return creator;
+  }
+
+  public GroupResponse join(final String code, final Integer userId) {
+    try {
+      final Group group = repository.findByCode(code);
+
+      if (groupUserRepository.isUserInGroup(group.id(), userId)) {
+        throw new ResourceAlreadyExitsException("User already in group");
+      }
+      groupUserRepository.save(group.id(), userId);
+      return getResponse(group, getUser(group.creatorId()));
+    } catch (final GroupNotFoundException | UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
   }
 
   private GroupResponse getResponse(final Group group, final Optional<User> creator) {

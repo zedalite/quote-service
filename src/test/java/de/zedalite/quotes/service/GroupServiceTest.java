@@ -1,18 +1,26 @@
 package de.zedalite.quotes.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.BDDMockito.willThrow;
 
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.GroupResponse;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.GroupNotFoundException;
+import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupRepository;
+import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +41,9 @@ class GroupServiceTest {
 
   @Mock
   private UserRepository userRepository;
+
+  @Mock
+  private GroupUserRepository groupUserRepository;
 
   @Test
   @DisplayName("Should create group with creator")
@@ -123,5 +134,52 @@ class GroupServiceTest {
     willThrow(GroupNotFoundException.class).given(groupRepository).findAllIds();
 
     assertThatCode(() -> instance.findAllIds()).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should allow user to join group")
+  void shouldAllowUserToJoinGroup() {
+    final Group expectedGroup = GroupGenerator.getGroup();
+    final User expectedUser = UserGenerator.getUser();
+    final String code = "testCode";
+    final Integer userId = 1;
+
+    willReturn(expectedGroup).given(groupRepository).findByCode(code);
+    willReturn(false).given(groupUserRepository).isUserInGroup(expectedGroup.id(), userId);
+    willReturn(expectedUser).given(userRepository).findById(anyInt());
+
+    final GroupResponse result = instance.join(code, userId);
+
+    then(groupRepository).should().findByCode(code);
+    then(groupUserRepository).should().save(expectedGroup.id(), userId);
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  @DisplayName("Should throw exception when user already in group")
+  void shouldThrowExceptionWhenUserAlreadyInGroup() {
+    final Group expectedGroup = GroupGenerator.getGroup();
+    final String code = "testCode";
+    final Integer userId = 1;
+
+    willReturn(expectedGroup).given(groupRepository).findByCode(code);
+    willReturn(true).given(groupUserRepository).isUserInGroup(expectedGroup.id(), userId);
+
+    assertThatExceptionOfType(ResourceAlreadyExitsException.class)
+      .isThrownBy(() -> instance.join(code, userId))
+      .withMessage("User already in group");
+  }
+
+  @Test
+  @DisplayName("Should throw exception when group does not exist")
+  void shouldThrowExceptionWhenGroupDoesNotExist() {
+    final String code = "nonExistentCode";
+    final Integer userId = 1;
+
+    willThrow(new GroupNotFoundException("Group not found")).given(groupRepository).findByCode(code);
+
+    assertThatExceptionOfType(ResourceNotFoundException.class)
+      .isThrownBy(() -> instance.join(code, userId))
+      .withMessage("Group not found");
   }
 }

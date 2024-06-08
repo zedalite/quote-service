@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -123,5 +125,41 @@ public class GroupController {
     @AuthenticationPrincipal final UserPrincipal principal
   ) {
     return ResponseEntity.ok(service.create(request, principal.getId()));
+  }
+
+  @Operation(
+    summary = "Join a group by invite code",
+    description = "Join a group by invite code",
+    operationId = "joinGroupByCode",
+    responses = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "Group joined",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponse.class))
+      ),
+      @ApiResponse(
+        responseCode = "400",
+        description = "Invite code not valid",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "Group entry not allowed",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Group not found",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+      ),
+    }
+  )
+  @PostMapping("invite")
+  public ResponseEntity<GroupResponse> joinGroup(
+    @RequestParam @Size(min = 1, max = 8) final String code,
+    @AuthenticationPrincipal final UserPrincipal principal
+  ) {
+    // TODO validate invite code
+    return ResponseEntity.ok(service.join(code, principal.getId()));
   }
 }

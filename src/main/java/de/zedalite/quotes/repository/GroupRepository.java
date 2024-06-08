@@ -68,4 +68,13 @@ public class GroupRepository {
     if (ids.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
     return ids;
   }
+
+  public Group findByCode(final String code) {
+    final Optional<GroupsRecord> group = dsl
+      .selectFrom(GROUPS)
+      .where(GROUPS.INVITE_CODE.eq(code))
+      .fetchOptionalInto(GroupsRecord.class);
+    if (group.isEmpty()) throw new GroupNotFoundException(GROUP_NOT_FOUND);
+    return GROUP_MAPPER.mapToGroup(group.get());
+  }
 }
