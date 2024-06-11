@@ -3,6 +3,7 @@ package de.zedalite.quotes.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyInt;
 import static org.mockito.BDDMockito.then;
@@ -117,6 +118,28 @@ class GroupServiceTest {
   }
 
   @Test
+  @DisplayName("Should find all groups by user")
+  void shouldFindAllGroupsByUser() {
+    final List<Group> expectedGroups = GroupGenerator.getGroups();
+    final User expectedUser = UserGenerator.getUser();
+    willReturn(expectedGroups).given(groupUserRepository).findGroups(anyInt());
+    willReturn(expectedUser).given(userRepository).findById(anyInt());
+
+    final List<GroupResponse> result = instance.findAllByUser(1);
+
+    then(groupUserRepository).should().findGroups(1);
+    assertThat(result).hasSizeGreaterThanOrEqualTo(1);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when user has no groups")
+  void shouldThrowExceptionWhenUserHasNoGroups() {
+    willThrow(GroupNotFoundException.class).given(groupUserRepository).findGroups(anyInt());
+
+    assertThatCode(() -> instance.findAllByUser(1)).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
   @DisplayName("Should find all group ids")
   void shouldFindAllGroupIds() {
     final List<Integer> expectedIds = GroupGenerator.getGroups().stream().map(Group::id).toList();
@@ -144,8 +167,8 @@ class GroupServiceTest {
     final String code = "testCode";
     final Integer userId = 1;
 
-    willReturn(expectedGroup).given(groupRepository).findByCode(code);
-    willReturn(false).given(groupUserRepository).isUserInGroup(expectedGroup.id(), userId);
+    willReturn(expectedGroup).given(groupRepository).findByCode(anyString());
+    willReturn(false).given(groupUserRepository).isUserInGroup(anyInt(), anyInt());
     willReturn(expectedUser).given(userRepository).findById(anyInt());
 
     final GroupResponse result = instance.join(code, userId);
@@ -162,12 +185,12 @@ class GroupServiceTest {
     final String code = "testCode";
     final Integer userId = 1;
 
-    willReturn(expectedGroup).given(groupRepository).findByCode(code);
-    willReturn(true).given(groupUserRepository).isUserInGroup(expectedGroup.id(), userId);
+    willReturn(expectedGroup).given(groupRepository).findByCode(anyString());
+    willReturn(true).given(groupUserRepository).isUserInGroup(anyInt(), anyInt());
 
     assertThatExceptionOfType(ResourceAlreadyExitsException.class)
       .isThrownBy(() -> instance.join(code, userId))
-      .withMessage("User already in group");
+      .withMessage("User is already a group member");
   }
 
   @Test
@@ -176,7 +199,7 @@ class GroupServiceTest {
     final String code = "nonExistentCode";
     final Integer userId = 1;
 
-    willThrow(new GroupNotFoundException("Group not found")).given(groupRepository).findByCode(code);
+    willThrow(new GroupNotFoundException("Group not found")).given(groupRepository).findByCode(anyString());
 
     assertThatExceptionOfType(ResourceNotFoundException.class)
       .isThrownBy(() -> instance.join(code, userId))

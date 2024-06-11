@@ -68,6 +68,12 @@ public class GroupUserRepository {
     return groups;
   }
 
+  public void delete(final Integer id, final Integer userId) {
+    final boolean isDeleted =
+      dsl.deleteFrom(GROUP_USERS).where(GROUP_USERS.GROUP_ID.eq(id)).and(GROUP_USERS.USER_ID.eq(userId)).execute() == 1;
+    if (!isDeleted) throw new GroupNotFoundException(GROUP_USER_NOT_FOUND);
+  }
+
   public boolean isUserInGroup(final Integer id, final Integer userId) {
     return dsl.fetchExists(
       dsl.selectFrom(GROUP_USERS).where(GROUP_USERS.GROUP_ID.eq(id)).and(GROUP_USERS.USER_ID.eq(userId))

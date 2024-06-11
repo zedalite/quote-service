@@ -24,6 +24,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @WebFilter(filterName = "RequestLogger", urlPatterns = "/*")
 public class RequestLogger extends OncePerRequestFilter {
 
+  //TODO rest logger does not log user information
+
   private static final Logger LOGGER = LoggerFactory.getLogger(RequestLogger.class);
 
   private static final RequestMapper REQUEST_MAPPER = RequestMapper.INSTANCE;

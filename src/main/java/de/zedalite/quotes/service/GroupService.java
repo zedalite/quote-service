@@ -89,7 +89,7 @@ public class GroupService {
       final Group group = repository.findByCode(code);
 
       if (groupUserRepository.isUserInGroup(group.id(), userId)) {
-        throw new ResourceAlreadyExitsException("User already in group");
+        throw new ResourceAlreadyExitsException("User is already a group member");
       }
       groupUserRepository.save(group.id(), userId);
       return getResponse(group, getUser(group.creatorId()));

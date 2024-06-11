@@ -12,6 +12,7 @@ import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +56,35 @@ class GroupControllerTest {
     final ResponseEntity<GroupResponse> response = instance.createGroup(groupRequest, principal);
 
     then(service).should().create(groupRequest, 1);
+    assertThat(response).isNotNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  @DisplayName("Should get all groups")
+  void shouldGetGroups() {
+    final GroupResponse expectedGroup = GroupGenerator.getGroupResponse();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+    willReturn(List.of(expectedGroup)).given(service).findAllByUser(anyInt());
+
+    final ResponseEntity<List<GroupResponse>> response = instance.getGroups(principal);
+
+    then(service).should().findAllByUser(principal.getId());
+    assertThat(response).isNotNull();
+    assertThat(response.getBody()).isNotEmpty();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  @DisplayName("Should join group")
+  void shouldJoinGroup() {
+    final GroupResponse expectedGroup = GroupGenerator.getGroupResponse();
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+    willReturn(expectedGroup).given(service).join(any(String.class), anyInt());
+
+    final ResponseEntity<GroupResponse> response = instance.joinGroup("code", principal);
+
+    then(service).should().join("code", principal.getId());
     assertThat(response).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }

@@ -3,6 +3,7 @@ package de.zedalite.quotes.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserRequest;
@@ -38,12 +39,15 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   void setup() {
     userId = userRepository.save(new UserRequest("grouper", "test", "Grouper")).id();
     groupId = groupRepository.save(new GroupRequest("groupers-group", "Groupers"), userId).id();
+    instance.save(groupId, userId);
   }
 
   @Test
   @DisplayName("Should save group user")
   void shouldSaveGroupUser() {
-    final Boolean isSaved = instance.save(groupId, userId);
+    final Integer newUserId = userRepository.save(new UserRequest("real operator", "op", "Real Operator")).id();
+    final Integer newGroupId = groupRepository.save(new GroupRequest("random-group", "sfsfefs"), userId).id();
+    final Boolean isSaved = instance.save(newGroupId, newUserId);
 
     assertThat(isSaved).isTrue();
   }
@@ -51,10 +55,6 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all group users")
   void shouldFindAllGroupUsers() {
-    final Integer userId = userRepository.save(new UserRequest("operator", "op", "Operator")).id();
-    final Integer groupId = groupRepository.save(new GroupRequest("new-group", "NewGr"), userId).id();
-    instance.save(groupId, userId);
-
     final List<User> users = instance.findUsers(groupId);
 
     assertThat(users).hasSizeGreaterThanOrEqualTo(1);
@@ -70,11 +70,35 @@ class GroupUserRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
+  @DisplayName("Should find all groups by user id")
+  void shouldFindAllGroupsByUserId() {
+    final List<Group> groups = instance.findGroups(userId);
+
+    assertThat(groups).hasSizeGreaterThanOrEqualTo(1);
+  }
+
+  @Test
   @DisplayName("Should return true when user is in group")
   void shouldReturnTrueWhenUserIsInGroup() {
     final boolean isInGroup = instance.isUserInGroup(groupId, userId);
 
     assertThat(isInGroup).isTrue();
+  }
+
+  @Test
+  @DisplayName("Should delete group user")
+  void shouldDeleteGroupUser() {
+    final Integer newUserId = userRepository.save(new UserRequest("operator", "op", "Operator")).id();
+    final Integer newGroupId = groupRepository.save(new GroupRequest("new-group", "NewGr"), userId).id();
+    instance.save(newGroupId, newUserId);
+
+    final boolean isInGroup = instance.isUserInGroup(newGroupId, newUserId);
+    assertThat(isInGroup).isTrue();
+
+    instance.delete(newGroupId, newUserId);
+
+    final boolean isInGroupAfterDelete = instance.isUserInGroup(newGroupId, newUserId);
+    assertThat(isInGroupAfterDelete).isFalse();
   }
 
   @Test

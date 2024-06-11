@@ -3,6 +3,7 @@ package de.zedalite.quotes.service;
 import de.zedalite.quotes.data.mapper.UserMapper;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
@@ -54,6 +55,18 @@ public class GroupUserService {
     try {
       return getResponses(repository.findUsers(id));
     } catch (final UserNotFoundException ex) {
+      throw new ResourceNotFoundException(ex.getMessage());
+    }
+  }
+
+  public void leave(final Integer id, final Integer userId) {
+    try {
+      if (!repository.isUserInGroup(id, userId)) {
+        throw new ResourceNotFoundException("User is not a group member");
+      }
+
+      repository.delete(id, userId);
+    } catch (final GroupNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }

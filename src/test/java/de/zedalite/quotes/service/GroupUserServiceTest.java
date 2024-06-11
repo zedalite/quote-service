@@ -2,14 +2,18 @@ package de.zedalite.quotes.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 
+import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
+import de.zedalite.quotes.fixtures.GroupGenerator;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
@@ -127,5 +131,43 @@ class GroupUserServiceTest {
     final boolean result = instance.isUserInGroup(1, 2);
 
     assertThat(result).isEqualTo(isInGroup);
+  }
+
+  @Test
+  @DisplayName("Should leave group")
+  void shouldLeaveGroup() {
+    final Group expectedGroup = GroupGenerator.getGroup();
+    final Integer userId = 1;
+
+    willReturn(true).given(repository).isUserInGroup(anyInt(), anyInt());
+
+    instance.leave(expectedGroup.id(), userId);
+
+    then(repository).should().delete(expectedGroup.id(), userId);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when leaving user is not a member")
+  void shouldThrowExceptionWhenLeavingUserIsNotAMember() {
+    final Integer expectedGroupId = GroupGenerator.getGroup().id();
+    final Integer userId = 1;
+
+    willReturn(false).given(repository).isUserInGroup(anyInt(), anyInt());
+
+    assertThatExceptionOfType(ResourceNotFoundException.class)
+      .isThrownBy(() -> instance.leave(expectedGroupId, userId))
+      .withMessage("User is not a group member");
+  }
+
+  @Test
+  @DisplayName("Should throw exception when leaving group is not found")
+  void shouldThrowExceptionWhenLeavingGroupIsNotFound() {
+    final Integer userId = 1;
+
+    willThrow(new GroupNotFoundException("Group not found")).given(repository).isUserInGroup(anyInt(), anyInt());
+
+    assertThatExceptionOfType(ResourceNotFoundException.class)
+      .isThrownBy(() -> instance.leave(1, userId))
+      .withMessage("Group not found");
   }
 }

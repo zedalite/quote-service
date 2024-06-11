@@ -1,6 +1,7 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.ErrorResponse;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.service.GroupUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -126,5 +129,33 @@ public class GroupUserController {
   public ResponseEntity<Void> createUser(@PathVariable("id") final Integer id, @RequestBody final Integer userId) {
     service.create(id, userId);
     return ResponseEntity.ok().build();
+  }
+
+  @Operation(
+    summary = "Leave a group",
+    description = "Leave a group",
+    operationId = "leaveGroup",
+    responses = {
+      @ApiResponse(responseCode = "204", description = "Group left"),
+      @ApiResponse(
+        responseCode = "403",
+        description = "Group leaving not allowed",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "Group not found",
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+      ),
+    }
+  )
+  @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
+  @DeleteMapping("{id}/users/me")
+  public ResponseEntity<Void> leaveGroup(
+    @PathVariable final Integer id,
+    @AuthenticationPrincipal final UserPrincipal principal
+  ) {
+    service.leave(id, principal.getId());
+    return ResponseEntity.noContent().build();
   }
 }

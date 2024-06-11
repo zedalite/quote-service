@@ -88,7 +88,7 @@ public class GroupController {
     }
   )
   @GetMapping("me")
-  public ResponseEntity<List<GroupResponse>> getGroup(@AuthenticationPrincipal final UserPrincipal principal) {
+  public ResponseEntity<List<GroupResponse>> getGroups(@AuthenticationPrincipal final UserPrincipal principal) {
     return ResponseEntity.ok(service.findAllByUser(principal.getId()));
   }
 

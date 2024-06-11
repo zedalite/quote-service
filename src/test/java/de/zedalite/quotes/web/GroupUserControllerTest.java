@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
 import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.service.GroupUserService;
@@ -62,5 +63,16 @@ class GroupUserControllerTest {
     then(service).should().create(1, 1);
     assertThat(response).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  @DisplayName("Should leave group")
+  void shouldLeaveGroup() {
+    final UserPrincipal principal = UserGenerator.getUserPrincipal();
+
+    final ResponseEntity<Void> response = instance.leaveGroup(1, principal);
+
+    then(service).should().leave(1, principal.getId());
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 }
