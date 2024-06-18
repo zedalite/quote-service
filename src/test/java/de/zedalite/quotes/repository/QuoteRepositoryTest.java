@@ -6,6 +6,7 @@ import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,21 @@ class QuoteRepositoryTest extends TestEnvironmentProvider {
 
     final Integer groupId = groupRepository.save(new GroupRequest("group1", "GROUP 1"), userId).id();
 
-    groupQuoteRepository.save(groupId, new QuoteRequest("quoter", "quotes are cool", "in quotversum"), null);
-    groupQuoteRepository.save(groupId, new QuoteRequest("quoter", "One more quotes", "#2"), userId);
-    groupQuoteRepository.save(groupId, new QuoteRequest("quotexpert", "I'm an expert", null), userId2);
+    groupQuoteRepository.save(
+      groupId,
+      new QuoteRequest("quoter", "quotes are cool", LocalDateTime.now(), "in quotversum"),
+      null
+    );
+    groupQuoteRepository.save(
+      groupId,
+      new QuoteRequest("quoter", "One more quotes", LocalDateTime.now(), "#2"),
+      userId
+    );
+    groupQuoteRepository.save(
+      groupId,
+      new QuoteRequest("quotexpert", "I'm an expert", LocalDateTime.now(), null),
+      userId2
+    );
   }
 
   @Test

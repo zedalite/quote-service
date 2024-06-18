@@ -11,6 +11,7 @@ import de.zedalite.quotes.data.model.SortOrder;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.TableField;
@@ -41,7 +42,7 @@ public class GroupQuoteRepository {
     final Optional<QuotesRecord> savedQuoteRec = dsl
       .insertInto(QUOTES)
       .set(QUOTES.AUTHOR, quote.author())
-      .set(QUOTES.CREATION_DATE, LocalDateTime.now())
+      .set(QUOTES.CREATION_DATE, Objects.requireNonNullElse(quote.creationDate(), LocalDateTime.now()))
       .set(QUOTES.TEXT, quote.text())
       .set(QUOTES.CONTEXT, quote.context())
       .set(QUOTES.CREATOR_ID, creatorId)

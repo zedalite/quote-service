@@ -14,7 +14,7 @@ public class QuoteGenerator {
   private static final QuoteMapper QUOTE_MAPPER = QuoteMapper.INSTANCE;
 
   public static QuoteRequest getQuoteRequest() {
-    return new QuoteRequest("tester", "quotes are 42", "@Mars");
+    return new QuoteRequest("tester", "quotes are 42", LocalDateTime.now(), "@Mars");
   }
 
   public static Quote getQuote() {
