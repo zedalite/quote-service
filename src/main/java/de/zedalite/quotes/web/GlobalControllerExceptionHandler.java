@@ -6,6 +6,8 @@ import de.zedalite.quotes.data.model.Violation;
 import de.zedalite.quotes.exception.ResourceAccessException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +54,18 @@ public class GlobalControllerExceptionHandler {
           )
         );
     }
+    return ResponseEntity.badRequest().body(details);
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ValidationErrorDetails> handleConstraintViolationException(
+    final ConstraintViolationException ex
+  ) {
+    final List<Violation> violations = new ArrayList<>();
+    for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+      violations.add(new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
+    }
+    final ValidationErrorDetails details = new ValidationErrorDetails(violations);
     return ResponseEntity.badRequest().body(details);
   }
 

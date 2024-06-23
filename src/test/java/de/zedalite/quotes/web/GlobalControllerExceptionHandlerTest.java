@@ -10,7 +10,11 @@ import de.zedalite.quotes.data.model.Violation;
 import de.zedalite.quotes.exception.ResourceAccessException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,6 +73,24 @@ class GlobalControllerExceptionHandlerTest {
 
     assertThat(errorDetails).isNotNull();
     assertThat(errorDetails.violations()).containsOnly(new Violation("name", "size must be between 0 and 32"));
+  }
+
+  @Test
+  @DisplayName("Should handle ConstraintViolationException")
+  void shouldHandleConstraintViolationException() {
+    final ConstraintViolation<?> constraintViolation = mock(ConstraintViolation.class);
+    final Path path = mock(Path.class);
+
+    given(constraintViolation.getPropertyPath()).willReturn(path);
+    given(constraintViolation.getPropertyPath().toString()).willReturn("joinGroup.code");
+    given(constraintViolation.getMessage()).willReturn("size must be between 1 and 8");
+
+    final ConstraintViolationException exception = new ConstraintViolationException(Set.of(constraintViolation));
+
+    final ValidationErrorDetails errorDetails = instance.handleConstraintViolationException(exception).getBody();
+
+    assertThat(errorDetails).isNotNull();
+    assertThat(errorDetails.violations()).containsOnly(new Violation("joinGroup.code", "size must be between 1 and 8"));
   }
 
   @Test

@@ -16,6 +16,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
+@Validated
 public class GroupController {
 
   private final GroupService service;
@@ -159,7 +161,6 @@ public class GroupController {
     @RequestParam @Size(min = 1, max = 8) final String code,
     @AuthenticationPrincipal final UserPrincipal principal
   ) {
-    // TODO validate invite code
     return ResponseEntity.ok(service.join(code, principal.getId()));
   }
 }
