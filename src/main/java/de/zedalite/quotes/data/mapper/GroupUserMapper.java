@@ -18,5 +18,6 @@ public interface GroupUserMapper {
   List<GroupUser> mapToGroupUsers(List<GroupUsersRecord> users);
 
   @Mapping(target = "user", source = "user")
-  GroupUserResponse mapToResponse(final User user, final String displayName);
+  @Mapping(target = "displayName", source = "userDisplayName")
+  GroupUserResponse mapToResponse(final User user, final String userDisplayName);
 }
