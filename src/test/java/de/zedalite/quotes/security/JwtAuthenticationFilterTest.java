@@ -49,6 +49,7 @@ class JwtAuthenticationFilterTest {
   @DisplayName("Should allow valid token")
   void shouldAllowValidToken() throws Exception {
     given(request.getHeader(AUTHORIZATION)).willReturn("Bearer jwtToken");
+    given(request.getRemoteAddr()).willReturn("127.0.0.1");
     given(jwtTokenService.validateToken(anyString())).willReturn("validTestUser");
     given(userDetailsService.loadUserByUsername(anyString())).willReturn(UserGenerator.getUserPrincipal());
 
@@ -62,6 +63,7 @@ class JwtAuthenticationFilterTest {
   @DisplayName("Should block invalid token")
   void shouldBlockInvalidToken() throws Exception {
     given(request.getHeader(AUTHORIZATION)).willReturn("Bearer jwtToken");
+    given(request.getRemoteAddr()).willReturn("127.0.0.1");
     given(jwtTokenService.validateToken(anyString())).willThrow(TokenExpiredException.class);
 
     instance.doFilterInternal(request, response, filterChain);
@@ -76,6 +78,7 @@ class JwtAuthenticationFilterTest {
   @DisplayName("Should block no token or wrong header")
   void shouldBlockNoToken(final String headerValue) throws Exception {
     given(request.getHeader(AUTHORIZATION)).willReturn(headerValue);
+    given(request.getRemoteAddr()).willReturn("127.0.0.1");
 
     instance.doFilterInternal(request, response, filterChain);
 

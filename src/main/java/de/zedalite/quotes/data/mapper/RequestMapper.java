@@ -1,5 +1,6 @@
 package de.zedalite.quotes.data.mapper;
 
+import de.zedalite.quotes.data.model.AuthLog;
 import de.zedalite.quotes.data.model.RequestLog;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -16,6 +17,11 @@ public interface RequestMapper {
   @Mapping(target = "query", source = "request.queryString", qualifiedByName = "mapQuery")
   @Mapping(target = "client", source = "request", qualifiedByName = "mapClient")
   RequestLog map(final HttpServletRequest request, final Integer status, final String user, final Long time);
+
+  @Mapping(target = "uri", source = "request.requestURI")
+  @Mapping(target = "query", source = "request.queryString", qualifiedByName = "mapQuery")
+  @Mapping(target = "client", source = "request", qualifiedByName = "mapClient")
+  AuthLog map(final HttpServletRequest request, final String status, final String user);
 
   @Named("mapClient")
   default String mapClient(final HttpServletRequest request) {
