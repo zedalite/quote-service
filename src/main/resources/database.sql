@@ -139,7 +139,8 @@ ALTER TABLE quotes.group_quotes OWNER TO "quote";
 
 CREATE TABLE quotes.group_users (
                                     group_id integer NOT NULL,
-                                    user_id integer NOT NULL
+                                    user_id integer NOT NULL,
+                                    user_display_name character varying(32)
 );
 
 

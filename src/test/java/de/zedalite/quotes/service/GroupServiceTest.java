@@ -13,6 +13,7 @@ import static org.mockito.BDDMockito.willThrow;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.GroupResponse;
+import de.zedalite.quotes.data.model.GroupUserRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
@@ -174,7 +175,7 @@ class GroupServiceTest {
     final GroupResponse result = instance.join(code, userId);
 
     then(groupRepository).should().findByCode(code);
-    then(groupUserRepository).should().save(expectedGroup.id(), userId);
+    then(groupUserRepository).should().save(expectedGroup.id(), new GroupUserRequest(userId, null));
     assertThat(result).isNotNull();
   }
 

@@ -4,6 +4,7 @@ import de.zedalite.quotes.data.mapper.GroupMapper;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.GroupResponse;
+import de.zedalite.quotes.data.model.GroupUserRequest;
 import de.zedalite.quotes.data.model.User;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
@@ -91,7 +92,7 @@ public class GroupService {
       if (groupUserRepository.isUserInGroup(group.id(), userId)) {
         throw new ResourceAlreadyExitsException("User is already a group member");
       }
-      groupUserRepository.save(group.id(), userId);
+      groupUserRepository.save(group.id(), new GroupUserRequest(userId, null));
       return getResponse(group, getUser(group.creatorId()));
     } catch (final GroupNotFoundException | UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());

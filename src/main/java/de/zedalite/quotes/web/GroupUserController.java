@@ -1,6 +1,8 @@
 package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.ErrorResponse;
+import de.zedalite.quotes.data.model.GroupUserRequest;
+import de.zedalite.quotes.data.model.GroupUserResponse;
 import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.service.GroupUserService;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,7 +65,7 @@ public class GroupUserController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/users")
-  public ResponseEntity<List<UserResponse>> getUsers(@PathVariable("id") final Integer id) {
+  public ResponseEntity<List<GroupUserResponse>> getUsers(@PathVariable("id") final Integer id) {
     return ResponseEntity.ok(service.findAll(id));
   }
 
@@ -90,7 +93,7 @@ public class GroupUserController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @GetMapping("{id}/users/{userId}")
-  public ResponseEntity<UserResponse> getUser(
+  public ResponseEntity<GroupUserResponse> getUser(
     @PathVariable("id") final Integer id,
     @PathVariable("userId") final Integer userId
   ) {
@@ -126,9 +129,11 @@ public class GroupUserController {
   )
   @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
   @PostMapping("{id}/users")
-  public ResponseEntity<Void> createUser(@PathVariable("id") final Integer id, @RequestBody final Integer userId) {
-    service.create(id, userId);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<GroupUserResponse> createUser(
+    @PathVariable("id") final Integer id,
+    @RequestBody @Valid final GroupUserRequest request
+  ) {
+    return ResponseEntity.ok(service.create(id, request));
   }
 
   @Operation(

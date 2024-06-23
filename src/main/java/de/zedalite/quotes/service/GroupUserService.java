@@ -1,8 +1,10 @@
 package de.zedalite.quotes.service;
 
-import de.zedalite.quotes.data.mapper.UserMapper;
+import de.zedalite.quotes.data.mapper.GroupUserMapper;
+import de.zedalite.quotes.data.model.GroupUser;
+import de.zedalite.quotes.data.model.GroupUserRequest;
+import de.zedalite.quotes.data.model.GroupUserResponse;
 import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.data.model.UserResponse;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GroupUserService {
 
-  private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
+  private static final GroupUserMapper GROUP_USER_MAPPER = GroupUserMapper.INSTANCE;
 
   private static final String GROUP_USER_ALREADY_EXITS = "Group user already exits";
 
@@ -28,32 +30,43 @@ public class GroupUserService {
     this.userRepository = userRepository;
   }
 
-  public Boolean create(final Integer id, final Integer userId) {
-    if (userRepository.doesUserNonExist(userId)) throw new ResourceNotFoundException("USER_NOT_FOUND");
+  public GroupUserResponse create(final Integer id, final GroupUserRequest request) {
+    if (userRepository.doesUserNonExist(request.userId())) throw new ResourceNotFoundException("USER_NOT_FOUND");
 
     // TODO add push notifcation: send to specific group topic or user notification token
     try {
-      if (repository.isUserInGroup(id, userId)) {
+      if (repository.isUserInGroup(id, request.userId())) {
         throw new ResourceAlreadyExitsException(GROUP_USER_ALREADY_EXITS);
       } else {
-        return repository.save(id, userId);
+        final GroupUser groupUser = repository.save(id, request);
+        final User user = userRepository.findById(groupUser.userId());
+        return GROUP_USER_MAPPER.mapToResponse(user, groupUser.userDisplayName());
       }
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public UserResponse find(final Integer id, final Integer userId) {
+  public GroupUserResponse find(final Integer id, final Integer userId) {
     try {
-      return getResponse(repository.findById(id, userId));
+      final GroupUser groupUser = repository.findById(id, userId);
+      final User user = userRepository.findById(groupUser.userId());
+      return GROUP_USER_MAPPER.mapToResponse(user, groupUser.userDisplayName());
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
 
-  public List<UserResponse> findAll(final Integer id) {
+  public List<GroupUserResponse> findAll(final Integer id) {
     try {
-      return getResponses(repository.findUsers(id));
+      return repository
+        .findUsers(id)
+        .stream()
+        .map(groupUser -> {
+          final User user = userRepository.findById(groupUser.userId());
+          return GROUP_USER_MAPPER.mapToResponse(user, groupUser.userDisplayName());
+        })
+        .toList();
     } catch (final UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
@@ -73,13 +86,5 @@ public class GroupUserService {
 
   public boolean isUserInGroup(final Integer id, final Integer userId) {
     return repository.isUserInGroup(id, userId);
-  }
-
-  private List<UserResponse> getResponses(final List<User> users) {
-    return USER_MAPPER.mapToResponses(users);
-  }
-
-  private UserResponse getResponse(final User user) {
-    return USER_MAPPER.mapToResponse(user);
   }
 }

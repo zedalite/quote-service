@@ -3,18 +3,23 @@ package de.zedalite.quotes.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyInt;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 
 import de.zedalite.quotes.data.model.Group;
-import de.zedalite.quotes.data.model.User;
-import de.zedalite.quotes.data.model.UserResponse;
+import de.zedalite.quotes.data.model.GroupUser;
+import de.zedalite.quotes.data.model.GroupUserRequest;
+import de.zedalite.quotes.data.model.GroupUserResponse;
 import de.zedalite.quotes.exception.GroupNotFoundException;
 import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
 import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.GroupGenerator;
-import de.zedalite.quotes.fixtures.UserGenerator;
+import de.zedalite.quotes.fixtures.GroupUserGenerator;
 import de.zedalite.quotes.repository.GroupUserRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import java.util.List;
@@ -39,18 +44,18 @@ class GroupUserServiceTest {
   @Mock
   private UserRepository userRepository;
 
-  @ParameterizedTest
-  @ValueSource(booleans = { true, false })
+  @Test
   @DisplayName("Should create group user")
-  void shouldCreateGroupUser(final boolean isUserSaved) {
+  void shouldCreateGroupUser() {
     willReturn(false).given(userRepository).doesUserNonExist(2);
     willReturn(false).given(repository).isUserInGroup(1, 2);
-    willReturn(isUserSaved).given(repository).save(anyInt(), anyInt());
+    final GroupUser groupUser = GroupUserGenerator.getGroupUser();
+    willReturn(groupUser).given(repository).save(anyInt(), any(GroupUserRequest.class));
 
-    final Boolean result = instance.create(1, 2);
+    final GroupUserResponse result = instance.create(1, new GroupUserRequest(2, null));
 
-    then(repository).should().save(1, 2);
-    assertThat(result).isEqualTo(isUserSaved);
+    then(repository).should().save(1, new GroupUserRequest(2, null));
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -58,7 +63,8 @@ class GroupUserServiceTest {
   void shouldNotCreateGroupUserWhenUserNonExist() {
     willReturn(true).given(userRepository).doesUserNonExist(2);
 
-    assertThatCode(() -> instance.create(1, 2)).isInstanceOf(ResourceNotFoundException.class);
+    final GroupUserRequest request = new GroupUserRequest(2, null);
+    assertThatCode(() -> instance.create(1, request)).isInstanceOf(ResourceNotFoundException.class);
     then(repository).shouldHaveNoInteractions();
   }
 
@@ -68,8 +74,10 @@ class GroupUserServiceTest {
     willReturn(false).given(userRepository).doesUserNonExist(2);
     willReturn(true).given(repository).isUserInGroup(1, 2);
 
-    assertThatCode(() -> instance.create(1, 2)).isInstanceOf(ResourceAlreadyExitsException.class);
-    then(repository).should(never()).save(1, 2);
+    final GroupUserRequest request = new GroupUserRequest(2, null);
+
+    assertThatCode(() -> instance.create(1, request)).isInstanceOf(ResourceAlreadyExitsException.class);
+    then(repository).should(never()).save(1, request);
   }
 
   @Test
@@ -77,18 +85,19 @@ class GroupUserServiceTest {
   void shouldNotCreateGroupUserWhenSavingFailed() {
     willReturn(false).given(userRepository).doesUserNonExist(2);
     willReturn(false).given(repository).isUserInGroup(1, 2);
-    willThrow(UserNotFoundException.class).given(repository).save(1, 2);
+    final GroupUserRequest request = new GroupUserRequest(2, null);
+    willThrow(UserNotFoundException.class).given(repository).save(1, request);
 
-    assertThatCode(() -> instance.create(1, 2)).isInstanceOf(ResourceNotFoundException.class);
+    assertThatCode(() -> instance.create(1, request)).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test
   @DisplayName("Should find group user")
   void shouldFindGroupUser() {
-    final User expectedUser = UserGenerator.getUser();
-    willReturn(expectedUser).given(repository).findById(1, 2);
+    final GroupUser expectedGroupUser = GroupUserGenerator.getGroupUser();
+    willReturn(expectedGroupUser).given(repository).findById(1, 2);
 
-    final UserResponse result = instance.find(1, 2);
+    final GroupUserResponse result = instance.find(1, 2);
 
     then(repository).should().findById(1, 2);
     assertThat(result).isNotNull();
@@ -105,10 +114,10 @@ class GroupUserServiceTest {
   @Test
   @DisplayName("Should find group users")
   void shouldFindGroupUsers() {
-    final List<User> expectedUsers = UserGenerator.getUsers();
+    final List<GroupUser> expectedUsers = List.of(GroupUserGenerator.getGroupUser());
     willReturn(expectedUsers).given(repository).findUsers(1);
 
-    final List<UserResponse> result = instance.findAll(1);
+    final List<GroupUserResponse> result = instance.findAll(1);
 
     then(repository).should().findUsers(1);
     assertThat(result).hasSizeGreaterThanOrEqualTo(1);
