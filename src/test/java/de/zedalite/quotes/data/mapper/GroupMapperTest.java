@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import de.zedalite.quotes.data.jooq.quotes.tables.records.GroupsRecord;
 import de.zedalite.quotes.data.model.Group;
+import de.zedalite.quotes.data.model.GroupResponse;
+import de.zedalite.quotes.data.model.User;
+import de.zedalite.quotes.data.model.UserResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,5 +61,36 @@ class GroupMapperTest {
     final List<Group> group = instance.mapToGroups(groupsRecords);
 
     assertThat(group).isNull();
+  }
+
+  @Test
+  @DisplayName("Should map group to response")
+  void shouldMapGroupToResponse() {
+    final Group group = new Group(0, "group", "GROUP", LocalDateTime.MIN, Optional.of(1));
+    final User creator = new User(1, "user", "user@email.net", "USER", LocalDateTime.MIN);
+
+    final GroupResponse result = instance.mapToResponse(group, creator);
+
+    assertThat(result).isNotNull();
+    assertThat(result.group().id()).isZero();
+    assertThat(result.group().inviteCode()).isEqualTo("group");
+    assertThat(result.group().displayName()).isEqualTo("GROUP");
+    assertThat(result.group().creationDate()).isEqualTo(LocalDateTime.MIN);
+
+    assertThat(result.creator()).isPresent().isNotNull();
+    final UserResponse reponseCreator = result.creator().get();
+    assertThat(reponseCreator.id()).isEqualTo(1);
+    assertThat(reponseCreator.name()).isEqualTo("user");
+    assertThat(reponseCreator.displayName()).isEqualTo("USER");
+    assertThat(reponseCreator.creationDate()).isEqualTo(LocalDateTime.MIN);
+  }
+
+  @ParameterizedTest
+  @DisplayName("Should map empty group to null")
+  @NullSource
+  void shouldMapEmptyGroupToNull(final Group group) {
+    final GroupResponse result = instance.mapToResponse(group, null);
+
+    assertThat(result).isNull();
   }
 }

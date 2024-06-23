@@ -11,6 +11,7 @@ import de.zedalite.quotes.exception.GroupNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestPropertySource("classpath:test.properties")
+@TestPropertySource(value = "classpath:test-no-cache.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GroupRepositoryTest extends TestEnvironmentProvider {
 
@@ -76,10 +77,39 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
+  @Disabled("implement separate group to be able to test this case")
+  @DisplayName("Should throw exception finding all groups")
+  void shouldThrowExceptionFindingAllGroups() {
+    assertThatCode(() -> instance.findAll()).isInstanceOf(GroupNotFoundException.class);
+  }
+
+  @Test
   @DisplayName("Should find all groups ids")
   void shouldFindAllGroupsIds() {
     final List<Integer> ids = instance.findAllIds();
 
     assertThat(ids).hasSizeGreaterThanOrEqualTo(2);
+  }
+
+  @Test
+  @Disabled("implement separate group to be able to test this case")
+  @DisplayName("Should throw exception finding all group ids")
+  void shouldThrowExceptionFindingAllGroupIds() {
+    assertThatCode(() -> instance.findAllIds()).isInstanceOf(GroupNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find group by code")
+  void shouldFindGroupByCode() {
+    final Group group = instance.findByCode("TESTGR");
+
+    assertThat(group).isNotNull();
+    assertThat(group.inviteCode()).isEqualTo("TESTGR");
+  }
+
+  @Test
+  @DisplayName("Should throw exception finding group by non-existing code")
+  void shouldThrowExceptionFindingGroupByNonExistingCode() {
+    assertThatCode(() -> instance.findByCode("NONEXISTING")).isInstanceOf(GroupNotFoundException.class);
   }
 }

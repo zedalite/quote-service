@@ -61,17 +61,17 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   void shouldSaveGroupQuote() {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
 
-    final Quote quote = instance.save(groupId, quoteRequest, userId);
+    final Quote newQuote = instance.save(groupId, quoteRequest, userId);
 
-    assertThat(quote).isNotNull();
-    assertThat(quote.id()).isNotNegative();
-    assertThat(quote.author()).isEqualTo(quoteRequest.author());
-    assertThat(quote.text()).isEqualTo(quoteRequest.text());
-    assertThat(quote.context()).isEqualTo(quoteRequest.context());
-    assertThat(quote.creatorId()).isEqualTo(Optional.of(userId));
+    assertThat(newQuote).isNotNull();
+    assertThat(newQuote.id()).isNotNegative();
+    assertThat(newQuote.author()).isEqualTo(quoteRequest.author());
+    assertThat(newQuote.text()).isEqualTo(quoteRequest.text());
+    assertThat(newQuote.context()).isEqualTo(quoteRequest.context());
+    assertThat(newQuote.creatorId()).isEqualTo(Optional.of(userId));
 
     final boolean isInserted = dsl.fetchExists(
-      dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(quote.id())))
+      dsl.selectFrom(GROUP_QUOTES).where(GROUP_QUOTES.GROUP_ID.eq(groupId).and(GROUP_QUOTES.QUOTE_ID.eq(newQuote.id())))
     );
 
     assertThat(isInserted).isTrue();
@@ -83,14 +83,14 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
     final QuoteRequest quoteRequest = QuoteGenerator.getQuoteRequest();
     final Quote savedQuote = instance.save(groupId, quoteRequest, userId);
 
-    final Quote quote = instance.findById(groupId, savedQuote.id());
+    final Quote newQuote = instance.findById(groupId, savedQuote.id());
 
-    assertThat(quote).isNotNull();
-    assertThat(quote.id()).isNotNegative();
-    assertThat(quote.author()).isEqualTo(quoteRequest.author());
-    assertThat(quote.text()).isEqualTo(quoteRequest.text());
-    assertThat(quote.context()).isEqualTo(quoteRequest.context());
-    assertThat(quote.creatorId()).isEqualTo(Optional.of(userId));
+    assertThat(newQuote).isNotNull();
+    assertThat(newQuote.id()).isNotNegative();
+    assertThat(newQuote.author()).isEqualTo(quoteRequest.author());
+    assertThat(newQuote.text()).isEqualTo(quoteRequest.text());
+    assertThat(newQuote.context()).isEqualTo(quoteRequest.context());
+    assertThat(newQuote.creatorId()).isEqualTo(Optional.of(userId));
   }
 
   @Test

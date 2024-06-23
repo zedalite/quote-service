@@ -3,6 +3,7 @@ package de.zedalite.quotes.data.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import de.zedalite.quotes.data.model.AuthLog;
 import de.zedalite.quotes.data.model.RequestLog;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,27 @@ class RequestMapperTest {
   @DisplayName("Should map empty request log")
   void shouldMapEmptyRequestLog() {
     final RequestLog result = instance.map(null, null, null, null);
+
+    assertThat(result).isNull();
+  }
+
+  @Test
+  @DisplayName("Should map auth log")
+  void shouldMapAuthLog() {
+    given(request.getRequestURI()).willReturn("/quotes");
+    given(request.getQueryString()).willReturn("filter=ASC");
+    given(request.getHeader("X-Forwarded-For")).willReturn("10.0.0.2");
+    given(request.getRemoteAddr()).willReturn("10.0.0.9");
+
+    final AuthLog result = instance.map(request, "SUCCESS", "user");
+
+    assertThat(result).isNotNull();
+  }
+
+  @Test
+  @DisplayName("Should map empty auth log")
+  void shouldMapEmptyAuthLog() {
+    final AuthLog result = instance.map(null, null, null);
 
     assertThat(result).isNull();
   }

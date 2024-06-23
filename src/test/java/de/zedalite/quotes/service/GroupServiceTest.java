@@ -142,6 +142,8 @@ class GroupServiceTest {
 
     then(groupUserRepository).should().findGroups(1);
     assertThat(result).hasSizeGreaterThanOrEqualTo(1);
+    assertThat(result.getFirst().group().id()).isEqualTo(expectedGroups.getFirst().id());
+    assertThat(result.getFirst().creator()).isPresent();
   }
 
   @Test

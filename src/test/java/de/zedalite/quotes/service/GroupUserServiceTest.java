@@ -121,6 +121,7 @@ class GroupUserServiceTest {
 
     then(repository).should().findUsers(1);
     assertThat(result).hasSizeGreaterThanOrEqualTo(1);
+    assertThat(result.getFirst()).isNotNull();
   }
 
   @Test

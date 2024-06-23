@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@TestPropertySource("classpath:test.properties")
+@TestPropertySource(value = "classpath:test-no-cache.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GroupQuoteOfTheDayRepositoryTest extends TestEnvironmentProvider {
 
