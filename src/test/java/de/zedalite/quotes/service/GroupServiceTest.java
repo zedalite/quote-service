@@ -59,6 +59,7 @@ class GroupServiceTest {
     final GroupResponse result = instance.create(groupRequest, 1);
 
     then(groupRepository).should().save(groupRequest, 1);
+    then(groupUserRepository).should().save(expectedGroup.id(), new GroupUserRequest(1, null));
     assertThat(result).isNotNull();
   }
 
@@ -67,6 +68,17 @@ class GroupServiceTest {
   void shouldThrowExceptionWhenGroupNotCreated() {
     final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
     willThrow(GroupNotFoundException.class).given(groupRepository).save(any(GroupRequest.class), anyInt());
+
+    assertThatCode(() -> instance.create(groupRequest, 1)).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should throw exception when group created but user not joined")
+  void shouldThrowExceptionWhenGroupCreatedButUserNotJoined() {
+    final GroupRequest groupRequest = GroupGenerator.getGroupRequest();
+    final Group expectedGroup = GroupGenerator.getGroup();
+    willReturn(expectedGroup).given(groupRepository).save(any(GroupRequest.class), anyInt());
+    willThrow(UserNotFoundException.class).given(groupUserRepository).save(anyInt(), any(GroupUserRequest.class));
 
     assertThatCode(() -> instance.create(groupRequest, 1)).isInstanceOf(ResourceNotFoundException.class);
   }

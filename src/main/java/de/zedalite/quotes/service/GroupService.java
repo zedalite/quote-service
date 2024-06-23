@@ -39,8 +39,9 @@ public class GroupService {
   public GroupResponse create(final GroupRequest request, final Integer creatorId) {
     try {
       final Group group = repository.save(request, creatorId);
+      groupUserRepository.save(group.id(), new GroupUserRequest(creatorId, null));
       return getResponse(group, getUser(group.creatorId()));
-    } catch (final GroupNotFoundException ex) {
+    } catch (final GroupNotFoundException | UserNotFoundException ex) {
       throw new ResourceNotFoundException(ex.getMessage());
     }
   }
