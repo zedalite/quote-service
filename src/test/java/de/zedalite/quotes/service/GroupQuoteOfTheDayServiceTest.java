@@ -76,7 +76,7 @@ class GroupQuoteOfTheDayServiceTest {
 
     willReturn(10).given(groupQuoteRepository).count(anyInt());
     willThrow(QotdNotFoundException.class).given(repository).findByDate(anyInt(), any(LocalDate.class));
-    willReturn(List.of(expectedQotd)).given(groupQuoteRepository).findRandoms(anyInt(), anyInt());
+    willReturn(List.of(expectedQotd)).given(groupQuoteRepository).findAll(anyInt());
 
     final QuoteResponse quoteOfTheDay = instance.findQuoteOfTheDay(1);
 

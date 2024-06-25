@@ -12,6 +12,7 @@ import de.zedalite.quotes.repository.GroupQuoteRepository;
 import de.zedalite.quotes.repository.UserRepository;
 import de.zedalite.quotes.utils.StringUtils;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,9 @@ public class GroupQuoteOfTheDayService {
     try {
       qotd = repository.findByDate(id, LocalDate.now());
     } catch (final QotdNotFoundException ex) {
-      qotd = groupQuoteRepository.findRandoms(id, 1).getFirst();
+      final ArrayList<Quote> allQuotes = new ArrayList<>(groupQuoteRepository.findAll(id));
+      Collections.shuffle(allQuotes);
+      qotd = allQuotes.getFirst();
       repository.save(id, new QuoteOfTheDayRequest(qotd.id(), LocalDate.now()));
     }
 

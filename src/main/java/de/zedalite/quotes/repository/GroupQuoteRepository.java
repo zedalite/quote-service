@@ -6,16 +6,12 @@ import de.zedalite.quotes.data.jooq.quotes.tables.records.QuotesRecord;
 import de.zedalite.quotes.data.mapper.QuoteMapper;
 import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
-import de.zedalite.quotes.data.model.SortField;
-import de.zedalite.quotes.data.model.SortOrder;
 import de.zedalite.quotes.exception.QuoteNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.jooq.TableField;
-import org.jooq.impl.DSL;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -37,7 +33,7 @@ public class GroupQuoteRepository {
     this.dsl = dsl;
   }
 
-  @CachePut(value = "group_quotes", key = "{#id,#result.id}", unless = "#result == null")
+  @CachePut(value = "group_quotes_single", key = "{#id,#result.id}", unless = "#result == null")
   public Quote save(final Integer id, final QuoteRequest quote, final Integer creatorId) {
     final Optional<QuotesRecord> savedQuoteRec = dsl
       .insertInto(QUOTES)
@@ -56,7 +52,7 @@ public class GroupQuoteRepository {
     return savedQuote;
   }
 
-  @Cacheable(value = "group_quotes", key = "{#id,#quoteId}", unless = "#result = null")
+  @Cacheable(value = "group_quotes_single", key = "{#id,#quoteId}", unless = "#result = null")
   public Quote findById(final Integer id, final Integer quoteId) {
     final Optional<Quote> quote = dsl
       .select(QUOTES)
@@ -68,24 +64,12 @@ public class GroupQuoteRepository {
   }
 
   // TODO implement caching, optimise with single caching or learn how to manipulate the cache to insert multiple values
-  public List<Quote> findAll(final Integer id, final SortField field, final SortOrder order) {
+  //@Cacheable(value = "group_quotes", key = "{#id}", unless = "#result = null")
+  public List<Quote> findAll(final Integer id) {
     final List<Quote> quotes = dsl
       .select(QUOTES)
       .from(GROUP_QUOTES.join(QUOTES).on(GROUP_QUOTES.QUOTE_ID.eq(QUOTES.ID)))
       .where(GROUP_QUOTES.GROUP_ID.eq(id))
-      .orderBy(mapToJooqSortField(field, order))
-      .fetchInto(Quote.class);
-    if (quotes.isEmpty()) throw new QuoteNotFoundException(GROUP_QUOTE_NOT_FOUND);
-    return quotes;
-  }
-
-  public List<Quote> findRandoms(final Integer id, final Integer quantity) {
-    final List<Quote> quotes = dsl
-      .select(QUOTES)
-      .from(GROUP_QUOTES.join(QUOTES).on(GROUP_QUOTES.QUOTE_ID.eq(QUOTES.ID)))
-      .where(GROUP_QUOTES.GROUP_ID.eq(id))
-      .orderBy(DSL.rand())
-      .limit(quantity)
       .fetchInto(Quote.class);
     if (quotes.isEmpty()) throw new QuoteNotFoundException(GROUP_QUOTE_NOT_FOUND);
     return quotes;
@@ -93,16 +77,5 @@ public class GroupQuoteRepository {
 
   public Integer count(final Integer id) {
     return dsl.fetchCount(GROUP_QUOTES, GROUP_QUOTES.GROUP_ID.eq(id));
-  }
-
-  private org.jooq.SortField<? extends Comparable<?>> mapToJooqSortField(final SortField field, final SortOrder order) {
-    final TableField<QuotesRecord, ? extends Comparable<?>> jooqField =
-      switch (field) {
-        case AUTHOR -> QUOTES.AUTHOR;
-        case TEXT -> QUOTES.TEXT;
-        default -> QUOTES.CREATION_DATE;
-      };
-
-    return order == SortOrder.ASC ? jooqField.asc() : jooqField.desc();
   }
 }

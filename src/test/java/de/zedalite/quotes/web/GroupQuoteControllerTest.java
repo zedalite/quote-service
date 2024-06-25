@@ -1,8 +1,12 @@
 package de.zedalite.quotes.web;
 
+import static de.zedalite.quotes.data.model.FilterKey.*;
+import static de.zedalite.quotes.data.model.SortField.CREATION_DATE;
+import static de.zedalite.quotes.data.model.SortMode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willReturn;
 
@@ -33,11 +37,13 @@ class GroupQuoteControllerTest {
   @DisplayName("Should get group quotes")
   void shouldGetGroupQuotes() {
     final List<QuoteResponse> expectedQuotes = QuoteGenerator.getQuoteResponses();
-    willReturn(expectedQuotes).given(service).findAll(anyInt(), any(SortField.class), any(SortOrder.class));
+    willReturn(expectedQuotes)
+      .given(service)
+      .findAll(anyInt(), any(FilterKey.class), anyString(), any(SortField.class), any(SortMode.class));
 
-    final ResponseEntity<List<QuoteResponse>> response = instance.getAll(1, SortField.CREATION_DATE, SortOrder.ASC);
+    final ResponseEntity<List<QuoteResponse>> response = instance.getAll(1, CREATOR, "1", CREATION_DATE, ASCENDING);
 
-    then(service).should().findAll(1, SortField.CREATION_DATE, SortOrder.ASC);
+    then(service).should().findAll(1, CREATOR, "1", CREATION_DATE, ASCENDING);
     assertThat(response).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
@@ -79,19 +85,6 @@ class GroupQuoteControllerTest {
     final ResponseEntity<QuoteResponse> response = instance.createQuote(1, quoteRequest, principal);
 
     then(service).should().create(1, quoteRequest, 1);
-    assertThat(response).isNotNull();
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
-  @Test
-  @DisplayName("Should get random group quotes")
-  void shouldGetRandomGroupQuotes() {
-    final List<QuoteResponse> expectedQuote = QuoteGenerator.getQuoteResponses();
-    willReturn(expectedQuote).given(service).findRandoms(anyInt(), anyInt());
-
-    final ResponseEntity<List<QuoteResponse>> response = instance.getRandomQuotes(1, 8);
-
-    then(service).should().findRandoms(1, 8);
     assertThat(response).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }

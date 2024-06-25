@@ -1,8 +1,5 @@
 package de.zedalite.quotes.repository;
 
-import static de.zedalite.quotes.data.model.SortField.*;
-import static de.zedalite.quotes.data.model.SortOrder.ASC;
-import static de.zedalite.quotes.data.model.SortOrder.DESC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.zedalite.quotes.TestEnvironmentProvider;
@@ -12,7 +9,6 @@ import de.zedalite.quotes.data.model.Quote;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.UserRequest;
 import de.zedalite.quotes.fixtures.QuoteGenerator;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -45,15 +41,13 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
 
   private Integer groupId;
 
-  private Quote quote;
-
   private Integer userId;
 
   @BeforeAll
   void setup() {
     userId = userRepository.save(new UserRequest("qg", "test", "Quote Group")).id();
     groupId = groupRepository.save(new GroupRequest("quoter-group", "QuoterG"), userId).id();
-    quote = instance.save(groupId, QuoteGenerator.getQuoteRequest(), userId);
+    instance.save(groupId, QuoteGenerator.getQuoteRequest(), userId);
   }
 
   @Test
@@ -96,31 +90,9 @@ class GroupQuoteRepositoryTest extends TestEnvironmentProvider {
   @Test
   @DisplayName("Should find all group quotes")
   void shouldFindAllGroupQuotes() {
-    final List<Quote> sortedAuthorAsc = instance.findAll(groupId, AUTHOR, ASC);
-    final List<Quote> sortedAuthorDesc = instance.findAll(groupId, AUTHOR, DESC);
+    final List<Quote> quotes = instance.findAll(groupId);
 
-    final List<Quote> sortedCreationAsc = instance.findAll(groupId, CREATION_DATE, ASC);
-    final List<Quote> sortedCreationDesc = instance.findAll(groupId, CREATION_DATE, DESC);
-
-    final List<Quote> sortedTextAsc = instance.findAll(groupId, TEXT, ASC);
-    final List<Quote> sortedTextDesc = instance.findAll(groupId, TEXT, DESC);
-
-    assertThat(sortedAuthorAsc).map(Quote::author).isSortedAccordingTo(Comparator.naturalOrder());
-    assertThat(sortedAuthorDesc).map(Quote::author).isSortedAccordingTo(Comparator.reverseOrder());
-
-    assertThat(sortedCreationAsc).map(Quote::author).isSortedAccordingTo(Comparator.naturalOrder());
-    assertThat(sortedCreationDesc).map(Quote::author).isSortedAccordingTo(Comparator.reverseOrder());
-
-    assertThat(sortedTextAsc).map(Quote::author).isSortedAccordingTo(Comparator.naturalOrder());
-    assertThat(sortedTextDesc).map(Quote::author).isSortedAccordingTo(Comparator.reverseOrder());
-  }
-
-  @Test
-  @DisplayName("Should find random group quotes")
-  void shouldFindRandomGroupQuotes() {
-    final List<Quote> quotes = instance.findRandoms(groupId, 8);
-
-    assertThat(quotes).contains(quote);
+    assertThat(quotes).hasSizeGreaterThanOrEqualTo(1);
   }
 
   @Test

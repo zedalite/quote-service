@@ -133,6 +133,7 @@ public class GroupUserController {
     @PathVariable("id") final Integer id,
     @RequestBody @Valid final GroupUserRequest request
   ) {
+    // TODO is this endpoint necessary? -> invitation code should be enough?
     return ResponseEntity.ok(service.create(id, request));
   }
 

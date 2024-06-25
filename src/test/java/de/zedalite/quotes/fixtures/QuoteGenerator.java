@@ -40,7 +40,7 @@ public class QuoteGenerator {
     return List.of(
       new Quote(1, "tester", LocalDateTime.now(), "quotes are awesome", "@Home", Optional.of(4)),
       new Quote(2, "qa", LocalDateTime.MIN, "tests are important", null, Optional.of(5)),
-      new Quote(3, "pipeline", LocalDateTime.MAX, "Going brrrrr", "@Work", null)
+      new Quote(3, "pipeline", LocalDateTime.MAX, "Going brrrrr", "@Work", Optional.empty())
     );
   }
 

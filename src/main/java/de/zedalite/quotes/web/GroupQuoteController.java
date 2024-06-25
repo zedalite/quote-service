@@ -2,10 +2,11 @@ package de.zedalite.quotes.web;
 
 import de.zedalite.quotes.data.model.CountResponse;
 import de.zedalite.quotes.data.model.ErrorResponse;
+import de.zedalite.quotes.data.model.FilterKey;
 import de.zedalite.quotes.data.model.QuoteRequest;
 import de.zedalite.quotes.data.model.QuoteResponse;
 import de.zedalite.quotes.data.model.SortField;
-import de.zedalite.quotes.data.model.SortOrder;
+import de.zedalite.quotes.data.model.SortMode;
 import de.zedalite.quotes.data.model.UserPrincipal;
 import de.zedalite.quotes.service.GroupQuoteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,11 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Groups", description = "Operations related to groups")
 @RequestMapping("groups")
+@Validated
 public class GroupQuoteController {
 
   private final GroupQuoteService service;
@@ -68,10 +71,12 @@ public class GroupQuoteController {
   @GetMapping("{id}/quotes")
   public ResponseEntity<List<QuoteResponse>> getAll(
     @PathVariable("id") final Integer id,
-    @RequestParam(defaultValue = "CREATION_DATE") @Valid final SortField field,
-    @RequestParam(defaultValue = "DESC") @Valid final SortOrder order
+    @RequestParam(defaultValue = "NONE") @Valid final FilterKey filter,
+    @RequestParam(required = false) @Size(max = 32) @Valid final String filterValue,
+    @RequestParam(defaultValue = "NONE") @Valid final SortField sortField,
+    @RequestParam(defaultValue = "NONE") @Valid final SortMode sortMode
   ) {
-    return ResponseEntity.ok(service.findAll(id, field, order));
+    return ResponseEntity.ok(service.findAll(id, filter, filterValue, sortField, sortMode));
   }
 
   @Operation(
@@ -168,39 +173,5 @@ public class GroupQuoteController {
     @AuthenticationPrincipal final UserPrincipal principal
   ) {
     return ResponseEntity.ok(service.create(id, request, principal.getId()));
-  }
-
-  @Operation(
-    summary = "Get random group quotes",
-    description = "Get random group quotes",
-    operationId = "getRandomGroupQuotes",
-    responses = {
-      @ApiResponse(
-        responseCode = "200",
-        description = "Group quotes found",
-        content = @Content(
-          mediaType = "application/json",
-          array = @ArraySchema(schema = @Schema(implementation = QuoteResponse.class))
-        )
-      ),
-      @ApiResponse(
-        responseCode = "403",
-        description = "Principal is no group member",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-      ),
-      @ApiResponse(
-        responseCode = "404",
-        description = "Group quotes not found",
-        content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-      ),
-    }
-  )
-  @PreAuthorize("@authorizer.isUserInGroup(principal,#id)")
-  @GetMapping("{id}/quotes/randoms")
-  public ResponseEntity<List<QuoteResponse>> getRandomQuotes(
-    @PathVariable("id") final Integer id,
-    @RequestParam(defaultValue = "32") @PositiveOrZero final Integer quantity
-  ) {
-    return ResponseEntity.ok(service.findRandoms(id, quantity));
   }
 }
