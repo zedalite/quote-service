@@ -1,26 +1,23 @@
 package de.zedalite.quotes.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.*;
+
 import de.zedalite.quotes.data.model.*;
-import de.zedalite.quotes.exceptions.ResourceAlreadyExitsException;
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
-import de.zedalite.quotes.exceptions.UserNotFoundException;
+import de.zedalite.quotes.exception.ResourceAlreadyExitsException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
+import de.zedalite.quotes.exception.UserNotFoundException;
 import de.zedalite.quotes.fixtures.UserGenerator;
 import de.zedalite.quotes.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -31,45 +28,18 @@ class UserServiceTest {
   @Mock
   private UserRepository repository;
 
-  @Mock
-  private PasswordEncoder passwordEncoder;
-
-  @Mock
-  private JwtTokenService tokenService;
-
-  @Mock
-  private AuthenticationManager authenticationManager;
-
-  @Test
-  @DisplayName("Should find user by name")
-  void shouldFindUserByName() {
-    final UserRequest userRequest = UserGenerator.getUserRequest();
-    final User expectedUser = UserGenerator.getUser();
-    willReturn(expectedUser).given(repository).findByName(anyString());
-
-    final User user = instance.findByName(userRequest.name());
-
-    Assertions.assertThat(user.name()).isEqualTo(expectedUser.name());
-  }
-
-  @Test
-  @DisplayName("Should throw exception when user not found")
-  void shouldThrowExceptionWhenUserNotFound() {
-    willThrow(UserNotFoundException.class).given(repository).findByName(anyString());
-
-    assertThatCode(() -> instance.findByName("tester")).isInstanceOf(ResourceNotFoundException.class);
-  }
-
   @Test
   @DisplayName("Should create user when it not exist")
   void shouldCreateUserWhenItNotExist() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
-    willReturn(UserGenerator.getUserRequest().password()).given(passwordEncoder).encode(anyString());
+    final User user = UserGenerator.getUser();
     willReturn(false).given(repository).isUsernameTaken(anyString());
+    willReturn(user).given(repository).save(any(UserRequest.class));
 
-    instance.create(userRequest);
+    final UserResponse result = instance.create(userRequest);
 
     then(repository).should().save(userRequest);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -87,29 +57,9 @@ class UserServiceTest {
   @DisplayName("Should not create user when saving failed ")
   void shouldNotCreateUserWhenSavingFailed() {
     final UserRequest userRequest = UserGenerator.getUserRequest();
-    willReturn(userRequest.password()).given(passwordEncoder).encode(anyString());
     willThrow(UserNotFoundException.class).given(repository).save(userRequest);
 
     assertThatCode(() -> instance.create(userRequest)).isInstanceOf(ResourceNotFoundException.class);
-  }
-
-  @Test
-  @DisplayName("Should find users")
-  void shouldFindUsers() {
-    final List<User> users = UserGenerator.getUsers();
-    willReturn(users).given(repository).findAll();
-
-    instance.findAll();
-
-    then(repository).should().findAll();
-  }
-
-  @Test
-  @DisplayName("Should not find users when users non exist")
-  void shouldNotFindUsersWhenUsersNonExist() {
-    willThrow(UserNotFoundException.class).given(repository).findAll();
-
-    assertThatCode(instance::findAll).isInstanceOf(ResourceNotFoundException.class);
   }
 
   @Test
@@ -118,9 +68,10 @@ class UserServiceTest {
     final User user = UserGenerator.getUser();
     willReturn(user).given(repository).findById(1);
 
-    instance.find(1);
+    final UserResponse result = instance.find(1);
 
     then(repository).should().findById(1);
+    assertThat(result).isNotNull();
   }
 
   @Test
@@ -132,39 +83,14 @@ class UserServiceTest {
   }
 
   @Test
-  @DisplayName("Should update password")
-  void shouldUpdatePassword() {
-    final PasswordRequest passwordRequest = UserGenerator.getPasswordRequest();
-    final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), passwordEncoder.encode(passwordRequest.password()), user.displayName());
-    willReturn(user).given(repository).findById(1);
-
-    instance.updatePassword(1, passwordRequest);
-
-    then(repository).should().update(1, userRequest);
-  }
-
-  @Test
-  @DisplayName("Should not update when updating failed")
-  void shouldNotUpdateWhenUpdatingFailed() {
-    final PasswordRequest passwordRequest = UserGenerator.getPasswordRequest();
-    final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), passwordEncoder.encode(passwordRequest.password()), user.displayName());
-    willReturn(user).given(repository).findById(1);
-    willThrow(UserNotFoundException.class).given(repository).update(1, userRequest);
-
-    assertThatCode(() -> instance.updatePassword(1, passwordRequest)).isInstanceOf(ResourceNotFoundException.class);
-  }
-
-  @Test
   @DisplayName("Should update displayName")
   void shouldUpdateDisplayName() {
-    final DisplayNameRequest displayNameRequest = UserGenerator.getDisplayNameRequest();
+    final UserDisplayNameRequest userDisplayNameRequest = UserGenerator.getDisplayNameRequest();
     final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), user.password(), displayNameRequest.displayName());
-    willReturn(user).given(repository).findById(1);
+    final UserRequest userRequest = new UserRequest(user.name(), user.email(), userDisplayNameRequest.displayName());
+    willReturn(user).given(repository).findById(anyInt());
 
-    instance.updateDisplayName(1, displayNameRequest);
+    instance.updateDisplayName(1, userDisplayNameRequest);
 
     then(repository).should().update(1, userRequest);
   }
@@ -172,35 +98,93 @@ class UserServiceTest {
   @Test
   @DisplayName("Should not update displayName when updating failed")
   void shouldNotUpdateDisplayNameWhenUpdatingFailed() {
-    final DisplayNameRequest displayNameRequest = UserGenerator.getDisplayNameRequest();
+    final UserDisplayNameRequest userDisplayNameRequest = UserGenerator.getDisplayNameRequest();
     final User user = UserGenerator.getUser();
-    final UserRequest userRequest = new UserRequest(user.name(), user.password(), displayNameRequest.displayName());
-    willReturn(user).given(repository).findById(1);
+    final UserRequest userRequest = new UserRequest(user.name(), user.email(), userDisplayNameRequest.displayName());
+    willReturn(user).given(repository).findById(anyInt());
     willThrow(UserNotFoundException.class).given(repository).update(1, userRequest);
 
-    assertThatCode(() -> instance.updateDisplayName(1, displayNameRequest)).isInstanceOf(ResourceNotFoundException.class);
+    assertThatCode(() -> instance.updateDisplayName(1, userDisplayNameRequest)).isInstanceOf(
+      ResourceNotFoundException.class
+    );
   }
 
   @Test
-  @DisplayName("Should authenticate valid user")
-  void shouldAuthenticateValidUser() {
-    final UserRequest userRequest = UserGenerator.getUserRequest();
-    final AuthRequest authRequest = new AuthRequest(userRequest.name(), userRequest.password());
-    willReturn("e54f6rmh7g").given(tokenService).generateToken(userRequest.name());
+  @DisplayName("Should not update displayname when user not exists")
+  void shouldNotUpdateDisplaynameWhenUserNotExists() {
+    final UserDisplayNameRequest userDisplayNameRequest = UserGenerator.getDisplayNameRequest();
+    willThrow(UserNotFoundException.class).given(repository).findById(anyInt());
 
-    final AuthResponse userResponse = instance.authenticate(authRequest);
-
-    assertThat(userResponse.token()).isEqualTo("e54f6rmh7g");
+    assertThatCode(() -> instance.updateDisplayName(1, userDisplayNameRequest)).isInstanceOf(
+      ResourceNotFoundException.class
+    );
   }
 
   @Test
-  @DisplayName("Should refresh token")
-  void shouldRefreshToken() {
-    final String userName = "test";
-    willReturn("e3432jh3").given(tokenService).generateToken(userName);
+  @DisplayName("Should update name")
+  void shouldUpdateName() {
+    final UserNameRequest userNameRequest = UserGenerator.getUserNameRequest();
+    final User user = UserGenerator.getUser();
+    final UserRequest userRequest = new UserRequest(userNameRequest.name(), user.email(), user.displayName());
+    willReturn(user).given(repository).findById(anyInt());
+    willReturn(false).given(repository).isUsernameTaken(anyString());
 
-    final AuthResponse userResponse = instance.refreshToken(userName);
+    instance.updateName(1, userNameRequest);
 
-    assertThat(userResponse.token()).isEqualTo("e3432jh3");
+    then(repository).should().update(1, userRequest);
+  }
+
+  @Test
+  @DisplayName("Should not update name when updating failed")
+  void shouldNotUpdateNameWhenUpdatingFailed() {
+    final UserNameRequest userNameRequest = UserGenerator.getUserNameRequest();
+    final User user = UserGenerator.getUser();
+    final UserRequest userRequest = new UserRequest(userNameRequest.name(), user.email(), user.displayName());
+    willReturn(user).given(repository).findById(1);
+    willReturn(false).given(repository).isUsernameTaken(anyString());
+    willThrow(UserNotFoundException.class).given(repository).update(1, userRequest);
+
+    assertThatCode(() -> instance.updateName(1, userNameRequest)).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should not update name when name already taken")
+  void shouldNotUpdateNameWhenNameAlreadyTaken() {
+    final UserNameRequest userNameRequest = UserGenerator.getUserNameRequest();
+    willReturn(true).given(repository).isUsernameTaken(anyString());
+
+    assertThatCode(() -> instance.updateName(1, userNameRequest)).isInstanceOf(ResourceAlreadyExitsException.class);
+  }
+
+  @Test
+  @DisplayName("Should not update name when user not exists")
+  void shouldNotUpdateNameWhenUserNotExists() {
+    final UserNameRequest userNameRequest = UserGenerator.getUserNameRequest();
+    willReturn(false).given(repository).isUsernameTaken(anyString());
+    willThrow(UserNotFoundException.class).given(repository).findById(anyInt());
+
+    assertThatCode(() -> instance.updateName(1, userNameRequest)).isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should update email")
+  void shouldUpdateEmail() {
+    final UserEmailRequest userEmailRequest = UserGenerator.getUserEmailRequest();
+    final User user = UserGenerator.getUser();
+    final UserRequest userRequest = new UserRequest(user.name(), userEmailRequest.email(), user.displayName());
+    willReturn(user).given(repository).findById(anyInt());
+
+    instance.updateEmail(1, userEmailRequest);
+
+    then(repository).should().update(1, userRequest);
+  }
+
+  @Test
+  @DisplayName("Should not update email when user not exists")
+  void shouldNotUpdateEmailWhenUserNotExists() {
+    final UserEmailRequest userEmailRequest = UserGenerator.getUserEmailRequest();
+    willThrow(UserNotFoundException.class).given(repository).findById(anyInt());
+
+    assertThatCode(() -> instance.updateEmail(1, userEmailRequest)).isInstanceOf(ResourceNotFoundException.class);
   }
 }

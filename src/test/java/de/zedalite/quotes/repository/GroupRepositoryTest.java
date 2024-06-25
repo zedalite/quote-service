@@ -1,23 +1,26 @@
 package de.zedalite.quotes.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 import de.zedalite.quotes.TestEnvironmentProvider;
 import de.zedalite.quotes.data.model.Group;
 import de.zedalite.quotes.data.model.GroupRequest;
 import de.zedalite.quotes.data.model.UserRequest;
-import de.zedalite.quotes.exceptions.GroupNotFoundException;
+import de.zedalite.quotes.exception.GroupNotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
+import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@TestPropertySource(value = "classpath:test-no-cache.properties")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GroupRepositoryTest extends TestEnvironmentProvider {
 
@@ -29,27 +32,25 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
 
   @BeforeAll
   void setup() {
-    final Integer userId = userRepository.save(new UserRequest("grouptester", "test")).id();
-    final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2")).id();
+    final Integer userId = userRepository.save(new UserRequest("grouptester", "test", "Group Tester")).id();
+    final Integer userId2 = userRepository.save(new UserRequest("grouptester2", "test2", "Group Tester 2")).id();
 
-    instance.save(new GroupRequest("test-group", "TESTGROUP", LocalDateTime.now(), userId));
-    instance.save(new GroupRequest("best-quoter", "The Best Quoter", LocalDateTime.now(), userId2));
+    instance.save(new GroupRequest("test-group", "TESTGR"), userId);
+    instance.save(new GroupRequest("best-quoter", "BstQtr"), userId2);
   }
 
   @Test
   @DisplayName("Should save group")
   void shouldSaveGroup() {
-    final LocalDateTime creationDate = LocalDateTime.of(2023, 11, 15, 15, 0, 0);
-    final GroupRequest groupRequest = new GroupRequest("test-group", "TestGroup", creationDate, 1);
+    final GroupRequest groupRequest = new GroupRequest("test-group", "testcode");
 
-    final Group savedGroup = instance.save(groupRequest);
+    final Group savedGroup = instance.save(groupRequest, 1);
 
     assertThat(savedGroup).isNotNull();
     assertThat(savedGroup.id()).isNotNull();
-    assertThat(savedGroup.name()).isEqualTo("test-group");
-    assertThat(savedGroup.displayName()).isEqualTo("TestGroup");
-    assertThat(savedGroup.creationDate()).isEqualTo(creationDate);
-    assertThat(savedGroup.creatorId()).isEqualTo(1);
+    assertThat(savedGroup.inviteCode()).isEqualTo("testcode");
+    assertThat(savedGroup.displayName()).isEqualTo("test-group");
+    assertThat(savedGroup.creatorId()).isEqualTo(Optional.of(1));
   }
 
   @Test
@@ -76,10 +77,39 @@ class GroupRepositoryTest extends TestEnvironmentProvider {
   }
 
   @Test
+  @Disabled("implement separate group to be able to test this case")
+  @DisplayName("Should throw exception finding all groups")
+  void shouldThrowExceptionFindingAllGroups() {
+    assertThatCode(() -> instance.findAll()).isInstanceOf(GroupNotFoundException.class);
+  }
+
+  @Test
   @DisplayName("Should find all groups ids")
   void shouldFindAllGroupsIds() {
     final List<Integer> ids = instance.findAllIds();
 
     assertThat(ids).hasSizeGreaterThanOrEqualTo(2);
+  }
+
+  @Test
+  @Disabled("implement separate group to be able to test this case")
+  @DisplayName("Should throw exception finding all group ids")
+  void shouldThrowExceptionFindingAllGroupIds() {
+    assertThatCode(() -> instance.findAllIds()).isInstanceOf(GroupNotFoundException.class);
+  }
+
+  @Test
+  @DisplayName("Should find group by code")
+  void shouldFindGroupByCode() {
+    final Group group = instance.findByCode("TESTGR");
+
+    assertThat(group).isNotNull();
+    assertThat(group.inviteCode()).isEqualTo("TESTGR");
+  }
+
+  @Test
+  @DisplayName("Should throw exception finding group by non-existing code")
+  void shouldThrowExceptionFindingGroupByNonExistingCode() {
+    assertThatCode(() -> instance.findByCode("NONEXISTING")).isInstanceOf(GroupNotFoundException.class);
   }
 }

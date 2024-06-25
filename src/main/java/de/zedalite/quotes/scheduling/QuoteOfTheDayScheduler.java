@@ -1,6 +1,6 @@
 package de.zedalite.quotes.scheduling;
 
-import de.zedalite.quotes.exceptions.ResourceNotFoundException;
+import de.zedalite.quotes.exception.ResourceNotFoundException;
 import de.zedalite.quotes.service.GroupQuoteOfTheDayService;
 import de.zedalite.quotes.service.GroupService;
 import org.slf4j.Logger;
@@ -22,7 +22,10 @@ public class QuoteOfTheDayScheduler {
 
   private final GroupService groupService;
 
-  public QuoteOfTheDayScheduler(final GroupQuoteOfTheDayService groupQuoteOfTheDayService, final GroupService groupService) {
+  public QuoteOfTheDayScheduler(
+    final GroupQuoteOfTheDayService groupQuoteOfTheDayService,
+    final GroupService groupService
+  ) {
     this.groupQuoteOfTheDayService = groupQuoteOfTheDayService;
     this.groupService = groupService;
   }
@@ -31,10 +34,10 @@ public class QuoteOfTheDayScheduler {
    * Clears the cache for the quote of the day and retrieves a new quote from the quote service.
    * This method is scheduled to run daily.
    */
+  @CacheEvict(value = "qotd", allEntries = true)
   @Scheduled(cron = "@daily")
   public void resetQuoteOfTheDay() {
-    LOGGER.info("Resetting quotes of the day...");
-    emptyQotdCache();
+    LOGGER.info("Resetting quotes of the day for all groups...");
 
     for (final Integer groupId : groupService.findAllIds()) {
       try {
@@ -43,15 +46,6 @@ public class QuoteOfTheDayScheduler {
         LOGGER.warn("Quotes of the day reset not reset, groupId={}", groupId);
       }
     }
-    LOGGER.info("Quotes of the day reset.");
-
-  }
-
-  /**
-   * Empties the cache for the Quote of the Day.
-   */
-  @CacheEvict(value = "qotd", allEntries = true)
-  public void emptyQotdCache() {
-    LOGGER.info("Cache QOTD emptied");
+    LOGGER.info("Quotes of the day for all groups reset.");
   }
 }
